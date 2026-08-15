@@ -38,10 +38,7 @@
   --radius-main: 1rem;
   --radius-round: 100vw;
 
-  /* Skeleton loading background (resolves against currentcolor) */
-  --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
-
-  /* Fluid scale range (px) */
+  /* Fluid scale range */
   --viewport-min: 320;
   --viewport-max: 1440;
 
@@ -53,7 +50,7 @@
   /* Nav */
   --nav-height: 5rem;
 
-  /* Heading styles */
+  /* Heading & text styles */
   --display: clamp(var(--display-min) / 16 * 1rem, ((var(--display-min) - ((var(--display-max) - var(--display-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--display-max) - var(--display-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--display-max) / 16 * 1rem);
   --display-min: 64;
   --display-max: 112;
@@ -152,7 +149,6 @@
   --h6-trim-bottom: var(--primary-trim-bottom);
   --h6-text-wrap: balance;
 
-  /* Text styles */
   --text-large: clamp(var(--text-large-min) / 16 * 1rem, ((var(--text-large-min) - ((var(--text-large-max) - var(--text-large-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-large-max) - var(--text-large-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-large-max) / 16 * 1rem);
   --text-large-min: 18;
   --text-large-max: 20;
@@ -232,7 +228,6 @@
   --space-8-min: 40;
   --space-8-max: 64;
 
-  /* Section spacing */
   --section-space-small: clamp(var(--section-space-small-min) / 16 * 1rem, ((var(--section-space-small-min) - ((var(--section-space-small-max) - var(--section-space-small-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--section-space-small-max) - var(--section-space-small-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--section-space-small-max) / 16 * 1rem);
   --section-space-small-min: 48;
   --section-space-small-max: 80;
