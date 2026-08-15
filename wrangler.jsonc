@@ -7,7 +7,7 @@
   // Worker: Cloudflare serves the files and no script runs per request.
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
   },
 
   // The domain the Worker answers on. `custom_domain` makes Cloudflare create
@@ -15,11 +15,11 @@
   "routes": [
     {
       "pattern": "lumosframework.timothyricks.com",
-      "custom_domain": true
-    }
+      "custom_domain": true,
+    },
   ],
 
   "observability": {
-    "enabled": true
-  }
+    "enabled": true,
+  },
 }
