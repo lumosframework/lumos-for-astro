@@ -48,10 +48,15 @@ const {
 
 const { class: containerAttrsClass, ...containerRest } = containerAttrs;
 
+const padSuffix: Partial<Record<SectionSpace, string>> = {
+  none: "0",
+  even: "sitemargin",
+};
+
 const padClass = (side: "top" | "bottom", value: SectionSpace) =>
   !!value &&
   value !== "medium" &&
-  `padding-${side}-${value === "even" ? "sitemargin" : value}`;
+  `padding-${side}-${padSuffix[value] ?? value}`;
 
 const content = await slotContent(Astro.slots);
 const background = await slotContent(Astro.slots, "background");
