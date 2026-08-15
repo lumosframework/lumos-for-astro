@@ -1,27 +1,41 @@
 ---
-import Layout from '@/layouts/BaseLayout.astro';
-import Section from '@/components/Section.astro';
-import Heading from '@/components/Heading.astro';
-import Eyebrow from '@/components/Eyebrow.astro';
-import logo from '@/assets/logo.svg';
-import arrow_full from '@/assets/icons/arrow-full.svg';
-import arrow from '@/assets/icons/arrow.svg';
-import close from '@/assets/icons/close.svg';
-import pause from '@/assets/icons/pause.svg';
-import play from '@/assets/icons/play.svg';
-import Img from '@/components/Img.astro';
-import lumos_background from '@/assets/lumos-background.svg';
-import Icon from '@/components/Icon.astro';
-import logo_icon from '@/assets/logo-icon.svg';
-import ContentWrapper from '@/components/ContentWrapper.astro';
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/Section.astro";
+import Heading from "@/components/Heading.astro";
+import Eyebrow from "@/components/Eyebrow.astro";
+import Img from "@/components/Img.astro";
+import lumos_background from "@/assets/lumos-background.svg";
+import Icon from "@/components/Icon.astro";
+import logo_icon from "@/assets/logo-icon.svg";
+import ContentWrapper from "@/components/ContentWrapper.astro";
 ---
+
 <Layout theme="dark">
-  <Section paddingBottom="even" containerClass="flex-grow" paddingTop="even" class="flex-grow" style="min-height: calc(100svh - var(--nav-height));">
-    <ContentWrapper class="flex-grow theme-brand" variant="card" mediaOpacity={100}>
+  <Section
+    paddingBottom="even"
+    containerClass="flex-grow"
+    paddingTop="even"
+    class="flex-grow"
+    style="min-height: calc(100svh - var(--nav-height));"
+  >
+    <ContentWrapper
+      class="flex-grow theme-brand"
+      variant="card"
+      mediaOpacity={100}
+    >
       <Icon src={logo_icon} variant="large" />
-      <Heading variant="display" tag="h1" class="margin-block-8">Style Guide</Heading>
+      <Heading variant="display" tag="h1" class="margin-block-8"
+        >Style Guide</Heading
+      >
       <Eyebrow variant="tag">v0.01</Eyebrow>
-      <Img slot="column2" src={lumos_background} width={1920} height={1080} loading="eager" fetchPriority="high" />
+      <Img
+        slot="column2"
+        src={lumos_background}
+        width={1920}
+        height={1080}
+        loading="eager"
+        fetchPriority="high"
+      />
     </ContentWrapper>
   </Section>
 </Layout>

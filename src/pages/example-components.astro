@@ -1,22 +1,27 @@
 ---
-import Layout from '@/layouts/BaseLayout.astro';
-import Section from '@/components/Section.astro';
-import ContentWrapper from '@/components/ContentWrapper.astro';
-import Eyebrow from '@/components/Eyebrow.astro';
-import Heading from '@/components/Heading.astro';
-import Paragraph from '@/components/Paragraph.astro';
-import ButtonWrapper from '@/components/ButtonWrapper.astro';
-import Button from '@/components/Button.astro';
-import Img from '@/components/Img.astro';
-import lumos_background from '@/assets/lumos-background.svg';
-import Grid from '@/components/Grid.astro';
-import Card from '@/components/Card.astro';
+import Layout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/Section.astro";
+import ContentWrapper from "@/components/ContentWrapper.astro";
+import Eyebrow from "@/components/Eyebrow.astro";
+import Heading from "@/components/Heading.astro";
+import Paragraph from "@/components/Paragraph.astro";
+import ButtonWrapper from "@/components/ButtonWrapper.astro";
+import Button from "@/components/Button.astro";
+import Img from "@/components/Img.astro";
+import lumos_background from "@/assets/lumos-background.svg";
+import Grid from "@/components/Grid.astro";
+import Card from "@/components/Card.astro";
 
 const heading = "We build things that help people work smarter";
 const text =
   "We build things that help people work smarter, move faster, and grow further.";
 ---
-<Layout title="Example Components" description="Every layout variant, side by side." theme="dark">
+
+<Layout
+  title="Example Components"
+  description="Every layout variant, side by side."
+  theme="dark"
+>
   <!-- stack -->
   <Section paddingTop="small" paddingBottom="small">
     <ContentWrapper>
@@ -143,7 +148,34 @@ const text =
     <ContentWrapper variant="sticky-visual">
       <Eyebrow>sticky-visual</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
-      <Paragraph>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</Paragraph>
+      <Paragraph
+        >Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
+        faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi
+        pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+        tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas.
+        Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit
+        semper vel class aptent taciti sociosqu. Ad litora torquent per conubia
+        nostra inceptos himenaeos. Lorem ipsum dolor sit amet consectetur
+        adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem
+        placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu
+        aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus
+        bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc
+        posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora
+        torquent per conubia nostra inceptos himenaeos. Lorem ipsum dolor sit
+        amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae
+        pellentesque sem placerat. In id cursus mi pretium tellus duis
+        convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus
+        fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+        lacinia integer nunc posuere. Ut hendrerit semper vel class aptent
+        taciti sociosqu. Ad litora torquent per conubia nostra inceptos
+        himenaeos. Lorem ipsum dolor sit amet consectetur adipiscing elit.
+        Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus
+        mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna
+        tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas.
+        Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit
+        semper vel class aptent taciti sociosqu. Ad litora torquent per conubia
+        nostra inceptos himenaeos.</Paragraph
+      >
       <ButtonWrapper>
         <Button element="link" href="/about">Learn more</Button>
       </ButtonWrapper>
@@ -152,7 +184,7 @@ const text =
   </Section>
   <!-- card -->
   <Section paddingTop="small" paddingBottom="large">
-    <ContentWrapper variant="card" mediaOpacity={30}>
+    <ContentWrapper variant="card" mediaOpacity={20}>
       <Eyebrow variant="tag">card</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
@@ -173,9 +205,29 @@ const text =
       </ButtonWrapper>
     </ContentWrapper>
     <Grid medium={3}>
-      <Card heading="Heading" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod." buttonHref="/about" buttonLabel="Learn More" />
-      <Card heading="Heading" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod." buttonHref="/about" buttonLabel="Learn More" variant="cover" image={lumos_background} />
-      <Card heading="Heading" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod." buttonHref="/about" buttonLabel="Learn More" variant="stacked" image={lumos_background} />
+      <Card
+        heading="Heading"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Learn More"
+      />
+      <Card
+        heading="Heading"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Learn More"
+        theme="dark"
+        variant="cover"
+        image={lumos_background}
+      />
+      <Card
+        heading="Heading"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Learn More"
+        variant="stacked"
+        image={lumos_background}
+      />
     </Grid>
   </Section>
 </Layout>
