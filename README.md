@@ -9,6 +9,13 @@ efficiency, scalability and accessibility.
 ## Getting started
 
 ```sh
+npm create lumos@latest my-site
+```
+
+That scaffolds a new site from this repository. Then:
+
+```sh
+cd my-site
 npm install
 npm run dev
 ```
@@ -67,8 +74,11 @@ search live in [`src/consts.ts`](src/consts.ts).
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) first — a pull request needs the
-[CLA](CLA.md) signed before it can be merged.
+Read
+[CONTRIBUTING.md](https://github.com/lumosframework/lumos-for-astro/blob/main/CONTRIBUTING.md)
+first — a pull request needs the
+[CLA](https://github.com/lumosframework/lumos-for-astro/blob/main/CLA.md)
+signed before it can be merged.
 
 ## License
 
