@@ -22,11 +22,46 @@ const TARBALL = `https://codeload.github.com/${REPO}/tar.gz/refs/heads/${BRANCH}
 // should be a date the framework was actually tested against.
 const COMPAT_DATE = "2026-08-13";
 
+// The Lumos mark, downsampled from logo.svg onto half-block characters.
+// Rebuild with .github/assets/build-ascii.mjs if the mark changes.
+const MARK = [
+  "       ▄███▄",
+  "        ████    ▄██▄",
+  "        ████▄ ▄████▀",
+  "  ████▄▄▄████████▀",
+  "  ██████████████▄",
+  "     ▀▀▀█████████████▄",
+  "      ▄████████▀██████",
+  "    ▄████▀ ████     ▀",
+  "  ▄████▀   ▀████",
+  "▄████▀      ████",
+  " ▀█▀",
+];
+
 const ESC = "\x1b[";
-const dim = (s) => `${ESC}2m${s}${ESC}0m`;
-const bold = (s) => `${ESC}1m${s}${ESC}0m`;
-const green = (s) => `${ESC}32m${s}${ESC}0m`;
-const red = (s) => `${ESC}31m${s}${ESC}0m`;
+
+// Escape codes only mean anything to a terminal, so piped output and NO_COLOR
+// get plain text instead.
+const styled = stdout.isTTY && !env.NO_COLOR;
+const style = (code) => (s) => (styled ? `${ESC}${code}m${s}${ESC}0m` : s);
+const dim = style("2");
+const bold = style("1");
+const green = style("32");
+const red = style("31");
+const lime = style("38;2;198;251;80");
+
+function header() {
+  const gutter = Math.max(...MARK.map((line) => line.length)) + 4;
+  const labels = [];
+  labels[4] = bold("Lumos For Astro");
+  labels[6] = dim("Components and styling for Astro sites.");
+
+  // Only pad rows that carry a label, so piped output has no trailing blanks.
+  const rows = MARK.map((line, i) =>
+    labels[i] ? lime(line.padEnd(gutter)) + labels[i] : lime(line),
+  );
+  console.log(`\n${rows.join("\n")}\n`);
+}
 
 /**
  * The package manager that invoked this, taken from the user agent npm, pnpm,
@@ -95,7 +130,7 @@ function* readTar(buf) {
 }
 
 async function main() {
-  console.log(`\n${bold("Lumos For Astro")}\n`);
+  header();
 
   const args = argv.slice(2);
   const flags = args.filter((a) => a.startsWith("--"));
