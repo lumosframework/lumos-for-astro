@@ -1,4 +1,12 @@
-# Lumos For Astro
+<p align="center">
+  <img src=".github/assets/banner.png" alt="Lumos For Astro" width="720">
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/create-lumos"><img alt="npm version" src="https://img.shields.io/npm/v/create-lumos?labelColor=1E1E1E&color=C6FB50"></a>
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/npm/l/create-lumos?labelColor=1E1E1E&color=C6FB50"></a>
+  <a href="https://github.com/lumosframework/lumos-for-astro/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/lumosframework/lumos-for-astro/actions/workflows/ci.yml/badge.svg"></a>
+</p>
 
 A component and styling framework for building Astro sites, designed around
 efficiency, scalability and accessibility.
