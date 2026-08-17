@@ -11,10 +11,9 @@ Run it without a directory name and it will ask for one.
 The new site is a full copy of the framework with its own package name and a
 Cloudflare config pointing at itself.
 
-You are asked whether to install dependencies, using whichever package manager
-invoked the command — `npm`, `pnpm`, `yarn` or `bun`. Pass `--install` or
-`--no-install` to answer up front, which is also what non-interactive runs need,
-since those skip the install unless told otherwise.
+Dependencies are installed with whichever package manager invoked the command —
+`npm`, `pnpm`, `yarn` or `bun`. Pass `--no-install` to skip that and set the
+project up yourself.
 
 ```sh
 cd my-site

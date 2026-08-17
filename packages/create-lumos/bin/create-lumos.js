@@ -109,16 +109,9 @@ async function main() {
   }
   if (!target) die("A directory name is required.");
 
-  // Asking only makes sense with someone there to answer, so a non-interactive
-  // run skips the install unless --install says otherwise.
-  let install = flags.includes("--install");
-  if (!install && !flags.includes("--no-install") && stdin.isTTY) {
-    const rl = createInterface({ input: stdin, output: stdout });
-    const answer = await rl.question(`Install dependencies with ${pm}? [Y/n] `);
-    rl.close();
-    const reply = answer.trim().toLowerCase();
-    install = reply === "" || reply.startsWith("y");
-  }
+  // Installing is what nearly every caller wants, and asking put a keystroke
+  // between them and a working site. --no-install covers the rest.
+  const install = !flags.includes("--no-install");
 
   const dir = resolve(cwd(), target);
   if (existsSync(dir) && (await readdir(dir)).length > 0) {

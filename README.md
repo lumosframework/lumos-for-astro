@@ -12,8 +12,8 @@ efficiency, scalability and accessibility.
 npm create lumos@latest my-site
 ```
 
-That scaffolds a new site from this repository and offers to install its
-dependencies with whichever package manager you ran it with. Then:
+That scaffolds a new site from this repository and installs its dependencies
+with whichever package manager you ran it with. Then:
 
 ```sh
 cd my-site
