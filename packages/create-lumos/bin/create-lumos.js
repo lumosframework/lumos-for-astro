@@ -1,8 +1,15 @@
 #!/usr/bin/env node
-import { mkdir, writeFile, readFile, readdir } from "node:fs/promises";
+import {
+  mkdir,
+  writeFile,
+  readFile,
+  readdir,
+  symlink,
+  copyFile,
+} from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
-import { dirname, join, resolve, basename } from "node:path";
+import { dirname, join, resolve, basename, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout, argv, exit, cwd } from "node:process";
 
@@ -53,6 +60,7 @@ function* readTar(buf) {
     if (!path) continue;
 
     if (type === "5") yield { path, directory: true };
+    else if (type === "2") yield { path, link: field(157, 100) };
     else if (type === "0") yield { path, data: buf.subarray(start, start + size) };
   }
 }
@@ -83,12 +91,25 @@ async function main() {
   let count = 0;
   for (const entry of readTar(tar)) {
     const dest = join(dir, entry.path);
+    // An archive entry should never be able to write outside the target.
+    if (dest !== dir && !dest.startsWith(dir + sep)) {
+      die(`The template contains an unsafe path: ${entry.path}`);
+    }
     if (entry.directory) {
       await mkdir(dest, { recursive: true });
       continue;
     }
     await mkdir(dirname(dest), { recursive: true });
-    await writeFile(dest, entry.data);
+
+    if (entry.link) {
+      // Windows refuses symlinks without elevation, so fall back to a copy of
+      // whatever the link pointed at.
+      await symlink(entry.link, dest).catch(() =>
+        copyFile(resolve(dirname(dest), entry.link), dest),
+      );
+    } else {
+      await writeFile(dest, entry.data);
+    }
     count++;
   }
   if (count === 0) die("The template archive was empty.");

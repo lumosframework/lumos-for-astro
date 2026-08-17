@@ -4,10 +4,22 @@
   "description": "Create a new site from the Lumos For Astro template.",
   "license": "MIT",
   "type": "module",
-  "bin": { "create-lumos": "bin/create-lumos.js" },
-  "files": ["bin"],
-  "engines": { "node": ">=18.0.0" },
-  "keywords": ["astro", "lumos", "template", "starter"],
+  "bin": {
+    "create-lumos": "bin/create-lumos.js"
+  },
+  "files": [
+    "bin",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "astro",
+    "lumos",
+    "template",
+    "starter"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lumosframework/lumos-for-astro.git",
