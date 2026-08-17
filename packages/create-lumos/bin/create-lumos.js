@@ -11,7 +11,8 @@ import { existsSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve, basename, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
-import { stdin, stdout, argv, exit, cwd } from "node:process";
+import { stdin, stdout, argv, exit, cwd, env, platform } from "node:process";
+import { spawn } from "node:child_process";
 
 const REPO = "lumosframework/lumos-for-astro";
 const BRANCH = "main";
@@ -27,6 +28,30 @@ const bold = (s) => `${ESC}1m${s}${ESC}0m`;
 const green = (s) => `${ESC}32m${s}${ESC}0m`;
 const red = (s) => `${ESC}31m${s}${ESC}0m`;
 
+/**
+ * The package manager that invoked this, taken from the user agent npm, pnpm,
+ * yarn and bun all set. Installing with the wrong one would leave a lockfile
+ * and `node_modules` from a tool the caller isn't using. Names are matched
+ * against a fixed list, since the value ends up in a command.
+ */
+function packageManager() {
+  const name = (env.npm_config_user_agent ?? "").split("/")[0];
+  return ["npm", "pnpm", "yarn", "bun"].includes(name) ? name : "npm";
+}
+
+function run(command, args, cwd) {
+  return new Promise((resolve) => {
+    // On Windows these are .cmd shims, which need a shell to be found.
+    const child = spawn(command, args, {
+      cwd,
+      stdio: "inherit",
+      shell: platform === "win32",
+    });
+    child.on("close", (code) => resolve(code === 0));
+    child.on("error", () => resolve(false));
+  });
+}
+
 function die(message) {
   console.error(`\n${red("Error:")} ${message}\n`);
   exit(1);
@@ -40,12 +65,15 @@ function die(message) {
  * and extended headers carry metadata rather than content, so they are skipped.
  */
 function* readTar(buf) {
-  for (let off = 0; off + 512 <= buf.length; ) {
+  for (let off = 0; off + 512 <= buf.length;) {
     const header = buf.subarray(off, off + 512);
     if (header[0] === 0) break;
 
     const field = (start, len) =>
-      header.subarray(start, start + len).toString("utf8").replace(/\0.*$/, "");
+      header
+        .subarray(start, start + len)
+        .toString("utf8")
+        .replace(/\0.*$/, "");
     const size = parseInt(field(124, 12).trim() || "0", 8);
     const flag = header[156];
     const type = flag === 0 ? "0" : String.fromCharCode(flag);
@@ -61,20 +89,36 @@ function* readTar(buf) {
 
     if (type === "5") yield { path, directory: true };
     else if (type === "2") yield { path, link: field(157, 100) };
-    else if (type === "0") yield { path, data: buf.subarray(start, start + size) };
+    else if (type === "0")
+      yield { path, data: buf.subarray(start, start + size) };
   }
 }
 
 async function main() {
   console.log(`\n${bold("Lumos For Astro")}\n`);
 
-  let target = argv[2];
+  const args = argv.slice(2);
+  const flags = args.filter((a) => a.startsWith("--"));
+  const pm = packageManager();
+
+  let target = args.find((a) => !a.startsWith("--"));
   if (!target) {
     const rl = createInterface({ input: stdin, output: stdout });
     target = (await rl.question("Directory name: ")).trim();
     rl.close();
   }
   if (!target) die("A directory name is required.");
+
+  // Asking only makes sense with someone there to answer, so a non-interactive
+  // run skips the install unless --install says otherwise.
+  let install = flags.includes("--install");
+  if (!install && !flags.includes("--no-install") && stdin.isTTY) {
+    const rl = createInterface({ input: stdin, output: stdout });
+    const answer = await rl.question(`Install dependencies with ${pm}? [Y/n] `);
+    rl.close();
+    const reply = answer.trim().toLowerCase();
+    install = reply === "" || reply.startsWith("y");
+  }
 
   const dir = resolve(cwd(), target);
   if (existsSync(dir) && (await readdir(dir)).length > 0) {
@@ -116,7 +160,9 @@ async function main() {
   console.log(green(`${count} files`));
 
   // The template ships under its own identity; the new site takes the folder name.
-  const name = basename(dir).toLowerCase().replace(/[^a-z0-9._-]+/g, "-");
+  const name = basename(dir)
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-");
 
   const manifest = join(dir, "package.json");
   if (existsSync(manifest)) {
@@ -156,14 +202,27 @@ async function main() {
 `,
   );
 
+  let installed = false;
+  if (install) {
+    console.log(dim(`\nInstalling dependencies with ${pm}...\n`));
+    installed = await run(pm, ["install"], dir);
+    // The site itself is already written, so a failed install is worth
+    // reporting without discarding the work.
+    if (!installed) {
+      console.log(red(`\n${pm} install failed. Try running it yourself.`));
+    }
+  }
+
+  const steps = [`  ${bold("cd " + target)}`];
+  if (!installed) steps.push(`  ${bold(pm + " install")}`);
+  steps.push(`  ${bold(pm + " run dev")}`);
+
   console.log(
     [
       "",
       `${green("Ready.")} Next:`,
       "",
-      `  ${bold("cd " + target)}`,
-      `  ${bold("npm install")}`,
-      `  ${bold("npm run dev")}`,
+      ...steps,
       "",
       `Set your site name and URL in ${bold("src/consts.ts")}.`,
       "",
