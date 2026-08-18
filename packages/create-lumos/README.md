@@ -46,8 +46,10 @@ skip themselves. Set your site name and URL in `src/consts.ts`.
 
 ## Documentation
 
-Full documentation lives in the
-[repository README](https://github.com/lumosframework/lumos-for-astro#readme).
+[lumosframework.com](https://lumosframework.com)
+
+Source and issues live in the
+[repository](https://github.com/lumosframework/lumos-for-astro).
 
 ## License
 

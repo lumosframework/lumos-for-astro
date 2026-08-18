@@ -11,6 +11,8 @@
 A component and styling framework for building Astro sites, designed around
 efficiency, scalability and accessibility.
 
+Documentation lives at **[lumosframework.com](https://lumosframework.com)**.
+
 > **Beta.** `v0.0.1` is the first tagged release. The component API is still
 > settling, so expect prop names to move before `v0.1.0`.
 
@@ -79,6 +81,12 @@ context.
 
 Site name, description, canonical origin, locale and the routes kept out of
 search live in [`src/consts.ts`](src/consts.ts).
+
+## Documentation
+
+Component reference, styling guides and examples are at
+[lumosframework.com](https://lumosframework.com). This README covers the shape of the
+framework; the site covers how to build with it.
 
 ## Contributing
 

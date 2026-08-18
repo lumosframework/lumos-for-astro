@@ -25,6 +25,6 @@
     "url": "git+https://github.com/lumosframework/lumos-for-astro.git",
     "directory": "packages/create-lumos"
   },
-  "homepage": "https://github.com/lumosframework/lumos-for-astro#readme",
+  "homepage": "https://lumosframework.com",
   "bugs": "https://github.com/lumosframework/lumos-for-astro/issues"
 }
