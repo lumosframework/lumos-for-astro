@@ -10,7 +10,7 @@
 import sharp from "sharp";
 import { readFile, writeFile } from "node:fs/promises";
 
-const COLS = 16;
+const COLS = 12;
 const PAD_X = 2;
 const PAD_Y = 1;
 const CARD = [30, 30, 30];
