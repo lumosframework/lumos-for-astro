@@ -40,53 +40,10 @@ npm run dev
 
 Node 22.12 or newer is required.
 
-## How it is put together
-
-### The cascade
-
-Styles are split across four cascade layers, declared in
-[`global.css`](src/styles/global.css) in this order:
-
-| Layer        | File                                      | Holds                                               |
-| ------------ | ----------------------------------------- | --------------------------------------------------- |
-| `base`       | [base.css](src/styles/base.css)           | Design tokens, color themes, the reset, text styles |
-| `patterns`   | [patterns.css](src/styles/patterns.css)   | Multi-property patterns shared across components    |
-| `components` | Each component's own `<style>` block      | The component itself                                |
-| `utilities`  | [utilities.css](src/styles/utilities.css) | Single-property classes                             |
-
-A later layer beats an earlier one whatever the selectors say, so components
-override patterns and utilities override components.
-
-### Theming
-
-Four theme classes — `theme-light`, `theme-dark`, `theme-brand` and
-`theme-invert` — each redeclare the same set of custom properties, so anything
-inside them picks up the right colors without knowing where it sits. `Section`,
-`BaseLayout` and `Card` all take a `theme` prop that applies one.
-
-### Components
-
-Layout: `Section`, `ContentWrapper`, `Grid`, `ButtonWrapper`
-Content: `Heading`, `Paragraph`, `RichText`, `Eyebrow`, `Card`, `Button`
-Media: `Img`, `Video`, `Icon`, `Overlay`
-Chrome: `Nav`, `Footer`, `SkipLink`, `BaseHead`, `FormattedDate`
-
-Every component takes a `render` prop; pass `false` to skip it and its children.
-Components that would render nothing skip themselves.
-
-See [example-components](src/pages/example-components.astro) for each one in
-context.
-
-### Site configuration
-
-Site name, description, canonical origin, locale and the routes kept out of
-search live in [`src/consts.ts`](src/consts.ts).
-
 ## Documentation
 
 Component reference, styling guides and examples are at
-[lumosframework.com](https://lumosframework.com). This README covers the shape of the
-framework; the site covers how to build with it.
+[lumosframework.com](https://lumosframework.com).
 
 ## Contributing
 
