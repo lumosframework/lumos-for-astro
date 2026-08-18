@@ -4,7 +4,7 @@ export const SITE_NAME = "Lumos Framework";
 export const SITE_DESCRIPTION =
   "Lumos is a cutting-edge framework for building Astro sites. It's designed with efficiency, scaleability, and accessibility at its core.";
 /** Canonical origin. Resolves canonical URLs, social images, and the sitemap. */
-export const SITE_URL = "https://lumosframework.timothyricks.com";
+export const SITE_URL = "https://preview.lumosframework.com";
 /** BCP 47 locale tag used to format dates and numbers. */
 export const SITE_LOCALE = "en-US";
 /**
