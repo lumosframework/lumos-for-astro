@@ -157,14 +157,39 @@ function* readTar(buf) {
   }
 }
 
-async function main() {
-  header();
+function usage() {
+  console.log(
+    [
+      `${bold("Usage")}`,
+      "  npm create lumos@latest [directory] [options]",
+      "",
+      `${bold("Options")}`,
+      `  --no-install   ${dim("Scaffold without installing dependencies")}`,
+      `  -h, --help     ${dim("Show this message")}`,
+      `  -v, --version  ${dim("Print the version")}`,
+      "",
+      dim("Run without a directory and you will be asked for one."),
+      "",
+    ].join("\n"),
+  );
+}
 
+async function main() {
   const args = argv.slice(2);
-  const flags = args.filter((a) => a.startsWith("--"));
+  // Single dashes count too, so that -h is not mistaken for a directory name.
+  const flags = args.filter((a) => a.startsWith("-"));
   const pm = packageManager();
 
-  let target = args.find((a) => !a.startsWith("--"));
+  // Printed before the banner, so the output stays parseable.
+  if (flags.includes("--version") || flags.includes("-v")) {
+    const pkg = new URL("../package.json", import.meta.url);
+    return console.log(JSON.parse(await readFile(pkg, "utf8")).version);
+  }
+
+  header();
+  if (flags.includes("--help") || flags.includes("-h")) return usage();
+
+  let target = args.find((a) => !a.startsWith("-"));
   if (!target) {
     const rl = createInterface({ input: stdin, output: stdout });
     target = (await rl.question("Directory name: ")).trim();
