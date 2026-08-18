@@ -10,7 +10,7 @@
 import sharp from "sharp";
 import { readFile, writeFile } from "node:fs/promises";
 
-const COLS = 30;
+const COLS = 12;
 const PAD_X = 2;
 const PAD_Y = 1;
 const CARD = [30, 30, 30];
@@ -38,7 +38,78 @@ const { data } = await sharp(".github/assets/lumi.svg")
   .raw()
   .toBuffer({ resolveWithObject: true });
 
+// At small sizes the eyes — which are holes in the body rather than dark
+// shapes — antialias away entirely. They are located in a large render, where
+// they still exist, and mapped back onto the grid.
+async function eyes() {
+  const BIG = 120;
+  const big = Math.round(BIG * (3306 / 3483));
+  const { data: hi } = await sharp(".github/assets/lumi.svg")
+    .resize({ width: BIG, height: big, fit: "fill" })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const clear = (x, y) => hi[(y * BIG + x) * 4 + 3] <= 128;
+
+  // Flood from the border to find the background, so what remains is enclosed.
+  const outside = new Set();
+  const queue = [];
+  for (let x = 0; x < BIG; x++) queue.push([x, 0], [x, big - 1]);
+  for (let y = 0; y < big; y++) queue.push([0, y], [BIG - 1, y]);
+  while (queue.length) {
+    const [x, y] = queue.pop();
+    const k = y * BIG + x;
+    if (
+      x < 0 ||
+      y < 0 ||
+      x >= BIG ||
+      y >= big ||
+      outside.has(k) ||
+      !clear(x, y)
+    )
+      continue;
+    outside.add(k);
+    queue.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+  }
+
+  // Group the enclosed gaps, then keep the two biggest: the eyes.
+  const seen = new Set();
+  const holes = [];
+  for (let y = 0; y < big; y++) {
+    for (let x = 0; x < BIG; x++) {
+      const k = y * BIG + x;
+      if (!clear(x, y) || outside.has(k) || seen.has(k)) continue;
+      const cells = [];
+      const stack = [[x, y]];
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        const ck = cy * BIG + cx;
+        if (cx < 0 || cy < 0 || cx >= BIG || cy >= big) continue;
+        if (!clear(cx, cy) || outside.has(ck) || seen.has(ck)) continue;
+        seen.add(ck);
+        cells.push([cx, cy]);
+        stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+      }
+      holes.push(cells);
+    }
+  }
+
+  return holes
+    .sort((a, b) => b.length - a.length)
+    .slice(0, 2)
+    .map((cells) => {
+      const cx = cells.reduce((t, c) => t + c[0], 0) / cells.length;
+      const cy = cells.reduce((t, c) => t + c[1], 0) / cells.length;
+      return [Math.round((cx / BIG) * COLS), Math.round((cy / big) * height)];
+    });
+}
+
+const EYES = await eyes();
+const isEye = (x, y) => EYES.some(([ex, ey]) => ex === x && ey === y);
+
 const at = (x, y) => {
+  if (isEye(x, y)) return null;
   const i = (y * COLS + x) * 4;
   return data[i + 3] > 128 ? nearest(data[i], data[i + 1], data[i + 2]) : null;
 };
@@ -69,7 +140,8 @@ const plain = [];
 for (let y = 0; y < height; y += 2) {
   let line = "";
   for (let x = 0; x < COLS; x++) {
-    const t = at(x, y), b = at(x, y + 1);
+    const t = at(x, y),
+      b = at(x, y + 1);
     line += t && b ? "█" : t ? "▀" : b ? "▄" : " ";
   }
   plain.push(" ".repeat(PAD_X) + line.replace(/\s+$/, ""));
@@ -79,11 +151,13 @@ const list = (arr) => arr.map((l) => `  ${JSON.stringify(l)},`).join("\n");
 const p = "packages/create-lumos/bin/create-lumos.js";
 let s = await readFile(p, "utf8");
 s = s.replace(
-  /const MARK = \[[\s\S]*?\n\];/,
+  /const MASCOT = \[[\s\S]*?\n\];\n\nconst MASCOT_PLAIN = \[[\s\S]*?\n\];/,
   `const MASCOT = [\n${list(colour)}\n];\n\nconst MASCOT_PLAIN = [\n${list(plain)}\n];`,
 );
+s = s.replace(/const CARD_COLS = \d+;/, `const CARD_COLS = ${width};`);
 await writeFile(p, s);
 
+console.log("eyes at:", EYES);
 console.log("card:", width, "cols x", colour.length, "rows");
 console.log("bytes:", colour.join("").length + plain.join("").length);
 console.log(plain.join("\n"));
