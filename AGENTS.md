@@ -20,3 +20,8 @@ Consult these guides before working on related tasks:
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
+## Building
+
+Read [LUMOS.md](LUMOS.md) before adding pages, components, or styles. It
+covers the conventions that keep a Lumos site consistent as it grows.
