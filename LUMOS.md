@@ -22,18 +22,16 @@ Read this before adding a page, a section, or a style.
 <!-- The prop conventions shared across components: theme, spacing scales,
      class and attrs passthrough. -->
 
-### `render`
+## New component checklist
 
-Every component takes a `render` prop, defaulting to `true`. Set it to `false`
-to drop the component and its children. `BaseHead` is the one exception: a
-page's head tags aren't optional.
+<!-- Every box has to be ticked before a component is done. -->
 
-They also hide themselves when there is nothing to show: an empty slot, or a
-missing prop they can't render without, such as `Video` with no `src`. Comments
-and whitespace don't count as content.
-
-So pass content straight through — a section fed by empty CMS fields disappears
-on its own, and pages need no `{data.heading && <Heading>}` guards.
+- [ ] Has `render`, default `true`, and outputs nothing when it is `false`,
+      when a prop it needs is missing, or when `slotContent` from
+      `@/utils/slots.ts` — not `Astro.slots.has` — finds its slots empty.
+- [ ] Orders props the same way in the type and the destructure: `render`,
+      content that changes per instance, `variant`, props that only apply to
+      some variants, then occasional settings. `class` and `...rest` last.
 
 ## Content and SEO
 

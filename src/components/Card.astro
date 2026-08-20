@@ -17,14 +17,6 @@ type ImageSource = ImageMetadata | string;
 type Base = HTMLAttributes<"div"> & {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
-  /**
-   * Where the image sits.
-   *
-   * - `default` — no image, text only (default)
-   * - `cover` — image fills the card, text over it
-   * - `stacked` — image above the text, bleeding to the edges
-   */
-  variant?: CardVariant;
   /** Small line of text above the heading. */
   eyebrow?: string;
   /** The card's title. */
@@ -38,6 +30,14 @@ type Base = HTMLAttributes<"div"> & {
   /** Where the button leads. Left out, it renders as a plain button. */
   buttonHref?: string;
   cardTag?: CardTag;
+  /**
+   * Where the image sits.
+   *
+   * - `default` — no image, text only (default)
+   * - `cover` — image fills the card, text over it
+   * - `stacked` — image above the text, bleeding to the edges
+   */
+  variant?: CardVariant;
   /** Colors the card carries with it, whatever section it sits in. */
   theme?: CardTheme;
 };
@@ -74,7 +74,6 @@ type AllProps = Base & {
 
 const {
   render = true,
-  variant = "default",
   eyebrow,
   heading,
   headingTag = "h3",
@@ -82,6 +81,7 @@ const {
   buttonLabel,
   buttonHref,
   cardTag = "div",
+  variant = "default",
   theme = "inherit",
   image,
   imageAlt,
