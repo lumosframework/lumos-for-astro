@@ -20,6 +20,14 @@ interface Props extends HTMLAttributes<"div"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
   tag?: HeadingTag;
+  /**
+   * Type style, chosen apart from `tag` so a heading can change level without
+   * changing size. Defaults to matching `tag`.
+   *
+   * - `display`, `h1`–`h6` — the heading sizes
+   * - `large`, `main`, `small` — the body sizes
+   * - `inherit` — take the style from its surroundings
+   */
   variant?: HeadingStyle;
   maxWidth?: number;
 }

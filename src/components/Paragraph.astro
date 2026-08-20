@@ -20,6 +20,13 @@ interface Props extends HTMLAttributes<"p"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
   tag?: ParagraphTag;
+  /**
+   * Type style. Defaults to `inherit`.
+   *
+   * - `display`, `h1`–`h6` — the heading sizes
+   * - `large`, `main`, `small` — the body sizes
+   * - `inherit` — take the style from its surroundings
+   */
   variant?: ParagraphStyle;
   maxWidth?: number;
 }

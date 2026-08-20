@@ -5,6 +5,13 @@ import { slotContent } from "@/utils/slots.ts";
 type ButtonProps = HTMLAttributes<"button"> & {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
+  /**
+   * How much weight the button carries.
+   *
+   * - `primary` — filled, for the main action (default)
+   * - `secondary` — outlined, for anything sitting beside a primary
+   * - `link` — text on a rule that travels across on hover
+   */
   variant?: "primary" | "secondary" | "link";
   element?: "button";
   type?: "button" | "submit" | "reset";

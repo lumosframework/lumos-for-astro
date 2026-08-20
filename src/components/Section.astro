@@ -22,6 +22,7 @@ type ContainerGap =
 interface Props extends HTMLAttributes<"section"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
+  /** Colors this section and everything inside it. */
   theme?: "inherit" | "light" | "dark" | "brand";
   paddingTop?: SectionSpace;
   paddingBottom?: SectionSpace;

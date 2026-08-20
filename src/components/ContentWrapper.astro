@@ -2,9 +2,33 @@
 import type { HTMLAttributes } from "astro/types";
 import { slotContent } from "@/utils/slots.ts";
 
+type ContentWrapperVariant =
+  | "stack"
+  | "auto-width"
+  | "columns"
+  | "breakout"
+  | "contain"
+  | "sticky-content"
+  | "sticky-visual"
+  | "card";
+
 type Base = HTMLAttributes<"div"> & {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
+  /**
+   * How the two columns are arranged. The default slot is the first column,
+   * the `column2` slot the second.
+   *
+   * - `stack` — one column, everything in order (default)
+   * - `auto-width` — a row, each column only as wide as its content
+   * - `columns` — two even columns from 64rem up
+   * - `breakout` — full viewport width, the visual bleeding off one edge
+   * - `contain` — two columns on a filled, rounded surface
+   * - `sticky-content` — two columns; the content holds as the visual scrolls
+   * - `sticky-visual` — two columns; the visual holds as the content scrolls
+   * - `card` — the visual fills the surface, the content centered over it
+   */
+  variant?: ContentWrapperVariant;
 };
 
 type ColumnClasses = {
@@ -60,15 +84,7 @@ type Props = Base &
 
 type AllProps = Base &
   ColumnClasses & {
-    variant?:
-      | "stack"
-      | "auto-width"
-      | "columns"
-      | "breakout"
-      | "contain"
-      | "sticky-content"
-      | "sticky-visual"
-      | "card";
+    variant?: ContentWrapperVariant;
     reverse?: boolean;
     centered?: boolean;
     mediaOpacity?: number;

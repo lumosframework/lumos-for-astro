@@ -18,6 +18,14 @@ type RichTextStyle =
 interface Props extends HTMLAttributes<"div"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
+  /**
+   * Type style the whole block is spaced and sized from. Defaults to
+   * `inherit`.
+   *
+   * - `display`, `h1`–`h6` — the heading sizes
+   * - `large`, `main`, `small` — the body sizes
+   * - `inherit` — take the style from its surroundings
+   */
   variant?: RichTextStyle;
   maxWidth?: number;
 }
