@@ -1,6 +1,6 @@
 {
   "name": "create-lumos",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "Create a new site from the Lumos For Astro template.",
   "license": "MIT",
   "type": "module",
