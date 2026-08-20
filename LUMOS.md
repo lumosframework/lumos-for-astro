@@ -24,8 +24,10 @@ Read this before adding a page, a section, or a style.
 
 <!-- Every box has to be ticked before new CSS is accepted. -->
 
-- [ ] Can't be had from an existing `variant`, or from a utility class for a
-      one-off override. New CSS is the last resort, in that order.
+- [ ] Can't be had from an existing `variant`. New CSS is the last resort.
+- [ ] Uses utilities only to override one instance of a variant — a change or
+      two that stand on their own. The moment several have to hold together to
+      make a look, that look is a variant, not a stack of classes.
 - [ ] Ships with the new component that needs it, in that component's own
       `<style is:global>` under `@layer components`. A page carries no CSS.
 - [ ] Roots on a class no other component uses — `.blog-gallery`,
@@ -37,16 +39,16 @@ Read this before adding a page, a section, or a style.
       `text-style-h3`, `theme-invert` — leaving the custom class to hold only
       what it overrides. Editing a pattern then reaches every component using
       it.
-- [ ] Is nested, each media query inside the rule it modifies rather than
-      gathered at the end.
+- [ ] Uses no `px`. Lengths are `rem`, a max width on text is `ch`, and
+      anything that should track the font size — letter spacing, an icon or
+      flourish sitting in text — is `em`.
+- [ ] Nests its media queries, one the whole component shares, inside the rule
+      it modifies. Split into one query per variant only where variants wrap at
+      different widths, as `ContentWrapper` does. Never one per child or per
+      property — that spreads a single value across the file.
 - [ ] Uses the breakpoints `Grid` declares, read from there rather than from
       memory, since a site may change them. Any other breakpoint needs a
       reason.
-
-## Component props
-
-<!-- The prop conventions shared across components: theme, spacing scales,
-     class and attrs passthrough. -->
 
 ## New component checklist
 
@@ -68,16 +70,3 @@ Read this before adding a page, a section, or a style.
 - [ ] Documents each prop with the exact wording other components already use
       for it. A shared prop only gets its own description where it genuinely
       behaves differently.
-
-## Content and SEO
-
-<!-- Page titles, descriptions, canonical URLs, images, and the settings in
-     src/consts.ts. -->
-
-## Accessibility
-
-<!-- Requirements that hold for every page, not just the ones that ask. -->
-
-## Anti-patterns
-
-<!-- The specific shortcuts that make a Lumos site hard to scale. -->
