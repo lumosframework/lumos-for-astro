@@ -27,7 +27,7 @@ const content = await slotContent(Astro.slots);
 {
   render && content && (
     <div
-      class:list={["eyebrow_wrap", variant !== "default" && variant, className]}
+      class:list={["eyebrow", variant !== "default" && variant, className]}
       {...rest}
     >
       {variant === "default" && (
@@ -42,7 +42,7 @@ const content = await slotContent(Astro.slots);
 
 <style is:global>
   @layer components {
-    .eyebrow_wrap {
+    .eyebrow {
       display: inline-flex;
       align-items: center;
       justify-content: var(--_alignment, start);

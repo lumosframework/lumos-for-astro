@@ -25,7 +25,7 @@ const isCurrent = (href: string) =>
 
 {
   render && (
-    <header class:list={["nav_wrap", overlap && "overlap"]} data-nav>
+    <header class:list={["nav", overlap && "overlap"]} data-nav>
       <div class="nav_inner">
         <a class="nav_logo" href="/" aria-label={SITE_NAME}>
           <Icon src={logo} variant="full-width" />
@@ -125,7 +125,7 @@ const isCurrent = (href: string) =>
 
 <style is:global>
   @layer components {
-    .nav_wrap {
+    .nav {
       position: sticky;
       top: 0;
       z-index: 50;
@@ -226,7 +226,7 @@ const isCurrent = (href: string) =>
     }
 
     /* Open: each bar moves to the middle of the box and crosses the other. */
-    .nav_wrap[data-open] .nav_toggle_icon {
+    .nav[data-open] .nav_toggle_icon {
       &::before {
         transform: translateY(calc(var(--_bar-gap) / 2)) rotate(45deg);
       }
@@ -256,12 +256,12 @@ const isCurrent = (href: string) =>
       transition: opacity 250ms ease;
     }
 
-    .nav_wrap[data-open] .nav_menu {
+    .nav[data-open] .nav_menu {
       grid-template-rows: 1fr;
       visibility: visible;
     }
 
-    .nav_wrap[data-open] .nav_menu_inner {
+    .nav[data-open] .nav_menu_inner {
       opacity: 1;
     }
 

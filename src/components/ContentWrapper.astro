@@ -130,7 +130,7 @@ const variantClasses =
   variant === "stack"
     ? []
     : variant === "card"
-      ? ["card", "theme-dark"]
+      ? ["card-layout", "theme-dark"]
       : [variant];
 
 const column1 = await slotContent(Astro.slots);
@@ -324,7 +324,7 @@ const column2 = await slotContent(Astro.slots, "column2");
           }
         }
       }
-      &.card {
+      &.card-layout {
         border-radius: var(--radius-main);
         position: relative;
         overflow: clip;

@@ -13,7 +13,7 @@ const { render = true } = Astro.props;
 
 {
   render && (
-    <footer class="footer_wrap">
+    <footer class="footer">
       <div class="footer_inner">
         <div class="footer_top">
           <a class="footer_logo" href="/" aria-label={SITE_NAME}>
@@ -55,7 +55,7 @@ const { render = true } = Astro.props;
 
 <style is:global>
   @layer components {
-    .footer_wrap {
+    .footer {
       display: flex;
       justify-content: center;
       padding-block: var(--section-space-small);

@@ -50,7 +50,7 @@ const content = await slotContent(Astro.slots);
 {
   render && content && (
     <Tag
-      class:list={["button_wrap", variant !== "primary" && variant]}
+      class:list={["button", variant !== "primary" && variant]}
       {...tagAttrs}
       {...rest}
     >
@@ -63,7 +63,7 @@ const content = await slotContent(Astro.slots);
 
 <style is:global>
   @layer components {
-    .button_wrap {
+    .button {
       display: inline-flex;
       justify-content: center;
       align-items: center;

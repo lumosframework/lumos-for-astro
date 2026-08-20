@@ -121,7 +121,7 @@ if (import.meta.env.DEV && render) {
   render && (hasContent || hasImage) && (
     <div
       class:list={[
-        "card_wrap",
+        "card",
         variant !== "default" && variant,
         hasTheme && `theme-${theme}`,
         className,
@@ -159,7 +159,7 @@ if (import.meta.env.DEV && render) {
 
 <style is:global>
   @layer components {
-    .card_wrap {
+    .card {
       --_padding: var(--space-6);
       --_min-height: 20rem;
       --_visual-ratio: 3 / 2;
