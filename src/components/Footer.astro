@@ -2,34 +2,48 @@
 import Icon from "@/components/Icon.astro";
 import logo from "@/assets/logo.svg";
 import { SITE_NAME } from "@/consts.ts";
+
+interface Props {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
 ---
 
-<footer class="footer_wrap">
-  <div class="footer_inner">
-    <div class="footer_top">
-      <a class="footer_logo" href="/" aria-label={SITE_NAME}>
-        <Icon src={logo} variant="full-width" />
-      </a>
-      <nav aria-label="Footer">
-        <ul class="footer_links">
-          <li><a class="footer_link" href="/">Home</a></li>
-          <li>
-            <a class="footer_link" href="/example-components">
-              Example Components
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-    <div class="footer_bottom">
-      <p class="footer_copyright text-style-small">
-        &copy; <span id="year">{new Date().getFullYear()}</span>&#160;{
-          SITE_NAME
-        }
-      </p>
-    </div>
-  </div>
-</footer>
+{
+  render && (
+    <footer class="footer_wrap">
+      <div class="footer_inner">
+        <div class="footer_top">
+          <a class="footer_logo" href="/" aria-label={SITE_NAME}>
+            <Icon src={logo} variant="full-width" />
+          </a>
+          <nav aria-label="Footer">
+            <ul class="footer_links">
+              <li>
+                <a class="footer_link" href="/">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a class="footer_link" href="/example-components">
+                  Example Components
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer_bottom">
+          <p class="footer_copyright text-style-small">
+            &copy; <span id="year">{new Date().getFullYear()}</span>&#160;
+            {SITE_NAME}
+          </p>
+        </div>
+      </div>
+    </footer>
+  )
+}
 
 <script>
   const year = document.querySelector<HTMLSpanElement>("#year");

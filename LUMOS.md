@@ -19,8 +19,21 @@ Read this before adding a page, a section, or a style.
 
 ## Component props
 
-<!-- The prop conventions shared across components: render, theme, spacing
-     scales, class and attrs passthrough. -->
+<!-- The prop conventions shared across components: theme, spacing scales,
+     class and attrs passthrough. -->
+
+### `render`
+
+Every component takes a `render` prop, defaulting to `true`. Set it to `false`
+to drop the component and its children. `BaseHead` is the one exception: a
+page's head tags aren't optional.
+
+They also hide themselves when there is nothing to show: an empty slot, or a
+missing prop they can't render without, such as `Video` with no `src`. Comments
+and whitespace don't count as content.
+
+So pass content straight through — a section fed by empty CMS fields disappears
+on its own, and pages need no `{data.heading && <Heading>}` guards.
 
 ## Content and SEO
 

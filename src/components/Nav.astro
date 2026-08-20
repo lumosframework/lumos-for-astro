@@ -4,6 +4,8 @@ import logo from "@/assets/logo.svg";
 import { SITE_NAME } from "@/consts.ts";
 
 interface Props {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
   /**
    * Fix the nav over the page rather than letting it stick in flow, so the
    * first section starts underneath it. Give that section
@@ -12,7 +14,7 @@ interface Props {
   overlap?: boolean;
 }
 
-const { overlap = false } = Astro.props;
+const { render = true, overlap = false } = Astro.props;
 
 /** Marks the link for the page being viewed. Trailing slashes are ignored. */
 const isCurrent = (href: string) =>
@@ -21,42 +23,46 @@ const isCurrent = (href: string) =>
     : undefined;
 ---
 
-<header class:list={["nav_wrap", overlap && "overlap"]} data-nav>
-  <div class="nav_inner">
-    <a class="nav_logo" href="/" aria-label={SITE_NAME}>
-      <Icon src={logo} variant="full-width" />
-    </a>
-    <button
-      class="nav_toggle"
-      type="button"
-      aria-label="Menu"
-      aria-expanded="false"
-      aria-controls="nav-menu"
-    >
-      <span class="nav_toggle_icon"></span>
-    </button>
-    <nav class="nav_menu" id="nav-menu" aria-label="Main">
-      <div class="nav_menu_inner">
-        <ul class="nav_links">
-          <li>
-            <a class="nav_link" href="/" aria-current={isCurrent("/")}>
-              Home
-            </a>
-          </li>
-          <li>
-            <a
-              class="nav_link"
-              href="/example-components"
-              aria-current={isCurrent("/example-components")}
-            >
-              Example Components
-            </a>
-          </li>
-        </ul>
+{
+  render && (
+    <header class:list={["nav_wrap", overlap && "overlap"]} data-nav>
+      <div class="nav_inner">
+        <a class="nav_logo" href="/" aria-label={SITE_NAME}>
+          <Icon src={logo} variant="full-width" />
+        </a>
+        <button
+          class="nav_toggle"
+          type="button"
+          aria-label="Menu"
+          aria-expanded="false"
+          aria-controls="nav-menu"
+        >
+          <span class="nav_toggle_icon" />
+        </button>
+        <nav class="nav_menu" id="nav-menu" aria-label="Main">
+          <div class="nav_menu_inner">
+            <ul class="nav_links">
+              <li>
+                <a class="nav_link" href="/" aria-current={isCurrent("/")}>
+                  Home
+                </a>
+              </li>
+              <li>
+                <a
+                  class="nav_link"
+                  href="/example-components"
+                  aria-current={isCurrent("/example-components")}
+                >
+                  Example Components
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
       </div>
-    </nav>
-  </div>
-</header>
+    </header>
+  )
+}
 
 {
   /* Without scripting the button can't do anything, so show the links instead. */

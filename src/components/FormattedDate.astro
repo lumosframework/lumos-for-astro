@@ -2,6 +2,8 @@
 import { SITE_LOCALE } from "@/consts.ts";
 
 interface Props {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
   /** The date to render. Nothing is output if it is missing or invalid. */
   date: Date;
   /** BCP 47 locale tag. Defaults to `SITE_LOCALE`. */
@@ -16,6 +18,7 @@ interface Props {
 }
 
 const {
+  render = true,
   date,
   locale = SITE_LOCALE,
   timeZone = "UTC",
@@ -35,4 +38,4 @@ const formatted = isValid
   : "";
 ---
 
-{isValid && <time datetime={date.toISOString()}>{formatted}</time>}
+{render && isValid && <time datetime={date.toISOString()}>{formatted}</time>}

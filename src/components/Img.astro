@@ -11,6 +11,8 @@ type Base = Omit<
   HTMLAttributes<"img">,
   "src" | "width" | "height" | "loading" | "fetchpriority"
 > & {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
   /**
    * An imported asset, a remote `http(s)` URL, or a path to a file in `public/`.
    *
@@ -76,6 +78,7 @@ type AllProps = Base & {
 };
 
 const {
+  render = true,
   src,
   alt: altProp,
   variant = "full-width",
@@ -176,7 +179,8 @@ const shared = {
 ---
 
 {
-  src &&
+  render &&
+    src &&
     (isPublicPath ? (
       <img
         src={src as string}

@@ -2,16 +2,28 @@
 import Button from "@/components/Button.astro";
 
 interface Props {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
   /** Id of the element it jumps to, written without the `#`. */
   target?: string;
   /** What it says once it is on screen. */
   label?: string;
 }
 
-const { target = "main", label = "Skip to main content" } = Astro.props;
+const {
+  render = true,
+  target = "main",
+  label = "Skip to main content",
+} = Astro.props;
 ---
 
-<Button element="link" href={`#${target}`} class="skip_link">{label}</Button>
+{
+  render && (
+    <Button element="link" href={`#${target}`} class="skip_link">
+      {label}
+    </Button>
+  )
+}
 
 <style is:global>
   @layer components {
