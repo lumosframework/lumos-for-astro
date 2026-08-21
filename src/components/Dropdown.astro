@@ -102,6 +102,7 @@ const content = await slotContent(Astro.slots);
 <style is:global>
   @layer components {
     .dropdown {
+      --_control-pad: 0.75em;
       position: relative;
       display: inline-flex;
     }
@@ -110,7 +111,7 @@ const content = await slotContent(Astro.slots);
       display: inline-flex;
       align-items: center;
       gap: 0.5em;
-      padding: 0.75em 0;
+      padding: var(--_control-pad) 0;
       background: none;
       border: 0;
       color: inherit;
@@ -135,7 +136,7 @@ const content = await slotContent(Astro.slots);
 
     .dropdown_content {
       position: absolute;
-      top: calc(100% + var(--space-2));
+      top: calc(100% - var(--_control-pad) + var(--space-2));
       inset-inline-start: 0;
       z-index: 10;
       width: max-content;
