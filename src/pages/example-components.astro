@@ -49,7 +49,7 @@ const text =
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
         <Button element="link" href="/about">Button Text</Button>
-        <Button variant="secondary">Button Text</Button>
+        <Button emphasis="secondary">Button Text</Button>
       </ButtonWrapper>
       <Img src={lumos_background} slot="column2" />
     </ContentWrapper>
@@ -280,7 +280,7 @@ const text =
       <Eyebrow>tabs · side</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>Services</Heading>
     </ContentWrapper>
-    <Tabs variant="side" id="services">
+    <Tabs id="services" variant="side">
       <Fragment slot="links">
         <TabLink>Strategy</TabLink>
         <TabLink>Design</TabLink>

@@ -1,9 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import Icon from "@/components/Icon.astro";
-import arrow from "@/assets/icons/arrow-full.svg";
-import play from "@/assets/icons/play.svg";
-import pause from "@/assets/icons/pause.svg";
+import Button from "@/components/Button.astro";
 import { slotContent } from "@/utils/slots.ts";
 
 type Props = HTMLAttributes<"div"> & {
@@ -69,33 +66,27 @@ const panels = await slotContent(Astro.slots);
       {auto && (
         <div class="tabs_controls">
           <div class="tabs_steps">
-            <button
-              class="tabs_step previous"
-              type="button"
+            <Button
+              variant="arrow"
+              emphasis="secondary"
+              direction="back"
+              label="Previous tab"
               data-step="-1"
-              aria-label="Previous tab"
-            >
-              <Icon src={arrow} variant="small" />
-            </button>
-            <button
-              class="tabs_step"
-              type="button"
+            />
+            <Button
+              variant="arrow"
+              emphasis="secondary"
+              label="Next tab"
               data-step="1"
-              aria-label="Next tab"
-            >
-              <Icon src={arrow} variant="small" />
-            </button>
+            />
           </div>
-          <button
-            class="tabs_toggle"
-            type="button"
-            data-toggle
+          <Button
+            variant="play"
+            emphasis="secondary"
+            label="Pause automatic rotation"
             aria-pressed="false"
-            aria-label="Pause automatic rotation"
-          >
-            <Icon class="tabs_toggle_play" src={play} variant="small" />
-            <Icon class="tabs_toggle_pause" src={pause} variant="small" />
-          </button>
+            data-toggle
+          />
         </div>
       )}
     </div>
@@ -394,43 +385,6 @@ const panels = await slotContent(Astro.slots);
     .tabs_steps {
       display: flex;
       gap: var(--space-2);
-    }
-
-    .tabs_step,
-    .tabs_toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.75rem;
-      height: 2.75rem;
-      background: none;
-      border: var(--border-width) solid var(--border);
-      border-radius: var(--radius-round);
-      color: inherit;
-      transition:
-        color var(--hover-duration) var(--hover-ease),
-        border-color var(--hover-duration) var(--hover-ease);
-      @media (hover: hover) {
-        &:hover {
-          border-color: var(--text);
-        }
-      }
-    }
-
-    .tabs_step.previous {
-      rotate: 180deg;
-    }
-
-    .tabs_toggle_pause {
-      display: none;
-    }
-
-    .tabs:not(.is-paused) .tabs_toggle_play {
-      display: none;
-    }
-
-    .tabs:not(.is-paused) .tabs_toggle_pause {
-      display: block;
     }
   }
 </style>

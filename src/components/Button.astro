@@ -1,62 +1,131 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import Icon from "@/components/Icon.astro";
+import arrow from "@/assets/icons/arrow-full.svg";
+import close from "@/assets/icons/close.svg";
+import play from "@/assets/icons/play.svg";
+import pause from "@/assets/icons/pause.svg";
 import { slotContent } from "@/utils/slots.ts";
 
-type ButtonProps = HTMLAttributes<"button"> & {
-  /** Set to `false` to skip rendering this component and its children. */
-  render?: boolean;
-  /**
-   * How much weight the button carries.
-   *
-   * - `primary` — filled, for the main action (default)
-   * - `secondary` — outlined, for anything sitting beside a primary
-   * - `link` — text on a rule that travels across on hover
-   */
-  variant?: "primary" | "secondary" | "link";
-  element?: "button";
-  type?: "button" | "submit" | "reset";
-  disabled?: boolean;
-  href?: never;
-};
+type Emphasis = "primary" | "secondary";
 
-type LinkProps = Omit<HTMLAttributes<"a">, "type"> & {
-  render?: boolean;
-  variant?: "primary" | "secondary" | "link";
-  element: "link";
-  href?: string;
-  type?: never;
-  disabled?: never;
-};
+type Tag =
+  | (HTMLAttributes<"button"> & {
+      element?: "button";
+      type?: "button" | "submit" | "reset";
+      disabled?: boolean;
+      href?: never;
+    })
+  | (Omit<HTMLAttributes<"a">, "type"> & {
+      element: "link";
+      href?: string;
+      type?: never;
+      disabled?: never;
+    });
 
-type Props = ButtonProps | LinkProps;
+type Kind =
+  | {
+      variant?: "main";
+      /**
+       * How much weight the button carries.
+       *
+       * - `primary` — filled, for the main action (default)
+       * - `secondary` — outlined, for anything sitting beside a primary
+       * - `link` — text on a rule that travels across on hover
+       */
+      emphasis?: Emphasis | "link";
+      label?: never;
+      direction?: never;
+    }
+  | {
+      variant: "play" | "close";
+      emphasis?: Emphasis;
+      /** What the control does, for anyone who cannot see the mark on it. */
+      label: string;
+      direction?: never;
+    }
+  | {
+      variant: "arrow";
+      emphasis?: Emphasis;
+      /** What the control does, for anyone who cannot see the mark on it. */
+      label: string;
+      /** Which way the arrow points. Defaults to `forward`. */
+      direction?: "forward" | "back";
+    };
+
+type Props = Tag &
+  Kind & {
+    /** Set to `false` to skip rendering this component and its children. */
+    render?: boolean;
+  };
+
+type AllProps = HTMLAttributes<"button"> &
+  Omit<HTMLAttributes<"a">, "type"> & {
+    render?: boolean;
+    variant?: "main" | "play" | "close" | "arrow";
+    emphasis?: Emphasis | "link";
+    label?: string;
+    direction?: "forward" | "back";
+    element?: "button" | "link";
+    href?: string;
+    type?: "button" | "submit" | "reset";
+  };
 
 const {
   render = true,
-  variant = "primary",
+  variant = "main",
+  emphasis = "primary",
+  label,
+  direction = "forward",
   element = "button",
   href,
   type = "button",
+  class: className,
   ...rest
-} = Astro.props;
+} = Astro.props as AllProps;
+
 const isLink = element === "link";
 const Tag = isLink ? "a" : "button";
 const tagAttrs = isLink
   ? { href: href || "#" }
   : { type: type === "submit" ? undefined : type };
 
-const content = await slotContent(Astro.slots);
+const marks = { play, close, arrow };
+const isMain = variant === "main";
+const content = isMain ? await slotContent(Astro.slots) : "";
 ---
 
 {
-  render && content && (
+  render && (isMain ? content : label) && (
     <Tag
-      class:list={["button", variant !== "primary" && variant]}
+      class:list={[
+        "button",
+        emphasis !== "primary" && emphasis,
+        !isMain && variant,
+        variant === "arrow" && direction === "back" && "back",
+        className,
+      ]}
+      aria-label={isMain ? undefined : label}
       {...tagAttrs}
       {...rest}
     >
-      <span class="button_text text-style-trim">
-        <Fragment set:html={content} />
-      </span>
+      {isMain && (
+        <span class="button_text text-style-trim">
+          <Fragment set:html={content} />
+        </span>
+      )}
+      {variant === "play" && (
+        <Fragment>
+          <Icon class="button_mark button_play" src={play} variant="small" />
+          <Icon class="button_mark button_pause" src={pause} variant="small" />
+        </Fragment>
+      )}
+      {variant === "close" && (
+        <Icon class="button_mark" src={marks.close} variant="small" />
+      )}
+      {variant === "arrow" && (
+        <Icon class="button_mark" src={marks.arrow} variant="small" />
+      )}
     </Tag>
   )
 }
@@ -125,6 +194,26 @@ const content = await slotContent(Astro.slots);
             transform: scaleX(1);
             transform-origin: left;
           }
+        }
+      }
+      /* A mark on its own, so the padding is even and the shape is round. */
+      &:is(.play, .close, .arrow) {
+        gap: 0;
+        padding: 0.75em;
+        border-radius: var(--radius-round);
+      }
+      &.back .button_mark {
+        rotate: 180deg;
+      }
+      &.play .button_pause {
+        display: none;
+      }
+      &.play[aria-pressed="false"] {
+        & .button_play {
+          display: none;
+        }
+        & .button_pause {
+          display: block;
         }
       }
       &:disabled {

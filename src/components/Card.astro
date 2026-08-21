@@ -90,7 +90,7 @@ const hasImage = variant !== "default" && !!image;
 const hasContent = !!(eyebrow || heading || text || buttonLabel);
 const hasTheme = variant !== "stacked" && theme !== "inherit";
 
-const buttonVariant =
+const buttonEmphasis =
   variant === "cover"
     ? "primary"
     : variant === "stacked"
@@ -142,11 +142,15 @@ if (import.meta.env.DEV && render) {
           <Paragraph>{text}</Paragraph>
           <ButtonWrapper>
             {buttonHref ? (
-              <Button element="link" href={buttonHref} variant={buttonVariant}>
+              <Button
+                element="link"
+                href={buttonHref}
+                emphasis={buttonEmphasis}
+              >
                 {buttonLabel}
               </Button>
             ) : (
-              <Button variant={buttonVariant}>{buttonLabel}</Button>
+              <Button emphasis={buttonEmphasis}>{buttonLabel}</Button>
             )}
           </ButtonWrapper>
         </div>
