@@ -85,6 +85,7 @@ const content = await slotContent(Astro.slots);
   @layer components {
     .dropdown {
       --_control-pad: 0.75em;
+      --_leaving: calc(var(--open-duration) * 0.7);
       position: relative;
       z-index: 10;
       display: inline-block;
@@ -125,13 +126,16 @@ const content = await slotContent(Astro.slots);
       opacity: 0;
       content-visibility: hidden;
       transition:
-        opacity var(--open-duration) var(--open-ease),
-        content-visibility var(--open-duration) var(--open-ease) allow-discrete;
+        opacity var(--_leaving) var(--open-ease),
+        content-visibility var(--_leaving) var(--open-ease) allow-discrete;
     }
 
     .dropdown[open]::details-content {
       opacity: 1;
       content-visibility: visible;
+      transition:
+        opacity var(--open-duration) var(--open-ease),
+        content-visibility var(--open-duration) var(--open-ease) allow-discrete;
     }
 
     .dropdown_content {
@@ -143,12 +147,20 @@ const content = await slotContent(Astro.slots);
       max-width: min(22rem, calc(100vw - var(--site-margin) * 2));
       background-color: var(--background-2);
       border-radius: var(--radius-small);
-      translate: 0 -0.25rem;
-      transition: translate var(--open-duration) var(--open-ease);
+      transform-origin: top left;
+      translate: 0 -0.5rem;
+      scale: 0.98;
+      transition:
+        translate var(--_leaving) var(--open-ease),
+        scale var(--_leaving) var(--open-ease);
     }
 
     .dropdown[open] .dropdown_content {
       translate: 0 0;
+      scale: 1;
+      transition:
+        translate var(--open-duration) var(--open-ease),
+        scale var(--open-duration) var(--open-ease);
     }
 
     .dropdown_body {
