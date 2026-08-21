@@ -11,6 +11,10 @@ import Img from "@/components/Img.astro";
 import lumos_background from "@/assets/lumos-background.svg";
 import Grid from "@/components/Grid.astro";
 import Card from "@/components/Card.astro";
+import Tabs from "@/components/Tabs.astro";
+import TabLink from "@/components/TabLink.astro";
+import Dropdown from "@/components/Dropdown.astro";
+import Overlay from "@/components/Overlay.astro";
 
 const heading = "We build things that help people work smarter";
 const text =
@@ -29,8 +33,10 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
-        <Button variant="secondary">Send</Button>
+        <Button element="link" href="/about">Button Text</Button>
+        <Dropdown label="Dropdown">
+          <Paragraph>Some text</Paragraph>
+        </Dropdown>
       </ButtonWrapper>
       <Img src={lumos_background} slot="column2" />
     </ContentWrapper>
@@ -42,8 +48,8 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
-        <Button variant="secondary">Send</Button>
+        <Button element="link" href="/about">Button Text</Button>
+        <Button variant="secondary">Button Text</Button>
       </ButtonWrapper>
       <Img src={lumos_background} slot="column2" />
     </ContentWrapper>
@@ -55,7 +61,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={28} slot="column2">{text}</Paragraph>
       <ButtonWrapper slot="column2" marginTop="4">
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
     </ContentWrapper>
   </Section>
@@ -66,7 +72,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -78,7 +84,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -90,7 +96,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -102,7 +108,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -114,7 +120,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -126,7 +132,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -138,7 +144,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -177,7 +183,7 @@ const text =
         nostra inceptos himenaeos.</Paragraph
       >
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -189,7 +195,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
       <Img slot="column2" src={lumos_background} width={1920} height={1080} />
     </ContentWrapper>
@@ -201,7 +207,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={28} slot="column2">{text}</Paragraph>
       <ButtonWrapper slot="column2" marginTop="4">
-        <Button element="link" href="/about">Learn more</Button>
+        <Button element="link" href="/about">Button Text</Button>
       </ButtonWrapper>
     </ContentWrapper>
     <Grid medium={3}>
@@ -209,13 +215,13 @@ const text =
         heading="Heading"
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
         buttonHref="/about"
-        buttonLabel="Learn More"
+        buttonLabel="Button Text"
       />
       <Card
         heading="Heading"
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
         buttonHref="/about"
-        buttonLabel="Learn More"
+        buttonLabel="Button Text"
         theme="dark"
         variant="cover"
         image={lumos_background}
@@ -224,10 +230,142 @@ const text =
         heading="Heading"
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
         buttonHref="/about"
-        buttonLabel="Learn More"
+        buttonLabel="Button Text"
         variant="stacked"
         image={lumos_background}
       />
     </Grid>
+  </Section>
+  <!-- tabs horizontal -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>tabs · horizontal</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Tabs>
+      <Fragment slot="links">
+        <TabLink>Strategy</TabLink>
+        <TabLink>Design</TabLink>
+        <TabLink>Development</TabLink>
+      </Fragment>
+      <ContentWrapper variant="columns">
+        <Heading tag="h3" variant="h4" maxWidth={17}>"Strategy"</Heading>
+        <Paragraph maxWidth={36}>{text}</Paragraph>
+        <ButtonWrapper>
+          <Button element="link" href="/about">Button Text</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={lumos_background} width={1920} height={1080} />
+      </ContentWrapper>
+      <ContentWrapper variant="columns">
+        <Heading tag="h3" variant="h4" maxWidth={17}>"Design"</Heading>
+        <Paragraph maxWidth={36}>{text}</Paragraph>
+        <ButtonWrapper>
+          <Button element="link" href="/about">Button Text</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={lumos_background} width={1920} height={1080} />
+      </ContentWrapper>
+      <ContentWrapper variant="columns">
+        <Heading tag="h3" variant="h4" maxWidth={17}>"Development"</Heading>
+        <Paragraph maxWidth={36}>{text}</Paragraph>
+        <ButtonWrapper>
+          <Button element="link" href="/about">Button Text</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={lumos_background} width={1920} height={1080} />
+      </ContentWrapper>
+    </Tabs>
+  </Section>
+  <!-- tabs side -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>tabs · side</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>Services</Heading>
+    </ContentWrapper>
+    <Tabs variant="side" id="services">
+      <Fragment slot="links">
+        <TabLink>Strategy</TabLink>
+        <TabLink>Design</TabLink>
+        <TabLink>Development</TabLink>
+      </Fragment>
+      <Card
+        heading="Strategy"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+      <Card
+        heading="Design"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+      <Card
+        heading="Development"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+    </Tabs>
+  </Section>
+  <!-- tabs auto -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>tabs · auto playback</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Tabs playback="auto" id="showcase">
+      <Fragment slot="links">
+        <TabLink>Tab Link 1</TabLink>
+        <TabLink>Tab Link 2</TabLink>
+        <TabLink>Tab Link 3</TabLink>
+      </Fragment>
+      <ContentWrapper variant="columns">
+        <Heading tag="h3" variant="h4" maxWidth={17}>"Tab Content 1"</Heading>
+        <Paragraph maxWidth={36}>{text}</Paragraph>
+        <ButtonWrapper>
+          <Button element="link" href="/about">Button Text</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={lumos_background} width={1920} height={1080} />
+      </ContentWrapper>
+      <ContentWrapper variant="columns">
+        <Heading tag="h3" variant="h4" maxWidth={17}>"Tab Content 2"</Heading>
+        <Paragraph maxWidth={36}>{text}</Paragraph>
+        <ButtonWrapper>
+          <Button element="link" href="/about">Button Text</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={lumos_background} width={1920} height={1080} />
+      </ContentWrapper>
+      <ContentWrapper variant="columns">
+        <Heading tag="h3" variant="h4" maxWidth={17}>"Tab Content 3"</Heading>
+        <Paragraph maxWidth={36}>{text}</Paragraph>
+        <ButtonWrapper>
+          <Button element="link" href="/about">Button Text</Button>
+        </ButtonWrapper>
+        <Img slot="column2" src={lumos_background} width={1920} height={1080} />
+      </ContentWrapper>
+    </Tabs>
+  </Section>
+  <!-- hero -->
+  <Section paddingTop="small" paddingBottom="small" fullHeight={true}>
+    <Img src={lumos_background} slot="background" />
+    <Overlay slot="background" />
+    <ContentWrapper centered={true}>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+      <Paragraph maxWidth={36}>{text}</Paragraph>
+      <ButtonWrapper>
+        <Button element="link" href="/about">Button Text</Button>
+        <Dropdown label="Dropdown">
+          <Paragraph />
+        </Dropdown>
+      </ButtonWrapper>
+    </ContentWrapper>
   </Section>
 </Layout>
