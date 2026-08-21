@@ -13,58 +13,40 @@ type Props = HTMLAttributes<"div"> & {
 
 const { render = true, label, class: className, ...rest } = Astro.props;
 
-const uid = crypto.randomUUID().slice(0, 8);
-const toggleId = `dropdown-toggle-${uid}`;
-const contentId = `dropdown-content-${uid}`;
-
 const content = await slotContent(Astro.slots);
 ---
 
 {
   render && label && content && (
-    <div class:list={["dropdown", className]} {...rest}>
-      <button
-        class="dropdown_toggle"
-        type="button"
-        id={toggleId}
-        aria-expanded="false"
-        aria-controls={contentId}
-      >
+    <details class:list={["dropdown", className]} {...rest}>
+      <summary class="dropdown_toggle">
         <span class="dropdown_label text-style-main">{label}</span>
         <Icon class="dropdown_icon" src={arrow} variant="small" />
-      </button>
+      </summary>
 
-      <div class="dropdown_content" id={contentId} aria-labelledby={toggleId}>
+      <div class="dropdown_content">
         <div class="dropdown_body margin-trim">
           <Fragment set:html={content} />
         </div>
       </div>
-    </div>
+    </details>
   )
 }
 
 <script>
-  for (const dropdown of document.querySelectorAll<HTMLElement>(".dropdown")) {
-    const toggle =
-      dropdown.querySelector<HTMLButtonElement>(".dropdown_toggle");
+  for (const dropdown of document.querySelectorAll<HTMLDetailsElement>(
+    ".dropdown",
+  )) {
+    const summary = dropdown.querySelector<HTMLElement>(".dropdown_toggle");
     const content = dropdown.querySelector<HTMLElement>(".dropdown_content");
-    if (!toggle || !content) continue;
-
-    const isOpen = () => dropdown.classList.contains("open");
-
-    const setOpen = (open: boolean) => {
-      dropdown.classList.toggle("open", open);
-      toggle.setAttribute("aria-expanded", String(open));
-    };
-
-    toggle.addEventListener("click", () => setOpen(!isOpen()));
+    if (!summary || !content) continue;
 
     document.addEventListener("keydown", (event) => {
-      if (!isOpen()) return;
+      if (!dropdown.open) return;
 
       if (event.key === "Escape") {
-        setOpen(false);
-        toggle.focus();
+        dropdown.open = false;
+        summary.focus();
         return;
       }
 
@@ -93,8 +75,8 @@ const content = await slotContent(Astro.slots);
 
     document.addEventListener("click", (event) => {
       const target = event.target;
-      if (!isOpen() || !(target instanceof Node)) return;
-      if (!dropdown.contains(target)) setOpen(false);
+      if (!dropdown.open || !(target instanceof Node)) return;
+      if (!dropdown.contains(target)) dropdown.open = false;
     });
   }
 </script>
@@ -104,7 +86,7 @@ const content = await slotContent(Astro.slots);
     .dropdown {
       --_control-pad: 0.75em;
       position: relative;
-      display: inline-flex;
+      display: inline-block;
     }
 
     .dropdown_toggle {
@@ -112,11 +94,13 @@ const content = await slotContent(Astro.slots);
       align-items: center;
       gap: 0.5em;
       padding: var(--_control-pad) 0;
-      background: none;
-      border: 0;
       color: inherit;
-      text-align: start;
+      list-style: none;
+      cursor: pointer;
       transition: color var(--hover-duration) var(--hover-ease);
+      &::-webkit-details-marker {
+        display: none;
+      }
       @media (hover: hover) {
         &:hover {
           color: color-mix(in lab, currentcolor 60%, transparent);
@@ -130,8 +114,23 @@ const content = await slotContent(Astro.slots);
       transition: rotate var(--open-duration) var(--open-ease);
     }
 
-    .dropdown.open .dropdown_icon {
+    .dropdown[open] .dropdown_icon {
       rotate: -90deg;
+    }
+
+    /* The panel is laid out by this element and revealed by the pseudo the
+       browser wraps it in, which is the part that can be animated open. */
+    .dropdown::details-content {
+      opacity: 0;
+      content-visibility: hidden;
+      transition:
+        opacity var(--open-duration) var(--open-ease),
+        content-visibility var(--open-duration) var(--open-ease) allow-discrete;
+    }
+
+    .dropdown[open]::details-content {
+      opacity: 1;
+      content-visibility: visible;
     }
 
     .dropdown_content {
@@ -145,18 +144,11 @@ const content = await slotContent(Astro.slots);
       background-color: var(--background-2);
       border: var(--border-width) solid var(--border);
       border-radius: var(--radius-main);
-      opacity: 0;
-      visibility: hidden;
       translate: 0 -0.25rem;
-      transition:
-        opacity var(--open-duration) var(--open-ease),
-        translate var(--open-duration) var(--open-ease),
-        visibility var(--open-duration) var(--open-ease);
+      transition: translate var(--open-duration) var(--open-ease);
     }
 
-    .dropdown.open .dropdown_content {
-      opacity: 1;
-      visibility: visible;
+    .dropdown[open] .dropdown_content {
       translate: 0 0;
     }
 
