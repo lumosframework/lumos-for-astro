@@ -158,7 +158,6 @@ const isCurrent = (href: string) =>
       display: flex;
       align-items: center;
       width: 6.5rem;
-      color: inherit;
       transition: opacity var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {
@@ -198,7 +197,7 @@ const isCurrent = (href: string) =>
         inset-inline: 0;
         height: var(--border-width);
         background-color: currentcolor;
-        transition: transform 200ms;
+        transition: transform var(--open-duration) var(--open-ease);
       }
       &::before {
         top: 0;
@@ -224,14 +223,14 @@ const isCurrent = (href: string) =>
       grid-template-rows: 0fr;
       visibility: hidden;
       transition:
-        grid-template-rows 250ms ease,
-        visibility 250ms;
+        grid-template-rows var(--open-duration) var(--open-ease),
+        visibility var(--open-duration) var(--open-ease);
     }
 
     .nav_menu_inner {
       overflow: hidden;
       opacity: 0;
-      transition: opacity 250ms ease;
+      transition: opacity var(--open-duration) var(--open-ease);
     }
 
     .nav[data-open] .nav_menu {

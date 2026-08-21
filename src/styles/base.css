@@ -39,6 +39,13 @@
   --hover-duration: 200ms;
   --hover-ease: ease;
 
+  /* Opening motion
+     What a click opens or closes — a menu, a panel — rather than what a
+     pointer touches. It follows the hover pair unless it is given its own
+     value, so the two can be told apart later without being unpicked now. */
+  --open-duration: var(--hover-duration);
+  --open-ease: var(--hover-ease);
+
   /* Radius */
   --radius-small: 0.5rem;
   --radius-main: 1rem;
@@ -392,6 +399,10 @@ body {
   }
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
 a:not([class]) {
   text-decoration: underline;
 }
