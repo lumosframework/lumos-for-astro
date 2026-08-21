@@ -29,9 +29,6 @@ const { theme = "inherit", overlap = false, ...seo } = Astro.props;
   <body>
     <SkipLink />
     <Nav overlap={overlap} />
-    {
-      /* `tabindex` so the jump moves focus here, not just the scroll position */
-    }
     <main id="main" tabindex="-1">
       <slot />
     </main>

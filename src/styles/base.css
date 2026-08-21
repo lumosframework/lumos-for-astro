@@ -262,6 +262,7 @@
   --background-2: var(--light-100);
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
   --text: var(--dark-900);
+  --text-2: color-mix(in lab, currentcolor 60%, transparent);
   --border: color-mix(in lab, var(--text) 20%, transparent);
   --heading-accent: color-mix(in srgb, var(--brand-500), black 20%);
 
@@ -296,6 +297,7 @@
   --background-2: var(--dark-800);
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
   --text: var(--light-100);
+  --text-2: color-mix(in lab, currentcolor 60%, transparent);
   --border: color-mix(in lab, var(--text) 20%, transparent);
   --heading-accent: var(--brand-500);
 
@@ -329,6 +331,7 @@
   --background-2: var(--brand-500);
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
   --text: var(--brand-text);
+  --text-2: color-mix(in lab, currentcolor 60%, transparent);
   --border: color-mix(in lab, var(--text) 20%, transparent);
   --heading-accent: color-mix(in srgb, var(--text), white 20%);
 
@@ -352,7 +355,6 @@
   --link-text: var(--text);
   --link-border: var(--border);
   --link-text-hover: var(--text);
-  /* The brand color is the background here, so the line uses the text color. */
   --link-border-hover: var(--text);
 }
 

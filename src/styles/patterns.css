@@ -50,9 +50,7 @@
   grid-row-gap: var(--space-2);
 }
 
-/* Buttons closing a card sit on its floor, however tall the row around it grows.
-   Here rather than in the component so the margin it replaces, set just above,
-   loses to it on specificity rather than on layer order. */
+/* Card button floor */
 .card_content > .button-wrapper:last-child {
   margin-top: auto;
   padding-top: var(--space-6);
@@ -77,15 +75,13 @@
   }
 }
 
-/* Card visual children — media fills its box, be that the whole card or the
-   band across its top. Here rather than in the component so it outranks the
-   `height: auto` every image and video starts from. */
+/* Card visual children */
 .card_visual > :is(.image, .video) {
   width: 100%;
   height: 100%;
 }
 
-/* Section background children — anything slotted beside the container */
+/* Section background children */
 .section > :where(:not(.container)) {
   pointer-events: none;
   position: absolute;

@@ -1,7 +1,4 @@
-/* Cascade order, lowest priority first. A later layer beats an earlier one
-   whatever the selectors say, so components override multi-property patterns
-   and single-property utilities override components. Declared before the
-   imports so the order holds no matter where a component's styles land. */
+/* Cascade order, lowest priority first */
 
 @layer base, patterns, components, utilities;
 

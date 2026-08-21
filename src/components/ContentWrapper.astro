@@ -120,7 +120,6 @@ if (import.meta.env.DEV && mediaOpacity !== undefined) {
   }
 }
 
-/* The stylesheet holds the default, so only a different value is written out. */
 const media =
   variant === "card" && validMediaOpacity && mediaOpacity !== 70
     ? `--_media-opacity: ${mediaOpacity}`

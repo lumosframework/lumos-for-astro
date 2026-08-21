@@ -90,7 +90,6 @@ const hasImage = variant !== "default" && !!image;
 const hasContent = !!(eyebrow || heading || text || buttonLabel);
 const hasTheme = variant !== "stacked" && theme !== "inherit";
 
-/* The button each variant closes with, so a set of cards reads as one system. */
 const buttonVariant =
   variant === "cover"
     ? "primary"
@@ -131,7 +130,6 @@ if (import.meta.env.DEV && render) {
       {hasImage && (
         <div class="card_visual">
           <Img src={image!} alt={imageAlt} />
-          {/* A cover card's text sits on the image, so the tint is not optional */}
           {variant === "cover" && <Overlay variant="gradient" />}
         </div>
       )}
@@ -166,8 +164,6 @@ if (import.meta.env.DEV && render) {
       width: 100%;
       display: flex;
       flex-direction: column;
-      /* Separates the visual from the content. Only the stacked variant feels
-         it — a cover card's visual is out of flow, a default card has none. */
       gap: var(--_padding);
       position: relative;
       background-color: var(--background-2);
@@ -177,9 +173,6 @@ if (import.meta.env.DEV && render) {
       &.cover {
         min-height: var(--_min-height);
       }
-
-      /* No surface of its own — the visual is the only thing with edges, and it
-         rounds itself, so nothing here needs clipping */
       &.stacked {
         background-color: transparent;
         overflow: visible;
@@ -215,16 +208,11 @@ if (import.meta.env.DEV && render) {
       max-width: 100%;
       padding: var(--_padding);
 
-      /* Fills the card like the default variant does, so the text starts at
-         the top and the button still lands on the floor. */
       .cover > & {
         position: relative;
         z-index: 1;
       }
 
-      /* Line the text up with the visual's edges. The wrap's gap opens the space
-         under the visual, and the bottom padding stays so a stacked card's
-         buttons land level with those on the cards beside it. */
       .stacked > & {
         padding-inline: 0;
         padding-top: 0;

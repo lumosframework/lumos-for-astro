@@ -64,9 +64,7 @@ const isCurrent = (href: string) =>
   )
 }
 
-{
-  /* Without scripting the button can't do anything, so show the links instead. */
-}
+{/* No-JS fallback */}
 <noscript>
   <style>
     .nav_toggle {
@@ -107,14 +105,12 @@ const isCurrent = (href: string) =>
       }
     });
 
-    /* A click on the toggle lands inside the nav, so it stays its own job. */
     document.addEventListener("click", (event) => {
       const target = event.target;
       if (!nav.hasAttribute("data-open") || !(target instanceof Node)) return;
       if (!nav.contains(target)) setOpen(false);
     });
 
-    /* Matches the breakpoint below, where every link is shown anyway. */
     window
       .matchMedia("(width >= 48rem)")
       .addEventListener("change", (event) => {
@@ -136,8 +132,6 @@ const isCurrent = (href: string) =>
       color: var(--text);
       border-bottom: var(--border-width) solid var(--border);
 
-      /* Out of flow, so the page starts at the top of the viewport instead
-         of below the bar. */
       &.overlap {
         position: fixed;
         inset-inline: 0;
@@ -151,21 +145,15 @@ const isCurrent = (href: string) =>
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      /* No row gap: a closed menu would still hold the bar open by it. The
-         panel spaces itself from inside instead. */
       gap: 0 var(--space-6);
     }
 
-    /* The bar row carries `--nav-height` rather than the header, so the bar
-       stays that tall when the mobile menu grows the header beneath it.
-       The header itself has no vertical padding: anything else offsetting
-       against `--nav-height` would be off by it. */
+    /* Bar height */
     .nav_logo,
     .nav_toggle {
       min-height: var(--nav-height);
     }
 
-    /* The logo is a wordmark, so it is sized by width and keeps its ratio. */
     .nav_logo {
       display: flex;
       align-items: center;
@@ -179,9 +167,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    /* A 2.75rem wide box gives the bars a comfortable tap target; the
-       negative margin pulls them back into optical alignment with the nav
-       edge. Height comes from the bar row above. */
     .nav_toggle {
       --_icon-width: 1.5rem;
       --_bar-gap: 0.5rem;
@@ -201,8 +186,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    /* The span is only the box the two bars sit in, so it is as tall as the
-       gap between them plus the bar that closes it. */
     .nav_toggle_icon {
       position: relative;
       display: block;
@@ -225,7 +208,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    /* Open: each bar moves to the middle of the box and crosses the other. */
     .nav[data-open] .nav_toggle_icon {
       &::before {
         transform: translateY(calc(var(--_bar-gap) / 2)) rotate(45deg);
@@ -235,10 +217,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    /* A 0fr → 1fr row is what slides: the panel takes the height its content
-       asks for and animates back down to nothing. `visibility` keeps the
-       links out of the tab order while closed, and stays `visible` for the
-       length of the transition so the panel is still on screen as it goes. */
     .nav_menu {
       order: 3;
       flex-basis: 100%;
@@ -265,8 +243,6 @@ const isCurrent = (href: string) =>
       opacity: 1;
     }
 
-    /* Padding sits here, inside the box that collapses, so a closed menu
-       measures zero and the bar stays exactly `--nav-height`. */
     .nav_links {
       display: flex;
       flex-direction: column;
@@ -298,7 +274,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    /* Wide enough for the links to sit in the bar itself. */
     @media (width >= 48rem) {
       .nav_toggle {
         display: none;
