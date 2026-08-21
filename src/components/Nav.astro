@@ -25,7 +25,7 @@ const isCurrent = (href: string) =>
 
 {
   render && (
-    <header class:list={["nav", overlap && "overlap"]} data-nav>
+    <header class:list={["nav", overlap && "overlap"]}>
       <div class="nav_inner">
         <a class="nav_logo" href="/" aria-label={SITE_NAME}>
           <Icon src={logo} variant="full-width" />
@@ -81,12 +81,12 @@ const isCurrent = (href: string) =>
 </noscript>
 
 <script>
-  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const nav = document.querySelector<HTMLElement>(".nav");
   const toggle = nav?.querySelector<HTMLButtonElement>(".nav_toggle");
 
   if (nav && toggle) {
     const setOpen = (open: boolean) => {
-      nav.toggleAttribute("data-open", open);
+      nav.classList.toggle("open", open);
       toggle.setAttribute("aria-expanded", String(open));
     };
 
@@ -99,7 +99,7 @@ const isCurrent = (href: string) =>
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && nav.hasAttribute("data-open")) {
+      if (event.key === "Escape" && nav.classList.contains("open")) {
         setOpen(false);
         toggle.focus();
       }
@@ -107,7 +107,7 @@ const isCurrent = (href: string) =>
 
     document.addEventListener("click", (event) => {
       const target = event.target;
-      if (!nav.hasAttribute("data-open") || !(target instanceof Node)) return;
+      if (!nav.classList.contains("open") || !(target instanceof Node)) return;
       if (!nav.contains(target)) setOpen(false);
     });
 
@@ -124,7 +124,7 @@ const isCurrent = (href: string) =>
     .nav {
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
       display: flex;
       justify-content: center;
       padding-inline: var(--site-margin);
@@ -207,7 +207,7 @@ const isCurrent = (href: string) =>
       }
     }
 
-    .nav[data-open] .nav_toggle_icon {
+    .nav.open .nav_toggle_icon {
       &::before {
         transform: translateY(calc(var(--_bar-gap) / 2)) rotate(45deg);
       }
@@ -233,12 +233,12 @@ const isCurrent = (href: string) =>
       transition: opacity var(--open-duration) var(--open-ease);
     }
 
-    .nav[data-open] .nav_menu {
+    .nav.open .nav_menu {
       grid-template-rows: 1fr;
       visibility: visible;
     }
 
-    .nav[data-open] .nav_menu_inner {
+    .nav.open .nav_menu_inner {
       opacity: 1;
     }
 
