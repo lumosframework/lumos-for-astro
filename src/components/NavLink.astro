@@ -1,0 +1,69 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { slotContent } from "@/utils/slots.ts";
+
+type Props = HTMLAttributes<"a"> & {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** Where the link goes. Compared against the current URL to mark it. */
+  href: string;
+};
+
+const { render = true, href, class: className, ...rest } = Astro.props;
+
+/** Marks the link for the page being viewed. Trailing slashes are ignored. */
+const current =
+  Astro.url.pathname.replace(/\/+$/, "") === href.replace(/\/+$/, "")
+    ? "page"
+    : undefined;
+
+const content = await slotContent(Astro.slots);
+---
+
+{
+  render && content && (
+    <li>
+      <a
+        class:list={["nav_link", className]}
+        href={href}
+        aria-current={current}
+        {...rest}
+      >
+        <slot />
+      </a>
+    </li>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .nav_link {
+      display: block;
+      padding-block: var(--space-3);
+      color: color-mix(in lab, currentcolor 60%, transparent);
+      text-decoration: none;
+      text-underline-offset: 0.4em;
+      text-decoration-thickness: var(--border-width);
+      transition: color var(--hover-duration) var(--hover-ease);
+      &[aria-current="page"] {
+        color: var(--text);
+      }
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text);
+        }
+      }
+    }
+
+    /* In the bar rather than the panel, the links sit on one line and the
+       current one is underlined instead of merely brighter. */
+    @media (width >= 48rem) {
+      .nav_link {
+        padding-block: 0;
+        &[aria-current="page"] {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import Icon from "@/components/Icon.astro";
+import NavLink from "@/components/NavLink.astro";
 import logo from "@/assets/logo.svg";
 import { SITE_NAME } from "@/consts.ts";
 
@@ -15,12 +16,6 @@ interface Props {
 }
 
 const { render = true, overlap = false } = Astro.props;
-
-/** Marks the link for the page being viewed. Trailing slashes are ignored. */
-const isCurrent = (href: string) =>
-  Astro.url.pathname.replace(/\/+$/, "") === href.replace(/\/+$/, "")
-    ? "page"
-    : undefined;
 ---
 
 {
@@ -42,20 +37,8 @@ const isCurrent = (href: string) =>
         <nav class="nav_menu" id="nav-menu" aria-label="Main">
           <div class="nav_menu_inner">
             <ul class="nav_links">
-              <li>
-                <a class="nav_link" href="/" aria-current={isCurrent("/")}>
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  class="nav_link"
-                  href="/example-components"
-                  aria-current={isCurrent("/example-components")}
-                >
-                  Example Components
-                </a>
-              </li>
+              <NavLink href="/">Home</NavLink>
+              <NavLink href="/example-components">Example Components</NavLink>
             </ul>
           </div>
         </nav>
@@ -215,14 +198,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    /* Out of flow, so opening the menu lays it over the page rather than
-       pushing everything below it down the length of the panel. It carries
-       its own ground and edge for that reason: what is behind it now is the
-       page, not the bar.
-
-       It hangs off `.nav` rather than `.nav_inner`, so the ground reaches the
-       edges of the screen the way the bar's does. Its own padding is what
-       keeps the links in line with the logo. */
     .nav_menu {
       position: absolute;
       top: 100%;
@@ -270,24 +245,6 @@ const isCurrent = (href: string) =>
       }
     }
 
-    .nav_link {
-      display: block;
-      padding-block: var(--space-3);
-      color: color-mix(in lab, currentcolor 60%, transparent);
-      text-decoration: none;
-      text-underline-offset: 0.4em;
-      text-decoration-thickness: var(--border-width);
-      transition: color var(--hover-duration) var(--hover-ease);
-      &[aria-current="page"] {
-        color: var(--text);
-      }
-      @media (hover: hover) {
-        &:hover {
-          color: var(--text);
-        }
-      }
-    }
-
     @media (width >= 48rem) {
       .nav_toggle {
         display: none;
@@ -315,13 +272,6 @@ const isCurrent = (href: string) =>
         font-size: var(--text-small);
         & > li + li {
           border-top: 0;
-        }
-      }
-
-      .nav_link {
-        padding-block: 0;
-        &[aria-current="page"] {
-          text-decoration: underline;
         }
       }
     }
