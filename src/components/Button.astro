@@ -77,9 +77,9 @@ const content = await slotContent(Astro.slots);
       text-decoration: none;
       text-align: center;
       transition:
-        background-color 200ms,
-        color 200ms,
-        border-color 200ms;
+        background-color var(--hover-duration) var(--hover-ease),
+        color var(--hover-duration) var(--hover-ease),
+        border-color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {
           background-color: var(--button-background-hover);
@@ -101,7 +101,6 @@ const content = await slotContent(Astro.slots);
         --button-border: var(--link-border);
         --button-background-hover: transparent;
         --button-text-hover: var(--link-text-hover);
-        /* The border itself holds still — the sliding line carries the hover color. */
         --button-border-hover: var(--link-border);
 
         position: relative;
@@ -109,11 +108,6 @@ const content = await slotContent(Astro.slots);
         border: 0;
         border-bottom: var(--border-width) solid var(--button-border);
         border-radius: 0;
-        /*
-         * The sliding line sits on top of the resting border. It grows from
-         * the left on hover, then collapses to the right on hover out, which
-         * reads as one line travelling left to right in both directions.
-         */
         &::after {
           content: "";
           position: absolute;
@@ -123,7 +117,8 @@ const content = await slotContent(Astro.slots);
           background-color: var(--link-border-hover);
           transform: scaleX(0);
           transform-origin: right;
-          transition: transform 400ms;
+          transition: transform calc(var(--hover-duration) * 2)
+            var(--hover-ease);
         }
         @media (hover: hover) {
           &:hover::after {

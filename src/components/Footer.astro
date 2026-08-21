@@ -81,12 +81,12 @@ const { render = true } = Astro.props;
       gap: var(--space-4) var(--space-6);
     }
 
-    /* The logo is a wordmark, so it is sized by width and keeps its ratio. */
     .footer_logo {
       display: block;
       width: 7.5rem;
+      max-width: 100%;
       color: inherit;
-      transition: opacity 200ms;
+      transition: opacity var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {
           opacity: 0.6;
@@ -109,7 +109,7 @@ const { render = true } = Astro.props;
     .footer_link {
       color: color-mix(in lab, currentcolor 60%, transparent);
       text-decoration: none;
-      transition: color 200ms;
+      transition: color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {
           color: var(--text);
