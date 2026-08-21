@@ -35,7 +35,7 @@ const content = await slotContent(Astro.slots);
       </button>
 
       <div class="dropdown_content" id={contentId} aria-labelledby={toggleId}>
-        <div class="dropdown_body">
+        <div class="dropdown_body margin-trim">
           <Fragment set:html={content} />
         </div>
       </div>
@@ -138,28 +138,28 @@ const content = await slotContent(Astro.slots);
       top: calc(100% + var(--space-2));
       inset-inline-start: 0;
       z-index: 10;
-      display: grid;
-      grid-template-rows: 0fr;
-      visibility: hidden;
       width: max-content;
       min-width: 100%;
       max-width: min(22rem, calc(100vw - var(--site-margin) * 2));
       background-color: var(--background-2);
       border: var(--border-width) solid var(--border);
       border-radius: var(--radius-main);
-      overflow: clip;
+      opacity: 0;
+      visibility: hidden;
+      translate: 0 -0.25rem;
       transition:
-        grid-template-rows var(--open-duration) var(--open-ease),
+        opacity var(--open-duration) var(--open-ease),
+        translate var(--open-duration) var(--open-ease),
         visibility var(--open-duration) var(--open-ease);
     }
 
     .dropdown.open .dropdown_content {
-      grid-template-rows: 1fr;
+      opacity: 1;
       visibility: visible;
+      translate: 0 0;
     }
 
     .dropdown_body {
-      overflow: hidden;
       padding: var(--space-5);
     }
   }
