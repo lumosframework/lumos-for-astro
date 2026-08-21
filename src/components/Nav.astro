@@ -230,6 +230,10 @@ const isCurrent = (href: string) =>
       display: grid;
       grid-template-rows: 0fr;
       visibility: hidden;
+      max-height: calc(100svh - var(--nav-height));
+      overflow-x: clip;
+      overflow-y: auto;
+      overscroll-behavior: contain;
       background-color: var(--background);
       border-bottom: var(--border-width) solid var(--border);
       transition:
@@ -250,6 +254,7 @@ const isCurrent = (href: string) =>
 
     .nav.open .nav_menu_inner {
       opacity: 1;
+      overflow-y: auto;
     }
 
     .nav_links {
