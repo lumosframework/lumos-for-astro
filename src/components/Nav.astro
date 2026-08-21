@@ -139,10 +139,10 @@ const isCurrent = (href: string) =>
     }
 
     .nav_inner {
+      position: relative;
       width: 100%;
       max-width: var(--max-width-main);
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 0 var(--space-6);
@@ -216,12 +216,19 @@ const isCurrent = (href: string) =>
       }
     }
 
+    /* Out of flow, so opening the menu lays it over the page rather than
+       pushing everything below it down the length of the panel. It carries
+       its own ground and edge for that reason: what is behind it now is the
+       page, not the bar. */
     .nav_menu {
-      order: 3;
-      flex-basis: 100%;
+      position: absolute;
+      top: 100%;
+      inset-inline: 0;
       display: grid;
       grid-template-rows: 0fr;
       visibility: hidden;
+      background-color: var(--background);
+      border-bottom: var(--border-width) solid var(--border);
       transition:
         grid-template-rows var(--open-duration) var(--open-ease),
         visibility var(--open-duration) var(--open-ease);
@@ -279,10 +286,11 @@ const isCurrent = (href: string) =>
       }
 
       .nav_menu {
-        order: initial;
-        flex-basis: auto;
+        position: static;
         display: block;
         visibility: visible;
+        background-color: transparent;
+        border-bottom: 0;
       }
 
       .nav_menu_inner {
