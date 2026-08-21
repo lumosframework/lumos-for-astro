@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { slotContent } from "@/utils/slots.ts";
+
+type Props = HTMLAttributes<"button"> & {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+};
+
+const { render = true, class: className, ...rest } = Astro.props;
+
+const content = await slotContent(Astro.slots);
+---
+
+{
+  render && content && (
+    <button class:list={["tabs_link", className]} type="button" {...rest}>
+      <span class="tabs_link_text text-style-main">
+        <Fragment set:html={content} />
+      </span>
+    </button>
+  )
+}

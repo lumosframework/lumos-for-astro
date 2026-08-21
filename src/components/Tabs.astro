@@ -1,0 +1,407 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Icon from "@/components/Icon.astro";
+import arrow from "@/assets/icons/arrow-full.svg";
+import play from "@/assets/icons/play.svg";
+import pause from "@/assets/icons/pause.svg";
+import { slotContent } from "@/utils/slots.ts";
+
+type Props = HTMLAttributes<"div"> & {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /**
+   * Where the tabs sit against their panels.
+   *
+   * - `horizontal` — in a row above them (default)
+   * - `side` — in a column beside them
+   */
+  variant?: "horizontal" | "side";
+  /**
+   * How the panels advance, and everything that follows from it.
+   *
+   * - `manual` — the reader advances them, and panels cross-fade (default)
+   * - `auto` — they advance on their own and slide, with arrows, a
+   *   play control and a progress line
+   */
+  playback?: "manual" | "auto";
+};
+
+const {
+  render = true,
+  variant = "horizontal",
+  playback = "manual",
+  class: className,
+  ...rest
+} = Astro.props;
+
+const auto = playback === "auto";
+
+const links = await slotContent(Astro.slots, "links");
+const panels = await slotContent(Astro.slots);
+---
+
+{
+  render && links && panels && (
+    <div
+      class:list={[
+        "tabs",
+        variant !== "horizontal" && variant,
+        auto && "auto",
+        className,
+      ]}
+      {...rest}
+    >
+      <div class="tabs_bar">
+        <div
+          class="tabs_links"
+          role="tablist"
+          aria-orientation={variant === "side" ? "vertical" : "horizontal"}
+        >
+          <Fragment set:html={links} />
+        </div>
+        {auto && <div class="tabs_progress" aria-hidden="true" />}
+      </div>
+
+      <div class="tabs_panels">
+        <Fragment set:html={panels} />
+      </div>
+
+      {auto && (
+        <div class="tabs_controls">
+          <div class="tabs_steps">
+            <button
+              class="tabs_step previous"
+              type="button"
+              data-step="-1"
+              aria-label="Previous tab"
+            >
+              <Icon src={arrow} variant="small" />
+            </button>
+            <button
+              class="tabs_step"
+              type="button"
+              data-step="1"
+              aria-label="Next tab"
+            >
+              <Icon src={arrow} variant="small" />
+            </button>
+          </div>
+          <button
+            class="tabs_toggle"
+            type="button"
+            data-toggle
+            aria-pressed="false"
+            aria-label="Pause automatic rotation"
+          >
+            <Icon class="tabs_toggle_play" src={play} variant="small" />
+            <Icon class="tabs_toggle_pause" src={pause} variant="small" />
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script>
+  const INTERVAL = 6000;
+
+  for (const tabs of document.querySelectorAll<HTMLElement>(".tabs")) {
+    const links = [...tabs.querySelectorAll<HTMLButtonElement>(".tabs_link")];
+    const panelList = tabs.querySelector<HTMLElement>(".tabs_panels");
+    const panels = [...(panelList?.children ?? [])] as HTMLElement[];
+    if (links.length === 0 || links.length !== panels.length) continue;
+
+    const uid = Math.random().toString(36).slice(2, 8);
+    const auto = tabs.classList.contains("auto");
+    const toggle = tabs.querySelector<HTMLButtonElement>("[data-toggle]");
+    const progress = tabs.querySelector<HTMLElement>(".tabs_progress");
+
+    let current = 0;
+    let timer: number | undefined;
+    let paused = false;
+
+    links.forEach((link, i) => {
+      link.id = `tab-${uid}-${i}`;
+      link.setAttribute("role", "tab");
+      link.setAttribute("aria-controls", `panel-${uid}-${i}`);
+      panels[i].id = `panel-${uid}-${i}`;
+      panels[i].setAttribute("role", "tabpanel");
+      panels[i].setAttribute("aria-labelledby", link.id);
+      panels[i].tabIndex = 0;
+    });
+
+    const restart = () => {
+      window.clearTimeout(timer);
+      if (!auto || paused) return;
+      progress?.classList.remove("running");
+      void progress?.offsetWidth;
+      progress?.classList.add("running");
+      timer = window.setTimeout(() => show(current + 1), INTERVAL);
+    };
+
+    const show = (next: number, focus = false) => {
+      const index = (next + links.length) % links.length;
+      if (index !== current) {
+        tabs.style.setProperty("--_dir", index > current ? "1" : "-1");
+        const leaving = panels[current];
+        leaving.classList.add("is-leaving");
+        window.setTimeout(() => leaving.classList.remove("is-leaving"), 400);
+      }
+
+      links.forEach((link, i) => {
+        link.classList.toggle("is-active", i === index);
+        link.setAttribute("aria-selected", String(i === index));
+        link.tabIndex = i === index ? 0 : -1;
+      });
+      panels.forEach((panel, i) =>
+        panel.classList.toggle("is-active", i === index),
+      );
+
+      current = index;
+      if (focus) links[index].focus();
+      links[index].scrollIntoView({ block: "nearest", inline: "nearest" });
+      restart();
+    };
+
+    links.forEach((link, i) => {
+      link.addEventListener("click", () => show(i));
+      link.addEventListener("keydown", (event) => {
+        const forward = event.key === "ArrowRight" || event.key === "ArrowDown";
+        const back = event.key === "ArrowLeft" || event.key === "ArrowUp";
+        if (!forward && !back) return;
+        event.preventDefault();
+        show(current + (forward ? 1 : -1), true);
+      });
+    });
+
+    for (const step of tabs.querySelectorAll<HTMLButtonElement>(
+      "[data-step]",
+    )) {
+      step.addEventListener("click", () =>
+        show(current + Number(step.dataset.step)),
+      );
+    }
+
+    const setPaused = (value: boolean) => {
+      paused = value;
+      tabs.classList.toggle("is-paused", value);
+      toggle?.setAttribute("aria-pressed", String(value));
+      toggle?.setAttribute(
+        "aria-label",
+        value ? "Start automatic rotation" : "Pause automatic rotation",
+      );
+      restart();
+    };
+
+    tabs.classList.add("is-ready");
+    show(0);
+
+    if (!auto) continue;
+
+    toggle?.addEventListener("click", () => setPaused(!paused));
+
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const holds = { motion: motion.matches, focus: false, offscreen: false };
+    const settle = () => setPaused(Object.values(holds).some(Boolean));
+
+    motion.addEventListener("change", (event) => {
+      holds.motion = event.matches;
+      settle();
+    });
+    tabs.addEventListener("focusin", () => {
+      holds.focus = true;
+      settle();
+    });
+    tabs.addEventListener("focusout", (event) => {
+      if (tabs.contains(event.relatedTarget as Node)) return;
+      holds.focus = false;
+      settle();
+    });
+    new IntersectionObserver((entries) => {
+      holds.offscreen = !entries[0].isIntersecting;
+      settle();
+    }).observe(tabs);
+
+    settle();
+  }
+</script>
+
+<style is:global>
+  @layer components {
+    .tabs {
+      --_dir: 1;
+      --_interval: 6s;
+      display: grid;
+      gap: var(--space-6);
+      width: 100%;
+
+      &.side {
+        @media (width >= 48rem) {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+          align-items: start;
+        }
+      }
+    }
+
+    .tabs_bar {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .tabs_links {
+      display: flex;
+      gap: var(--space-6);
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      .tabs.side & {
+        flex-direction: column;
+        gap: var(--space-2);
+        overflow-x: visible;
+      }
+    }
+
+    .tabs_link {
+      flex: none;
+      padding-block: var(--space-3);
+      background: none;
+      border: 0;
+      color: color-mix(in lab, currentcolor 60%, transparent);
+      text-align: start;
+      transition: color var(--hover-duration) var(--hover-ease);
+      &.is-active {
+        color: var(--text);
+      }
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text);
+        }
+      }
+      .tabs.side & {
+        padding: var(--space-3) var(--space-5);
+        border: var(--border-width) solid var(--border);
+        border-radius: var(--radius-round);
+        &.is-active {
+          background-color: var(--text);
+          color: var(--background);
+        }
+      }
+    }
+
+    .tabs_progress {
+      position: relative;
+      height: var(--border-width);
+      background-color: var(--border);
+      &::after {
+        content: "";
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        background-color: var(--text);
+        transform-origin: left;
+        scale: 0 1;
+      }
+      &.running::after {
+        animation: tabs-progress var(--_interval) linear forwards;
+      }
+      .tabs.is-paused &::after {
+        animation-play-state: paused;
+      }
+      .tabs.side & {
+        display: none;
+      }
+    }
+
+    @keyframes tabs-progress {
+      from {
+        scale: 0 1;
+      }
+      to {
+        scale: 1 1;
+      }
+    }
+
+    .tabs_panels {
+      display: grid;
+      min-width: 0;
+      overflow: clip;
+    }
+
+    .tabs_panels > * {
+      grid-area: 1 / 1;
+      min-width: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity var(--open-duration) var(--open-ease),
+        translate var(--open-duration) var(--open-ease),
+        visibility var(--open-duration) var(--open-ease);
+      .tabs:not(.is-ready) &:first-child,
+      &.is-active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .tabs.auto & {
+        translate: calc(var(--_dir) * 8%) 0;
+      }
+      .tabs.auto &.is-active {
+        translate: 0 0;
+      }
+      .tabs.auto &.is-leaving {
+        translate: calc(var(--_dir) * -8%) 0;
+        visibility: visible;
+      }
+    }
+
+    .tabs_controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+
+    .tabs_steps {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .tabs_step,
+    .tabs_toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem;
+      height: 2.75rem;
+      background: none;
+      border: var(--border-width) solid var(--border);
+      border-radius: var(--radius-round);
+      color: inherit;
+      transition:
+        color var(--hover-duration) var(--hover-ease),
+        border-color var(--hover-duration) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--text);
+        }
+      }
+    }
+
+    .tabs_step.previous {
+      rotate: 180deg;
+    }
+
+    .tabs_toggle_pause {
+      display: none;
+    }
+
+    .tabs:not(.is-paused) .tabs_toggle_play {
+      display: none;
+    }
+
+    .tabs:not(.is-paused) .tabs_toggle_pause {
+      display: block;
+    }
+  }
+</style>
