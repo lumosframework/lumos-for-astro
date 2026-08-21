@@ -40,16 +40,16 @@ type Kind =
   | {
       variant: "play";
       emphasis?: Emphasis;
-      /** What the control does. Defaults to `Play`, or `Pause` while pressed. */
+      /** What the control does, for anyone who cannot see its mark. Each mark names itself unless this is set. */
       label?: string;
-      /** Whether it is playing. Shows the pause mark, and reads as pressed. */
+      /** Whether it is playing: shows the pause mark, and reads as pressed. Defaults to `false`. */
       pressed?: boolean;
       direction?: never;
     }
   | {
       variant: "close";
       emphasis?: Emphasis;
-      /** What the control does. Defaults to `Close`. */
+      /** What the control does, for anyone who cannot see its mark. Each mark names itself unless this is set. */
       label?: string;
       pressed?: never;
       direction?: never;
@@ -57,7 +57,7 @@ type Kind =
   | {
       variant: "arrow";
       emphasis?: Emphasis;
-      /** What the control does. Defaults to `Next`, or `Previous` going back. */
+      /** What the control does, for anyone who cannot see its mark. Each mark names itself unless this is set. */
       label?: string;
       pressed?: never;
       /** Which way the arrow points. Defaults to `forward`. */
