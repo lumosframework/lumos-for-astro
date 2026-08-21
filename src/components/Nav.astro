@@ -139,7 +139,6 @@ const isCurrent = (href: string) =>
     }
 
     .nav_inner {
-      position: relative;
       width: 100%;
       max-width: var(--max-width-main);
       display: flex;
@@ -219,7 +218,11 @@ const isCurrent = (href: string) =>
     /* Out of flow, so opening the menu lays it over the page rather than
        pushing everything below it down the length of the panel. It carries
        its own ground and edge for that reason: what is behind it now is the
-       page, not the bar. */
+       page, not the bar.
+
+       It hangs off `.nav` rather than `.nav_inner`, so the ground reaches the
+       edges of the screen the way the bar's does. Its own padding is what
+       keeps the links in line with the logo. */
     .nav_menu {
       position: absolute;
       top: 100%;
@@ -253,7 +256,7 @@ const isCurrent = (href: string) =>
       display: flex;
       flex-direction: column;
       margin: 0;
-      padding: var(--space-2) 0 var(--space-4);
+      padding: var(--space-2) var(--site-margin) var(--space-4);
       list-style: none;
       font-size: var(--text-main);
       font-weight: var(--primary-medium);
