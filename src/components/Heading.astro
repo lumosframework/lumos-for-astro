@@ -57,7 +57,7 @@ const content = await slotContent(Astro.slots);
       style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
       {...rest}
     >
-      <slot />
+      <Fragment set:html={content} />
     </Tag>
   )
 }

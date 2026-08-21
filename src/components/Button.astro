@@ -55,7 +55,7 @@ const content = await slotContent(Astro.slots);
       {...rest}
     >
       <span class="button_text text-style-trim">
-        <slot />
+        <Fragment set:html={content} />
       </span>
     </Tag>
   )

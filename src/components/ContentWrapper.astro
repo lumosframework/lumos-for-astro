@@ -151,12 +151,12 @@ const column2 = await slotContent(Astro.slots, "column2");
     >
       {column1 && (
         <div class:list={[column1Class]}>
-          <slot />
+          <Fragment set:html={column1} />
         </div>
       )}
       {column2 && (
         <div class:list={[column2Class]}>
-          <slot name="column2" />
+          <Fragment set:html={column2} />
         </div>
       )}
     </div>

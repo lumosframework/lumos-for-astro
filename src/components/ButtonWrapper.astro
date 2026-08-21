@@ -32,7 +32,7 @@ const content = await slotContent(Astro.slots);
       ]}
       {...rest}
     >
-      <slot />
+      <Fragment set:html={content} />
     </div>
   )
 }
