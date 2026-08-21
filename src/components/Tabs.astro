@@ -120,6 +120,21 @@ const panels = await slotContent(Astro.slots);
     let timer: number | undefined;
     let paused = false;
 
+    const key = tabs.id || "tab";
+    const slugs = links.map((link) =>
+      (link.textContent ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, ""),
+    );
+
+    const remember = (index: number) => {
+      const url = new URL(location.href);
+      url.searchParams.set(key, slugs[index]);
+      history.replaceState(history.state, "", url);
+    };
+
     links.forEach((link, i) => {
       link.id = `tab-${uid}-${i}`;
       link.setAttribute("role", "tab");
@@ -139,7 +154,7 @@ const panels = await slotContent(Astro.slots);
       timer = window.setTimeout(() => show(current + 1), INTERVAL);
     };
 
-    const show = (next: number, focus = false) => {
+    const show = (next: number, focus = false, share = true) => {
       const index = (next + links.length) % links.length;
       if (index !== current) {
         tabs.style.setProperty("--_dir", index > current ? "1" : "-1");
@@ -158,6 +173,7 @@ const panels = await slotContent(Astro.slots);
       );
 
       current = index;
+      if (share) remember(index);
       if (focus) links[index].focus();
       links[index].scrollIntoView({ block: "nearest", inline: "nearest" });
       restart();
@@ -194,14 +210,27 @@ const panels = await slotContent(Astro.slots);
     };
 
     tabs.classList.add("is-ready");
-    show(0);
+
+    const wanted = slugs.indexOf(
+      new URLSearchParams(location.search).get(key) ?? "",
+    );
+    show(wanted === -1 ? 0 : wanted, false, false);
+    if (wanted !== -1) tabs.scrollIntoView({ block: "nearest" });
 
     if (!auto) continue;
 
-    toggle?.addEventListener("click", () => setPaused(!paused));
+    toggle?.addEventListener("click", () => {
+      holds.asked = false;
+      setPaused(!paused);
+    });
 
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const holds = { motion: motion.matches, focus: false, offscreen: false };
+    const holds = {
+      motion: motion.matches,
+      focus: false,
+      offscreen: false,
+      asked: wanted !== -1,
+    };
     const settle = () => setPaused(Object.values(holds).some(Boolean));
 
     motion.addEventListener("change", (event) => {
