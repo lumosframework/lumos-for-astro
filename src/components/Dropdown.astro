@@ -1,0 +1,157 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Icon from "@/components/Icon.astro";
+import arrow from "@/assets/icons/arrow.svg";
+import { slotContent } from "@/utils/slots.ts";
+
+type Props = HTMLAttributes<"div"> & {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** The text on the control that opens it. */
+  label?: string;
+};
+
+const { render = true, label, class: className, ...rest } = Astro.props;
+
+const uid = crypto.randomUUID().slice(0, 8);
+const toggleId = `dropdown-toggle-${uid}`;
+const contentId = `dropdown-content-${uid}`;
+
+const content = await slotContent(Astro.slots);
+---
+
+{
+  render && label && content && (
+    <div class:list={["dropdown", className]} {...rest}>
+      <button
+        class="dropdown_toggle"
+        type="button"
+        id={toggleId}
+        aria-expanded="false"
+        aria-controls={contentId}
+      >
+        <span class="dropdown_label text-style-main">{label}</span>
+        <Icon class="dropdown_icon" src={arrow} variant="small" />
+      </button>
+
+      <div class="dropdown_content" id={contentId} aria-labelledby={toggleId}>
+        <div class="dropdown_body">
+          <Fragment set:html={content} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  for (const dropdown of document.querySelectorAll<HTMLElement>(".dropdown")) {
+    const toggle =
+      dropdown.querySelector<HTMLButtonElement>(".dropdown_toggle");
+    const content = dropdown.querySelector<HTMLElement>(".dropdown_content");
+    if (!toggle || !content) continue;
+
+    const isOpen = () => dropdown.classList.contains("open");
+
+    const setOpen = (open: boolean) => {
+      dropdown.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+
+    toggle.addEventListener("click", () => setOpen(!isOpen()));
+
+    document.addEventListener("keydown", (event) => {
+      if (!isOpen()) return;
+
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggle.focus();
+        return;
+      }
+
+      const forward = event.key === "ArrowDown";
+      if (!forward && event.key !== "ArrowUp") return;
+      if (!dropdown.contains(document.activeElement)) return;
+
+      const items = [
+        ...content.querySelectorAll<HTMLElement>(
+          "a[href], button:not(:disabled)",
+        ),
+      ];
+      if (items.length === 0) return;
+
+      event.preventDefault();
+      const from = items.indexOf(document.activeElement as HTMLElement);
+      const step = forward ? 1 : -1;
+      const next =
+        from === -1
+          ? forward
+            ? 0
+            : items.length - 1
+          : (from + step + items.length) % items.length;
+      items[next].focus();
+    });
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!isOpen() || !(target instanceof Node)) return;
+      if (!dropdown.contains(target)) setOpen(false);
+    });
+  }
+</script>
+
+<style is:global>
+  @layer components {
+    .dropdown {
+      width: 100%;
+      border-bottom: var(--border-width) solid var(--border);
+    }
+
+    .dropdown_toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      width: 100%;
+      padding-block: var(--space-4);
+      background: none;
+      border: 0;
+      color: inherit;
+      text-align: start;
+      transition: color var(--hover-duration) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          color: color-mix(in lab, currentcolor 60%, transparent);
+        }
+      }
+    }
+
+    .dropdown_icon {
+      flex: none;
+      rotate: 90deg;
+      transition: rotate var(--open-duration) var(--open-ease);
+    }
+
+    .dropdown.open .dropdown_icon {
+      rotate: -90deg;
+    }
+
+    .dropdown_content {
+      display: grid;
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      transition:
+        grid-template-rows var(--open-duration) var(--open-ease),
+        visibility var(--open-duration) var(--open-ease);
+    }
+
+    .dropdown.open .dropdown_content {
+      grid-template-rows: 1fr;
+      visibility: visible;
+    }
+
+    .dropdown_body {
+      overflow: hidden;
+      padding-bottom: var(--space-4);
+    }
+  }
+</style>
