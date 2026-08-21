@@ -245,6 +245,24 @@ const { render = true, overlap = false } = Astro.props;
       }
     }
 
+    .nav_link {
+      display: block;
+      padding-block: var(--space-3);
+      color: color-mix(in lab, currentcolor 60%, transparent);
+      text-decoration: none;
+      text-underline-offset: 0.4em;
+      text-decoration-thickness: var(--border-width);
+      transition: color var(--hover-duration) var(--hover-ease);
+      &[aria-current="page"] {
+        color: var(--text);
+      }
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text);
+        }
+      }
+    }
+
     @media (width >= 48rem) {
       .nav_toggle {
         display: none;
@@ -272,6 +290,13 @@ const { render = true, overlap = false } = Astro.props;
         font-size: var(--text-small);
         & > li + li {
           border-top: 0;
+        }
+      }
+
+      .nav_link {
+        padding-block: 0;
+        &[aria-current="page"] {
+          text-decoration: underline;
         }
       }
     }
