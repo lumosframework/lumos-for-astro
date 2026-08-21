@@ -38,17 +38,28 @@ type Kind =
       direction?: never;
     }
   | {
-      variant: "play" | "close";
+      variant: "play";
       emphasis?: Emphasis;
-      /** What the control does, for anyone who cannot see the mark on it. */
-      label: string;
+      /** What the control does. Defaults to `Play`, or `Pause` while pressed. */
+      label?: string;
+      /** Whether it is playing. Shows the pause mark, and reads as pressed. */
+      pressed?: boolean;
+      direction?: never;
+    }
+  | {
+      variant: "close";
+      emphasis?: Emphasis;
+      /** What the control does. Defaults to `Close`. */
+      label?: string;
+      pressed?: never;
       direction?: never;
     }
   | {
       variant: "arrow";
       emphasis?: Emphasis;
-      /** What the control does, for anyone who cannot see the mark on it. */
-      label: string;
+      /** What the control does. Defaults to `Next`, or `Previous` going back. */
+      label?: string;
+      pressed?: never;
       /** Which way the arrow points. Defaults to `forward`. */
       direction?: "forward" | "back";
     };
@@ -65,6 +76,7 @@ type AllProps = HTMLAttributes<"button"> &
     variant?: "main" | "play" | "close" | "arrow";
     emphasis?: Emphasis | "link";
     label?: string;
+    pressed?: boolean;
     direction?: "forward" | "back";
     element?: "button" | "link";
     href?: string;
@@ -76,6 +88,7 @@ const {
   variant = "main",
   emphasis = "primary",
   label,
+  pressed = false,
   direction = "forward",
   element = "button",
   href,
@@ -93,10 +106,16 @@ const tagAttrs = isLink
 const marks = { play, close, arrow };
 const isMain = variant === "main";
 const content = isMain ? await slotContent(Astro.slots) : "";
+
+const named = {
+  play: pressed ? "Pause" : "Play",
+  close: "Close",
+  arrow: direction === "back" ? "Previous" : "Next",
+};
 ---
 
 {
-  render && (isMain ? content : label) && (
+  render && (isMain ? content : true) && (
     <Tag
       class:list={[
         "button",
@@ -105,7 +124,8 @@ const content = isMain ? await slotContent(Astro.slots) : "";
         variant === "arrow" && direction === "back" && "back",
         className,
       ]}
-      aria-label={isMain ? undefined : label}
+      aria-label={isMain ? undefined : (label ?? named[variant])}
+      aria-pressed={variant === "play" ? pressed : undefined}
       {...tagAttrs}
       {...rest}
     >
@@ -208,7 +228,7 @@ const content = isMain ? await slotContent(Astro.slots) : "";
       &.play .button_pause {
         display: none;
       }
-      &.play[aria-pressed="false"] {
+      &.play[aria-pressed="true"] {
         & .button_play {
           display: none;
         }

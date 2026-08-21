@@ -33,7 +33,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about">Button Text</Button>
+        <Button element="link" href="/about" variant="close">Button Text</Button>
         <Dropdown label="Dropdown">
           <Paragraph>Some text</Paragraph>
         </Dropdown>
@@ -247,33 +247,18 @@ const text =
         <Button emphasis="link">Button Text</Button>
       </ButtonWrapper>
       <ButtonWrapper>
-        <Button variant="arrow" direction="back" label="Previous" />
-        <Button variant="arrow" label="Next" />
-        <Button variant="play" label="Play" aria-pressed="true" />
-        <Button variant="play" label="Pause" aria-pressed="false" />
-        <Button variant="close" label="Close" />
+        <Button variant="arrow" direction="back" />
+        <Button variant="arrow" />
+        <Button variant="play" />
+        <Button variant="play" pressed />
+        <Button variant="close" />
       </ButtonWrapper>
       <ButtonWrapper>
-        <Button
-          variant="arrow"
-          emphasis="secondary"
-          direction="back"
-          label="Previous"
-        />
-        <Button variant="arrow" emphasis="secondary" label="Next" />
-        <Button
-          variant="play"
-          emphasis="secondary"
-          label="Play"
-          aria-pressed="true"
-        />
-        <Button
-          variant="play"
-          emphasis="secondary"
-          label="Pause"
-          aria-pressed="false"
-        />
-        <Button variant="close" emphasis="secondary" label="Close" />
+        <Button variant="arrow" emphasis="secondary" direction="back" />
+        <Button variant="arrow" emphasis="secondary" />
+        <Button variant="play" emphasis="secondary" />
+        <Button variant="play" emphasis="secondary" pressed />
+        <Button variant="close" emphasis="secondary" />
       </ButtonWrapper>
     </ContentWrapper>
   </Section>

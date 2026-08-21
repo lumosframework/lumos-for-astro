@@ -84,7 +84,7 @@ const panels = await slotContent(Astro.slots);
             variant="play"
             emphasis="secondary"
             label="Pause automatic rotation"
-            aria-pressed="false"
+            pressed
             data-toggle
           />
         </div>
@@ -192,7 +192,7 @@ const panels = await slotContent(Astro.slots);
     const setPaused = (value: boolean) => {
       paused = value;
       tabs.classList.toggle("is-paused", value);
-      toggle?.setAttribute("aria-pressed", String(value));
+      toggle?.setAttribute("aria-pressed", String(!value));
       toggle?.setAttribute(
         "aria-label",
         value ? "Start automatic rotation" : "Pause automatic rotation",
@@ -271,7 +271,6 @@ const panels = await slotContent(Astro.slots);
 
     .tabs_links {
       display: flex;
-      gap: var(--space-6);
       min-width: 0;
       overflow-x: auto;
       scrollbar-width: none;
@@ -283,14 +282,19 @@ const panels = await slotContent(Astro.slots);
     }
 
     .tabs_link {
-      flex: none;
+      flex: 1;
+      min-width: 8rem;
       padding-block: var(--space-3);
       background: none;
       border: 0;
+      border-bottom: var(--border-width) solid var(--border);
       color: color-mix(in lab, currentcolor 60%, transparent);
-      text-align: start;
-      transition: color var(--hover-duration) var(--hover-ease);
+      text-align: center;
+      transition:
+        color var(--hover-duration) var(--hover-ease),
+        border-color var(--hover-duration) var(--hover-ease);
       &.is-active {
+        border-bottom-color: var(--text);
         color: var(--text);
       }
       @media (hover: hover) {
@@ -299,9 +303,12 @@ const panels = await slotContent(Astro.slots);
         }
       }
       .tabs.side & {
+        flex: none;
+        min-width: 0;
         padding: var(--space-3) var(--space-5);
         border: var(--border-width) solid var(--border);
         border-radius: var(--radius-round);
+        text-align: start;
         &.is-active {
           background-color: var(--text);
           color: var(--background);
