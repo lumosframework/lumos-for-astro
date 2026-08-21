@@ -86,6 +86,7 @@ const content = await slotContent(Astro.slots);
     .dropdown {
       --_control-pad: 0.75em;
       position: relative;
+      z-index: 10;
       display: inline-block;
     }
 
@@ -137,7 +138,6 @@ const content = await slotContent(Astro.slots);
       position: absolute;
       top: calc(100% - var(--_control-pad) + var(--space-2));
       inset-inline-start: 0;
-      z-index: 10;
       width: max-content;
       min-width: 100%;
       max-width: min(22rem, calc(100vw - var(--site-margin) * 2));
