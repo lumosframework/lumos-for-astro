@@ -1,7 +1,5 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import Button from "@/components/Button.astro";
-import ButtonWrapper from "@/components/ButtonWrapper.astro";
 import { slotContent } from "@/utils/slots.ts";
 
 interface Props extends HTMLAttributes<"form"> {
@@ -15,8 +13,6 @@ interface Props extends HTMLAttributes<"form"> {
   successMessage?: string;
   /** Shown beneath the fields when it could not send. */
   errorMessage?: string;
-  /** The text on the button that sends it. */
-  submitLabel?: string;
 }
 
 const {
@@ -25,7 +21,6 @@ const {
   action,
   successMessage = "Thanks — we will be in touch.",
   errorMessage = "That did not send. Please try again.",
-  submitLabel = "Submit",
   method = "post",
   class: className,
   ...rest
@@ -49,11 +44,6 @@ const content = await slotContent(Astro.slots);
         {...rest}
       >
         <Fragment set:html={content} />
-        <ButtonWrapper marginTop="4">
-          <Button class="form_submit" type="submit">
-            {submitLabel}
-          </Button>
-        </ButtonWrapper>
       </form>
 
       <p class="form_note form_note-sent text-style-main" role="status">
@@ -71,7 +61,9 @@ const content = await slotContent(Astro.slots);
     const fields = form.querySelector<HTMLFormElement>(".form_fields");
     if (!fields) continue;
 
-    const submit = form.querySelector<HTMLButtonElement>(".form_submit");
+    const submit = fields.querySelector<HTMLButtonElement | HTMLInputElement>(
+      'button:not([type]), button[type="submit"], input[type="submit"]',
+    );
 
     fields.addEventListener("submit", async (event) => {
       // Read when it is sent rather than when the page loads, so a form whose
@@ -140,10 +132,6 @@ const content = await slotContent(Astro.slots);
     .form[data-state="failed"] .form_note-failed {
       display: block;
       color: var(--text);
-    }
-
-    .form[data-state="sending"] .form_submit {
-      opacity: 0.5;
     }
   }
 </style>

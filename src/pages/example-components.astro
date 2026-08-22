@@ -259,7 +259,7 @@ const lorem =
     <ContentWrapper>
       <Eyebrow>form</Eyebrow>
       <Heading tag="h2" variant="h4">Contact Details</Heading>
-      <Form name="contact" submitLabel="Send enquiry">
+      <Form name="contact">
         <Grid medium={2}>
           <FormInput variant="first-name" required />
           <FormInput variant="last-name" required />
@@ -287,6 +287,9 @@ const lorem =
             placeholder="000-000-0000"
           />
         </Grid>
+        <ButtonWrapper marginTop="4">
+          <Button type="submit">Send enquiry</Button>
+        </ButtonWrapper>
       </Form>
     </ContentWrapper>
   </Section>
@@ -296,7 +299,7 @@ const lorem =
       <Eyebrow>buttons</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <ButtonWrapper>
-        <Button element="link" href="/about" variant="arrow">Button Text</Button>
+        <Button element="link" href="/about">Button Text</Button>
         <Button emphasis="secondary">Button Text</Button>
         <Button emphasis="link">Button Text</Button>
       </ButtonWrapper>
