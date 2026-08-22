@@ -207,7 +207,12 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
     }
 
     .form-range_output {
-      justify-self: start;
+      /* The field lays its rows out with flex, so it is align-self that lets
+         this one shrink to its number instead of stretching the width of the
+         track. Flex also drops the whitespace between the number and its
+         unit, which inline layout would have kept as a gap. */
+      display: flex;
+      align-self: start;
       margin-inline-start: calc(
         var(--_progress, 0) * (100% - var(--_handle)) + var(--_handle) / 2
       );
