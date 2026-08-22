@@ -1,0 +1,84 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { slug } from "@/utils/text.ts";
+
+interface Props extends Omit<HTMLAttributes<"textarea">, "rows"> {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** The text above the field. */
+  label?: string;
+  /** What the field starts out holding. */
+  value?: string;
+  /** The name it submits under. Taken from the label where it is not set. */
+  name?: string;
+  /** The text shown in an empty field. */
+  placeholder?: string;
+  /** How short it may be, in lines. Defaults to `3`. */
+  minLines?: number;
+  /** How tall it grows to before it scrolls, in lines. Defaults to `12`. */
+  maxLines?: number;
+  /** Marks the field as needed, and stars its label. */
+  required?: boolean;
+}
+
+const {
+  render = true,
+  label,
+  value,
+  name,
+  placeholder,
+  minLines = 3,
+  maxLines = 12,
+  required = false,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+{
+  render && label && (
+    <label
+      class:list={["field", "form-textarea", className]}
+      style={`--_min-lines: ${minLines}; --_max-lines: ${maxLines};`}
+    >
+      <span class="field_label text-style-main">
+        <span>{label}</span>
+        {required && (
+          <span class="field_star" aria-hidden="true">
+            *
+          </span>
+        )}
+      </span>
+      <textarea
+        class="field_control form-textarea_field text-style-main"
+        name={name ?? slug(label)}
+        placeholder={placeholder}
+        required={required || undefined}
+        rows={minLines}
+        {...rest}
+      >
+        {value}
+      </textarea>
+    </label>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .form-textarea_field {
+      /* Grows with what is typed into it, between a floor and a ceiling set
+         in lines. Both count the padding as well, since the box is measured
+         border to border. */
+      field-sizing: content;
+      min-height: calc(
+        var(--_min-lines, 3) * 1lh + var(--field-pad-block) * 2 +
+          var(--border-width) * 2
+      );
+      max-height: calc(
+        var(--_max-lines, 12) * 1lh + var(--field-pad-block) * 2 +
+          var(--border-width) * 2
+      );
+      resize: vertical;
+    }
+  }
+</style>

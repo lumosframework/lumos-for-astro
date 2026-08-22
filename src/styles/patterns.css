@@ -210,8 +210,10 @@
 }
 
 .field_control {
+  --field-pad-block: 0.75em;
+  --field-pad-inline: 1em;
   width: 100%;
-  padding: 0.75em 1em;
+  padding: var(--field-pad-block) var(--field-pad-inline);
   background: none;
   color: inherit;
   border: var(--border-width) solid var(--border);
