@@ -76,7 +76,11 @@ const {
         {...rest}
       />
       <span class="form-choice_mark" aria-hidden="true">
-        <Icon class="form-choice_tick" src={check} variant="small" />
+        {type === "radio" ? (
+          <span class="form-choice_dot" />
+        ) : (
+          <Icon class="form-choice_tick" src={check} variant="small" />
+        )}
       </span>
       <span class="form-choice_text text-style-main">{label}</span>
     </label>
@@ -103,63 +107,69 @@ const {
     }
 
     .form-choice_mark {
+      /* The surface a mark is drawn on, and the colour of what is drawn on it.
+         A variant that moves the mark onto a different surface sets these
+         rather than restating every rule below it. */
+      --_mark: var(--background-2);
+      --_mark-hover: var(--background-3);
+      --_mark-chosen: var(--text);
+      --_ink: var(--background);
+
       flex: none;
       display: grid;
       place-items: center;
       width: 1.5em;
       height: 1.5em;
-      border: var(--border-width) solid var(--border);
+      background-color: var(--_mark);
+      /* Transparent rather than absent, as on a field: the box keeps the size
+         it would have with a border, and focus has an edge to colour. */
+      border: var(--border-width) solid transparent;
       border-radius: var(--radius-small);
       transition:
         background-color var(--hover-duration) var(--hover-ease),
         border-color var(--hover-duration) var(--hover-ease);
     }
 
-    .form-choice:has(.form-choice_input[type="radio"]) .form-choice_mark {
+    /* A dot only ever sits in a circle. */
+    .form-choice_mark:has(.form-choice_dot) {
       border-radius: var(--radius-round);
     }
 
     .form-choice_tick {
+      color: var(--_ink);
       opacity: 0;
-      color: var(--background);
       transition: opacity var(--hover-duration) var(--hover-ease);
     }
 
-    .form-choice:has(:checked) .form-choice_mark {
-      background-color: var(--text);
-      border-color: var(--text);
+    /* A radio fills rather than ticks: a dot cannot be mistaken for a box that
+       has been crossed. It grows into place on the clock the tick fades on, so
+       neither of them arrives out of nothing. */
+    .form-choice_dot {
+      width: 0.6em;
+      height: 0.6em;
+      background-color: var(--_ink);
+      border-radius: var(--radius-round);
+      scale: 0;
+      transition: scale var(--hover-duration) var(--hover-ease);
     }
 
-    .form-choice:has(:checked) .form-choice_tick {
-      opacity: 1;
-    }
-
-    /* A radio fills rather than ticks: a dot cannot be mistaken for a box
-       that has been crossed. */
-    .form-choice:has(.form-choice_input[type="radio"]) .form-choice_tick {
-      display: none;
-    }
-
-    .form-choice:has(.form-choice_input[type="radio"]) .form-choice_mark {
-      background-color: transparent;
-      border-color: var(--border);
-    }
-
-    .form-choice:has(.form-choice_input[type="radio"]:checked)
-      .form-choice_mark {
-      border-color: var(--text);
-      &::after {
-        content: "";
-        width: 0.6em;
-        height: 0.6em;
-        border-radius: var(--radius-round);
-        background-color: var(--text);
+    .form-choice:has(:checked) {
+      & .form-choice_mark {
+        background-color: var(--_mark-chosen);
+      }
+      & .form-choice_tick {
+        opacity: 1;
+      }
+      & .form-choice_dot {
+        scale: 1;
       }
     }
 
     @media (hover: hover) {
-      .form-choice:hover .form-choice_mark {
-        border-color: var(--text);
+      /* Only what has not been chosen lifts. A mark that is already filled has
+         nowhere to go, and moving it would read as a change of state. */
+      .form-choice:hover .form-choice_input:not(:checked) ~ .form-choice_mark {
+        background-color: var(--_mark-hover);
       }
     }
 
@@ -168,8 +178,7 @@ const {
       outline-offset: var(--focus-offset);
     }
 
-    /* Toggle: the mark is the track, and the tick gives way to a knob that
-       travels the length of it. */
+    /* Toggle: the mark is the track, and the knob travels the length of it. */
     .form-choice-toggle {
       & .form-choice_mark {
         width: 2.75em;
@@ -178,7 +187,7 @@ const {
         place-items: center start;
         padding: 0.15em;
       }
-      & .form-choice_tick {
+      & :is(.form-choice_tick, .form-choice_dot) {
         display: none;
       }
       & .form-choice_mark::after {
@@ -187,34 +196,42 @@ const {
         height: 1.1em;
         border-radius: var(--radius-round);
         background-color: var(--text);
-        transition: translate var(--hover-duration) var(--hover-ease);
+        transition:
+          translate var(--hover-duration) var(--hover-ease),
+          background-color var(--hover-duration) var(--hover-ease);
       }
       &:has(:checked) .form-choice_mark::after {
         translate: 1.2em 0;
-        background-color: var(--background);
+        background-color: var(--_ink);
       }
     }
 
     /* Button: the whole of it is the control, so the box it sits in is what
-       fills. */
+       fills. Its mark stays the colour of the page in either state, so being
+       chosen never costs the button its mark. */
     .form-choice-button {
       padding: 0.75em 1.5em;
-      border: var(--border-width) solid var(--border);
+      background-color: var(--background-2);
+      border: var(--border-width) solid transparent;
       border-radius: var(--radius-round);
       transition:
         background-color var(--hover-duration) var(--hover-ease),
         color var(--hover-duration) var(--hover-ease),
         border-color var(--hover-duration) var(--hover-ease);
+      & .form-choice_mark {
+        --_mark: var(--background);
+        --_mark-hover: var(--background);
+        --_mark-chosen: var(--background);
+        --_ink: var(--text);
+      }
+      @media (hover: hover) {
+        &:hover:not(:has(:checked)) {
+          background-color: var(--background-3);
+        }
+      }
       &:has(:checked) {
         background-color: var(--text);
         color: var(--background);
-        & .form-choice_mark {
-          border-color: var(--background);
-          background-color: var(--background);
-        }
-        & .form-choice_tick {
-          color: var(--text);
-        }
       }
       & .form-choice_input:focus-visible ~ .form-choice_mark {
         outline: 0;
