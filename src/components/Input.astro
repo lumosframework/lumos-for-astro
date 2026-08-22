@@ -1,0 +1,162 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type InputVariant =
+  | "text"
+  | "first-name"
+  | "last-name"
+  | "email"
+  | "phone"
+  | "date"
+  | "zip-code"
+  | "number"
+  | "search"
+  | "password"
+  | "url";
+
+interface Props extends Omit<HTMLAttributes<"input">, "type"> {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** The text above the field. Defaults to the wording of the variant. */
+  label?: string;
+  /** What the field starts out holding. */
+  value?: string;
+  /**
+   * What the field is for. It settles the input's type, keyboard, autofill
+   * and wording together, so a field only has to say which one it is.
+   */
+  variant?: InputVariant;
+  /** The name it submits under. Defaults to the wording of the variant. */
+  name?: string;
+  /** The text shown in an empty field. Defaults to the wording of the variant. */
+  placeholder?: string;
+  /** Marks the field as needed, and stars its label. */
+  required?: boolean;
+}
+
+const {
+  render = true,
+  label,
+  value,
+  variant = "text",
+  name,
+  placeholder,
+  required = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+type InputAttrs = HTMLAttributes<"input">;
+
+const KINDS: Record<
+  InputVariant,
+  {
+    label: string;
+    type: NonNullable<InputAttrs["type"]>;
+    mode: NonNullable<InputAttrs["inputmode"]>;
+    fill: NonNullable<InputAttrs["autocomplete"]>;
+  }
+> = {
+  text: { label: "Text", type: "text", mode: "text", fill: "on" },
+  "first-name": {
+    label: "First Name",
+    type: "text",
+    mode: "text",
+    fill: "given-name",
+  },
+  "last-name": {
+    label: "Last Name",
+    type: "text",
+    mode: "text",
+    fill: "family-name",
+  },
+  email: { label: "Email", type: "email", mode: "email", fill: "email" },
+  phone: { label: "Phone", type: "tel", mode: "tel", fill: "tel" },
+  date: { label: "Date", type: "date", mode: "text", fill: "bday" },
+  "zip-code": {
+    label: "Zip Code",
+    type: "text",
+    mode: "numeric",
+    fill: "postal-code",
+  },
+  number: { label: "Number", type: "number", mode: "numeric", fill: "off" },
+  search: { label: "Search", type: "search", mode: "search", fill: "off" },
+  password: {
+    label: "Password",
+    type: "password",
+    mode: "text",
+    fill: "current-password",
+  },
+  url: { label: "URL", type: "url", mode: "url", fill: "url" },
+};
+
+const kind = KINDS[variant];
+const text = label ?? kind.label;
+---
+
+{
+  render && (
+    <label class:list={["input", className]}>
+      <span class="input_label text-style-main">
+        <span>{text}</span>
+        {required && (
+          <span class="input_star" aria-hidden="true">
+            *
+          </span>
+        )}
+      </span>
+      <input
+        class="input_field text-style-main"
+        type={kind.type}
+        name={name ?? variant}
+        placeholder={placeholder ?? text}
+        inputmode={kind.mode}
+        autocomplete={kind.fill}
+        required={required || undefined}
+        value={value}
+        {...rest}
+      />
+    </label>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .input {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      width: 100%;
+    }
+
+    .input_label {
+      display: flex;
+    }
+
+    .input_star {
+      color: var(--text-2);
+    }
+
+    .input_field {
+      width: 100%;
+      padding: 0.75em 1em;
+      background: none;
+      color: inherit;
+      border: var(--border-width) solid var(--border);
+      border-radius: var(--radius-small);
+      transition: border-color var(--hover-duration) var(--hover-ease);
+      &::placeholder {
+        color: var(--text-2);
+      }
+      @media (hover: hover) {
+        &:hover:not(:disabled) {
+          border-color: var(--text);
+        }
+      }
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+    }
+  }
+</style>
