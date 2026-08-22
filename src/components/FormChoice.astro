@@ -11,6 +11,26 @@ type Base = {
   label?: string;
   /** What it submits when it is chosen. Defaults to `on`. */
   value?: string;
+};
+
+/* What the control is comes before how it is drawn: a radio is one of a group
+   where a checkbox stands on its own, which is why only a radio is made to say
+   the name it shares. */
+type Kind =
+  | {
+      /** Whether it stands on its own or belongs to a group. Defaults to `checkbox`. */
+      type?: "checkbox";
+      /** The name it submits under. Taken from the label where it is not set. */
+      name?: string;
+    }
+  | {
+      /** Whether it stands on its own or belongs to a group. Defaults to `checkbox`. */
+      type: "radio";
+      /** The name every choice in the group shares, which is what groups them. */
+      name: string;
+    };
+
+type Settings = {
   /**
    * How the control is drawn.
    *
@@ -27,29 +47,19 @@ type Base = {
 
 type Props = Omit<HTMLAttributes<"input">, "type" | "value"> &
   Base &
-  (
-    | {
-        type?: "checkbox";
-        /** The name it submits under. Taken from the label where it is not set. */
-        name?: string;
-      }
-    | {
-        type: "radio";
-        /** The name every choice in the group shares, which is what groups them. */
-        name: string;
-      }
-  );
+  Kind &
+  Settings;
 
 type AllProps = Omit<HTMLAttributes<"input">, "type" | "value"> &
-  Base & { type?: "checkbox" | "radio"; name?: string };
+  Base & { type?: "checkbox" | "radio"; name?: string } & Settings;
 
 const {
   render = true,
   label,
   value,
   type = "checkbox",
-  variant = "default",
   name,
+  variant = "default",
   checked = false,
   required = false,
   class: className,
@@ -145,8 +155,8 @@ const {
        has been crossed. It grows into place on the clock the tick fades on, so
        neither of them arrives out of nothing. */
     .form-choice_dot {
-      width: 0.6em;
-      height: 0.6em;
+      width: 1.1em;
+      height: 1.1em;
       background-color: var(--_ink);
       border-radius: var(--radius-round);
       scale: 0;
