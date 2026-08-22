@@ -218,9 +218,11 @@
      short of every field beside it without a floor to hold it. */
   min-height: calc(1lh + var(--field-pad-block) * 2 + var(--border-width) * 2);
   padding: var(--field-pad-block) var(--field-pad-inline);
-  background: none;
+  background-color: var(--background-2);
   color: inherit;
-  border: var(--border-width) solid var(--border);
+  /* Transparent rather than absent: the box keeps the size it would have with
+     a border, so nothing shifts when focus colours one in. */
+  border: var(--border-width) solid transparent;
   border-radius: var(--radius-small);
   transition:
     background-color var(--hover-duration) var(--hover-ease),
@@ -229,10 +231,10 @@
     color: var(--text-2);
   }
   @media (hover: hover) {
-    /* A pointer warms the field rather than drawing its edge. Focus owns the
+    /* A pointer lifts the field rather than drawing its edge. Focus owns the
        edge, and the two have to be told apart at a glance. */
     &:hover:not(:disabled) {
-      background-color: color-mix(in lab, var(--text) 6%, transparent);
+      background-color: var(--background-3);
     }
   }
   /* Focus is the edge going solid. The page rings every focused element from
