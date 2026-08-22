@@ -213,6 +213,10 @@
   --field-pad-block: 0.75em;
   --field-pad-inline: 1em;
   width: 100%;
+  /* A line of text, whatever the control makes of it. A date input lays its
+     own content out and pays no attention to line-height, so it comes up
+     short of every field beside it without a floor to hold it. */
+  min-height: calc(1lh + var(--field-pad-block) * 2 + var(--border-width) * 2);
   padding: var(--field-pad-block) var(--field-pad-inline);
   background: none;
   color: inherit;
