@@ -249,6 +249,21 @@ const text = label ?? wording.label;
         display: none;
       }
 
+      .form-select_field {
+        /* Once the select lays out its own content, that content needs putting
+           in the middle of the height the padding gives it. */
+        display: flex;
+        align-items: center;
+        /* The leading trim every text style lays down is meant for a run of
+           prose, and a select was never subject to it: nothing renders inside
+           a control the browser draws itself. Drawing its own content puts the
+           two trim rows inside it, where they drag the text off centre. */
+        &::before,
+        &::after {
+          content: none;
+        }
+      }
+
       .form-select_mark {
         transition: rotate var(--open-duration) var(--open-ease);
       }
@@ -261,7 +276,18 @@ const text = label ?? wording.label;
         /* Both block sides: the browser turns the list over to open upwards
            when there is no room below it, and the gap has to turn with it. */
         margin-block: var(--space-2);
-        padding: var(--space-2);
+        padding: var(--space-1);
+        /* Long enough to read a list from, short enough to stay a menu. Left
+           alone it stretches to the edge of the viewport, which for fifty
+           states means a menu the height of the window — and a menu that tall
+           will reach the nav, which nothing can paint over it. */
+        max-height: min(18rem, calc(100dvh - 6rem));
+        /* The browser would otherwise open it on whichever side has the most
+           room, which for a field in the upper half of the page means opening
+           upwards over everything above it. Under the field unless it will not
+           fit there, which capping the height above makes the usual case. */
+        position-try-order: normal;
+        overscroll-behavior: contain;
         background-color: var(--background-2);
         border: 0;
         border-radius: var(--radius-small);
@@ -290,11 +316,16 @@ const text = label ?? wording.label;
         }
       }
 
+      /* A row in a menu, not a field in a form: a step down in size and the
+         tight leading a list wants, so eight of them are in view rather than
+         four. */
       .form-select_field option {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        padding: var(--space-2) var(--space-3);
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--text-small);
+        line-height: var(--line-height-large);
         color: var(--text);
         background-color: transparent;
         border-radius: var(--radius-small);
