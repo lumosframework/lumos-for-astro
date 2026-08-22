@@ -36,7 +36,9 @@ const content = await slotContent(Astro.slots);
       class:list={["form-fieldset", variant !== "stack" && variant, className]}
       {...rest}
     >
-      <legend class="form-fieldset_legend text-style-main">{legend}</legend>
+      <legend class="form-fieldset_legend field_label text-style-main">
+        {legend}
+      </legend>
       <div class="form-fieldset_fields">
         <Fragment set:html={content} />
       </div>
@@ -55,13 +57,16 @@ const content = await slotContent(Astro.slots);
       margin: 0;
       padding: 0;
       border: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
     }
 
+    /* The legend names its fields as a label names its own, so it carries
+       the same pattern. What is left here is what a legend needs and a label
+       does not: the padding a browser gives it, and the space beneath it,
+       which the fieldset's own gap cannot supply — a legend is set outside
+       the box's flow, so no gap of its parent's ever reaches it. */
     .form-fieldset_legend {
       padding: 0;
+      margin-bottom: var(--space-2);
     }
 
     .form-fieldset_fields {
