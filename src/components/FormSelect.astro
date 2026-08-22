@@ -1,0 +1,196 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Icon from "@/components/Icon.astro";
+import arrow from "@/assets/icons/arrow.svg";
+
+type SelectOption = string | { value: string; label: string };
+
+type Base = {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** The text above the field. Defaults to the wording of the variant. */
+  label?: string;
+  /** Which option starts out chosen. */
+  value?: string;
+  /** The name it submits under. Defaults to the wording of the variant. */
+  name?: string;
+  /** The text shown before a choice is made. Defaults to the wording of the variant. */
+  placeholder?: string;
+  /** Marks the field as needed, and stars its label. */
+  required?: boolean;
+};
+
+type Props = HTMLAttributes<"select"> &
+  Base &
+  (
+    | {
+        variant?: "list";
+        /** What there is to choose from. A plain string is its own label. */
+        options: SelectOption[];
+        from?: never;
+        to?: never;
+      }
+    | {
+        variant: "month" | "day";
+        options?: never;
+        from?: never;
+        to?: never;
+      }
+    | {
+        variant: "year";
+        options?: never;
+        /** The earliest year offered. Defaults to a hundred before `to`. */
+        from?: number;
+        /** The latest year offered. Defaults to the year this was built. */
+        to?: number;
+      }
+  );
+
+type AllProps = HTMLAttributes<"select"> &
+  Base & {
+    variant?: "list" | "month" | "day" | "year";
+    options?: SelectOption[];
+    from?: number;
+    to?: number;
+  };
+
+const {
+  render = true,
+  label,
+  value,
+  variant = "list",
+  options,
+  from,
+  to,
+  name,
+  placeholder,
+  required = false,
+  class: className,
+  ...rest
+} = Astro.props as AllProps;
+
+const WORDING = {
+  list: { label: "Select", placeholder: "Select one…" },
+  month: { label: "Month", placeholder: "MM" },
+  day: { label: "Day", placeholder: "DD" },
+  year: { label: "Year", placeholder: "YYYY" },
+};
+
+const pad = (n: number) => String(n).padStart(2, "0");
+const span = (start: number, end: number) =>
+  Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+const latest = to ?? new Date().getFullYear();
+const earliest = from ?? latest - 100;
+
+const choices: SelectOption[] =
+  variant === "month"
+    ? span(1, 12).map(pad)
+    : variant === "day"
+      ? span(1, 31).map(pad)
+      : variant === "year"
+        ? span(earliest, latest).reverse().map(String)
+        : (options ?? []);
+
+const entries = choices.map((choice) =>
+  typeof choice === "string" ? { value: choice, label: choice } : choice,
+);
+
+const wording = WORDING[variant];
+const text = label ?? wording.label;
+---
+
+{
+  render && entries.length > 0 && (
+    <label class:list={["form-select", className]}>
+      <span class="form-select_label text-style-main">
+        <span>{text}</span>
+        {required && (
+          <span class="form-select_star" aria-hidden="true">
+            *
+          </span>
+        )}
+      </span>
+
+      <span class="form-select_control">
+        <select
+          class="form-select_field text-style-main"
+          name={name ?? variant}
+          required={required || undefined}
+          {...rest}
+        >
+          <option value="" disabled selected={value === undefined} hidden>
+            {placeholder ?? wording.placeholder}
+          </option>
+          {entries.map((entry) => (
+            <option value={entry.value} selected={entry.value === value}>
+              {entry.label}
+            </option>
+          ))}
+        </select>
+        <Icon class="form-select_mark" src={arrow} variant="small" />
+      </span>
+    </label>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .form-select {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      width: 100%;
+    }
+
+    .form-select_label {
+      display: flex;
+    }
+
+    .form-select_star {
+      color: var(--text-2);
+    }
+
+    .form-select_control {
+      position: relative;
+      display: block;
+    }
+
+    .form-select_field {
+      appearance: none;
+      width: 100%;
+      padding: 0.75em 3em 0.75em 1em;
+      background: none;
+      color: inherit;
+      border: var(--border-width) solid var(--border);
+      border-radius: var(--radius-small);
+      transition: border-color var(--hover-duration) var(--hover-ease);
+      /* An unmade choice reads as a placeholder, not as an answer. */
+      &:has(option[value=""]:checked) {
+        color: var(--text-2);
+      }
+      @media (hover: hover) {
+        &:hover:not(:disabled) {
+          border-color: var(--text);
+        }
+      }
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+    }
+
+    /* The mark the browser would draw is turned off above, so this one is
+       drawn instead — and kept out of the way of the pointer, which belongs
+       to the field underneath it. */
+    .form-select_mark {
+      position: absolute;
+      inset-inline-end: 1em;
+      top: 50%;
+      translate: 0 -50%;
+      rotate: 90deg;
+      pointer-events: none;
+      color: var(--text-2);
+    }
+  }
+</style>

@@ -96,17 +96,17 @@ const text = label ?? kind.label;
 
 {
   render && (
-    <label class:list={["input", className]}>
-      <span class="input_label text-style-main">
+    <label class:list={["form-input", className]}>
+      <span class="form-input_label text-style-main">
         <span>{text}</span>
         {required && (
-          <span class="input_star" aria-hidden="true">
+          <span class="form-input_star" aria-hidden="true">
             *
           </span>
         )}
       </span>
       <input
-        class="input_field text-style-main"
+        class="form-input_field text-style-main"
         type={kind.type}
         name={name ?? variant}
         placeholder={placeholder ?? text}
@@ -122,22 +122,22 @@ const text = label ?? kind.label;
 
 <style is:global>
   @layer components {
-    .input {
+    .form-input {
       display: flex;
       flex-direction: column;
       gap: var(--space-2);
       width: 100%;
     }
 
-    .input_label {
+    .form-input_label {
       display: flex;
     }
 
-    .input_star {
+    .form-input_star {
       color: var(--text-2);
     }
 
-    .input_field {
+    .form-input_field {
       width: 100%;
       padding: 0.75em 1em;
       background: none;
