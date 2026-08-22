@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { slug } from "@/utils/text.ts";
 
 type InputVariant =
   | "text"
@@ -26,7 +27,7 @@ interface Props extends Omit<HTMLAttributes<"input">, "type"> {
    * and wording together, so a field only has to say which one it is.
    */
   variant?: InputVariant;
-  /** The name it submits under. Defaults to the wording of the variant. */
+  /** The name it submits under. Taken from the label where it is not set. */
   name?: string;
   /** The text shown in an empty field. Defaults to the wording of the variant. */
   placeholder?: string;
@@ -116,7 +117,7 @@ const text = label ?? kind.label;
       <input
         class="field_control text-style-main"
         type={kind.type}
-        name={name ?? variant}
+        name={name ?? slug(text)}
         placeholder={placeholder ?? text}
         inputmode={kind.mode}
         autocomplete={kind.fill}

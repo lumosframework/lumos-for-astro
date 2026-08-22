@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { slug } from "@/utils/text.ts";
 import Icon from "@/components/Icon.astro";
 import arrow from "@/assets/icons/arrow.svg";
 
@@ -12,7 +13,7 @@ type Base = {
   label?: string;
   /** Which option starts out chosen. */
   value?: string;
-  /** The name it submits under. Defaults to the wording of the variant. */
+  /** The name it submits under. Taken from the label where it is not set. */
   name?: string;
   /** The text shown before a choice is made. Defaults to the wording of the variant. */
   placeholder?: string;
@@ -123,7 +124,7 @@ const text = label ?? wording.label;
       <span class="form-select_control">
         <select
           class="field_control form-select_field text-style-main"
-          name={name ?? variant}
+          name={name ?? slug(text)}
           required={required || undefined}
           {...rest}
         >
