@@ -103,29 +103,26 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
 
     input.addEventListener("input", update);
     update();
+    range.classList.add("is-drawn");
   }
 </script>
 
-<noscript>
-  <style>
-    /* Nothing is moving the handle, so the browser's own is shown and the
-       drawn one taken away. */
-    .form-range_input {
-      --_handle-face: currentColor;
-    }
-    .form-range_fill,
-    .form-range_handle {
-      display: none;
-    }
-  </style>
-</noscript>
-
 <style is:global>
   @layer components {
+    /* Until a script is placing them, the browser's own handle is what
+       moves, and the drawn parts are not there to disagree with it. */
     .form-range {
       --_handle: 1.75rem;
-      --_handle-face: transparent;
+      --_handle-face: currentColor;
       --_rail: 0.25rem;
+    }
+
+    .form-range.is-drawn {
+      --_handle-face: transparent;
+    }
+
+    .form-range:not(.is-drawn) :is(.form-range_fill, .form-range_handle) {
+      display: none;
     }
 
     .form-range_control {

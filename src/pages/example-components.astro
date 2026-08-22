@@ -15,6 +15,9 @@ import Form from "@/components/Form.astro";
 import FormFieldset from "@/components/FormFieldset.astro";
 import FormInput from "@/components/FormInput.astro";
 import FormSelect from "@/components/FormSelect.astro";
+import FormChoice from "@/components/FormChoice.astro";
+import FormRange from "@/components/FormRange.astro";
+import FormTextarea from "@/components/FormTextarea.astro";
 import Tabs from "@/components/Tabs.astro";
 import TabLink from "@/components/TabLink.astro";
 import Dropdown from "@/components/Dropdown.astro";
@@ -25,6 +28,8 @@ import Accordion from "@/components/Accordion.astro";
 import AccordionItem from "@/components/AccordionItem.astro";
 
 const heading = "We build things that help people work smarter";
+const jobs = ["Designer", "Developer", "Producer", "Something else"];
+
 const states = [
   "Alabama",
   "Alaska",
@@ -259,37 +264,59 @@ const lorem =
   <Section paddingTop="small" paddingBottom="small">
     <ContentWrapper>
       <Eyebrow>form</Eyebrow>
-      <Heading tag="h2" variant="h4">Contact Details</Heading>
-      <Form name="contact">
-        <Grid medium={2}>
-          <FormInput variant="first-name" required />
-          <FormInput variant="last-name" required />
-          <FormInput
-            variant="email"
-            label="Email Address"
-            placeholder="email@company.com"
-            required
-          />
-          <Grid medium={2}>
-            <FormSelect label="State" name="state" options={states} />
-            <FormInput variant="zip-code" placeholder="" />
-          </Grid>
-          <FormFieldset legend="Date of Birth" variant="thirds">
-            <FormSelect variant="month" labelHidden={true} />
-            <FormSelect variant="day" labelHidden={true} />
-            <FormSelect variant="year" from={1920} labelHidden={true} />
-          </FormFieldset>
-          <FormInput
-            variant="phone"
-            label="Phone Number"
-            placeholder="000-000-0000"
-          />
-        </Grid>
-        <ButtonWrapper marginTop="4">
-          <Button type="submit">Send enquiry</Button>
-        </ButtonWrapper>
-      </Form>
     </ContentWrapper>
+    <Form name="contact">
+      <FormFieldset legend="Contact Details" variant="columns">
+        <FormInput variant="first-name" required />
+        <FormInput variant="last-name" required />
+        <FormInput
+          variant="email"
+          label="Email Address"
+          placeholder="email@company.com"
+          required
+        />
+        <Grid medium={2}>
+          <FormSelect label="State" options={states} />
+          <FormInput variant="zip-code" placeholder="" />
+        </Grid>
+        <FormFieldset legend="Date of Birth" variant="thirds">
+          <FormSelect variant="month" labelHidden={true} />
+          <FormSelect variant="day" labelHidden={true} />
+          <FormSelect variant="year" from={1920} labelHidden={true} />
+        </FormFieldset>
+        <FormInput
+          variant="phone"
+          label="Phone Number"
+          placeholder="000-000-0000"
+        />
+      </FormFieldset>
+
+      <FormFieldset legend="Legend" variant="columns">
+        <FormFieldset legend="Favorite Color" variant="inline">
+          <FormChoice type="radio" name="colour" label="Red" value="red" />
+          <FormChoice type="radio" name="colour" label="Green" value="green" />
+          <FormChoice
+            type="radio"
+            name="colour"
+            label="Blue"
+            value="blue"
+            checked
+          />
+        </FormFieldset>
+        <FormFieldset legend="Terms & Conditions" variant="inline">
+          <FormChoice label="I agree to the terms" name="terms" checked={true} />
+          <FormChoice label="I agree to the terms" name="updates" />
+        </FormFieldset>
+        <FormSelect label="Job Title" options={jobs} />
+        <FormInput variant="date" label="Completion Date" />
+        <FormRange label="Label" unit="%" />
+        <FormTextarea label="Message" placeholder="Your message" required />
+      </FormFieldset>
+
+      <ButtonWrapper marginTop="4">
+        <Button type="submit">Submit</Button>
+      </ButtonWrapper>
+    </Form>
   </Section>
   <!-- buttons -->
   <Section paddingTop="small" paddingBottom="small">
@@ -592,8 +619,8 @@ const lorem =
     <ContentWrapper variant="sticky-content">
       <Eyebrow>accordion</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
-      <Accordion slot="column2">
-        <AccordionItem heading="This is some text inside of a div block." open>
+      <Accordion slot="column2" openFirst={true}>
+        <AccordionItem heading="This is some text inside of a div block.">
           <Paragraph>{lorem}</Paragraph>
         </AccordionItem>
         <AccordionItem heading="This is some text inside of a div block.">
