@@ -28,8 +28,6 @@ import Accordion from "@/components/Accordion.astro";
 import AccordionItem from "@/components/AccordionItem.astro";
 
 const heading = "We build things that help people work smarter";
-const jobs = ["Designer", "Developer", "Producer", "Something else"];
-
 const text =
   "We build things that help people work smarter, move faster, and grow further.";
 const lorem =
@@ -270,7 +268,11 @@ const lorem =
           <FormSelect variant="state" />
           <FormInput variant="zip-code" placeholder="" />
         </Grid>
-        <FormFieldset legend="Date of Birth" variant="thirds">
+        <FormFieldset
+          legend="Date of Birth"
+          variant="thirds"
+          legendStyle="label"
+        >
           <FormSelect variant="month" labelHidden={true} />
           <FormSelect variant="day" labelHidden={true} />
           <FormSelect variant="year" from={1920} labelHidden={true} />
@@ -283,18 +285,26 @@ const lorem =
       </FormFieldset>
 
       <FormFieldset legend="Legend" variant="columns">
-        <FormFieldset legend="Favorite Color" variant="inline">
-          <FormChoice type="radio" name="colour" label="Red" value="red" />
-          <FormChoice type="radio" name="colour" label="Green" value="green" />
+        <FormFieldset
+          legend="Favorite Color"
+          variant="inline"
+          legendStyle="label"
+        >
           <FormChoice
             type="radio"
             name="colour"
-            label="Blue"
-            value="blue"
-            checked
+            label="Red"
+            value="red"
+            checked={true}
           />
+          <FormChoice type="radio" name="colour" label="Green" value="green" />
+          <FormChoice type="radio" name="color" label="Blue" value="blue" />
         </FormFieldset>
-        <FormFieldset legend="Terms & Conditions" variant="inline">
+        <FormFieldset
+          legend="Terms & Conditions"
+          variant="inline"
+          legendStyle="label"
+        >
           <FormChoice
             label="I agree to the terms"
             name="terms"
@@ -302,7 +312,10 @@ const lorem =
           />
           <FormChoice label="I agree to the terms" name="updates" />
         </FormFieldset>
-        <FormSelect label="Job Title" options={jobs} />
+        <FormSelect
+          label="Job Title"
+          options={["Designer", "Developer", "Producer", "Something else"]}
+        />
         <FormInput variant="date" label="Completion Date" />
         <FormRange label="Label" unit="%" />
         <FormTextarea label="Message" placeholder="Your message" required />

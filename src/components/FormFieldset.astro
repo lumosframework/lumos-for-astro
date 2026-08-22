@@ -17,15 +17,30 @@ interface Props extends HTMLAttributes<"fieldset"> {
    * - `inline` — in a row that wraps, for a run of choices
    */
   variant?: "stack" | "columns" | "thirds" | "inline";
+  /**
+   * How the legend is set.
+   *
+   * - `heading` — larger and heavier than a field's label (default)
+   * - `label` — the weight of a field's label, for a group inside a group
+   * - `hidden` — read out but not shown, where the fields say it themselves
+   */
+  legendStyle?: "heading" | "label" | "hidden";
 }
 
 const {
   render = true,
   legend,
   variant = "stack",
+  legendStyle = "heading",
   class: className,
   ...rest
 } = Astro.props;
+
+const LEGEND_STYLES: Record<NonNullable<Props["legendStyle"]>, string> = {
+  heading: "text-style-h5",
+  label: "field_label text-style-main",
+  hidden: "visually-hidden",
+};
 
 const content = await slotContent(Astro.slots);
 ---
@@ -36,7 +51,13 @@ const content = await slotContent(Astro.slots);
       class:list={["form-fieldset", variant !== "stack" && variant, className]}
       {...rest}
     >
-      <legend class="form-fieldset_legend field_label text-style-main">
+      <legend
+        class:list={[
+          "form-fieldset_legend",
+          `form-fieldset_legend-${legendStyle}`,
+          LEGEND_STYLES[legendStyle],
+        ]}
+      >
         {legend}
       </legend>
       <div class="form-fieldset_fields">
@@ -59,14 +80,21 @@ const content = await slotContent(Astro.slots);
       border: 0;
     }
 
-    /* The legend names its fields as a label names its own, so it carries
-       the same pattern. What is left here is what a legend needs and a label
-       does not: the padding a browser gives it, and the space beneath it,
-       which the fieldset's own gap cannot supply — a legend is set outside
-       the box's flow, so no gap of its parent's ever reaches it. */
+    /* Whatever it is set in, a legend needs two things a heading or a label
+       set elsewhere does not: the padding a browser gives it taken off, and
+       the space beneath it put on by hand — a legend is set outside the box's
+       flow, so no gap of its parent's ever reaches it. A legend hidden away
+       drops both, since the utility that hides it is laid down later. */
     .form-fieldset_legend {
       padding: 0;
       margin-bottom: var(--space-2);
+    }
+
+    /* A legend set as a heading is a size above the labels under it, and asks
+       for the room that size asks for. Set as a label it is one of them, and
+       sits as close as they do. */
+    .form-fieldset_legend-heading {
+      margin-bottom: var(--space-3);
     }
 
     .form-fieldset_fields {
