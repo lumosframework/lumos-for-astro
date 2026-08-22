@@ -30,15 +30,6 @@ import AccordionItem from "@/components/AccordionItem.astro";
 const heading = "We build things that help people work smarter";
 const jobs = ["Designer", "Developer", "Producer", "Something else"];
 
-const states = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-];
-
 const text =
   "We build things that help people work smarter, move faster, and grow further.";
 const lorem =
@@ -276,7 +267,7 @@ const lorem =
           required
         />
         <Grid medium={2}>
-          <FormSelect label="State" options={states} />
+          <FormSelect variant="state" />
           <FormInput variant="zip-code" placeholder="" />
         </Grid>
         <FormFieldset legend="Date of Birth" variant="thirds">
@@ -304,7 +295,11 @@ const lorem =
           />
         </FormFieldset>
         <FormFieldset legend="Terms & Conditions" variant="inline">
-          <FormChoice label="I agree to the terms" name="terms" checked={true} />
+          <FormChoice
+            label="I agree to the terms"
+            name="terms"
+            checked={true}
+          />
           <FormChoice label="I agree to the terms" name="updates" />
         </FormFieldset>
         <FormSelect label="Job Title" options={jobs} />

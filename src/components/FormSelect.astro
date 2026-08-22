@@ -34,7 +34,7 @@ type Props = HTMLAttributes<"select"> &
         to?: never;
       }
     | {
-        variant: "month" | "day";
+        variant: "month" | "day" | "state";
         options?: never;
         from?: never;
         to?: never;
@@ -51,7 +51,7 @@ type Props = HTMLAttributes<"select"> &
 
 type AllProps = HTMLAttributes<"select"> &
   Base & {
-    variant?: "list" | "month" | "day" | "year";
+    variant?: "list" | "month" | "day" | "year" | "state";
     options?: SelectOption[];
     from?: number;
     to?: number;
@@ -77,8 +77,66 @@ const WORDING = {
   list: { label: "Select", placeholder: "Select one…" },
   month: { label: "Month", placeholder: "MM" },
   day: { label: "Day", placeholder: "DD" },
+  state: { label: "State", placeholder: "Select one…" },
   year: { label: "Year", placeholder: "YYYY" },
 };
+
+/* The fifty states, by the codes a form is filled in with and the names it is
+   read in. Neither the District of Columbia nor the territories are here: a
+   field that asks for a state is not always the field that should offer them,
+   and a page that wants them can pass its own list. */
+const STATES: SelectOption[] = [
+  { value: "AL", label: "Alabama" },
+  { value: "AK", label: "Alaska" },
+  { value: "AZ", label: "Arizona" },
+  { value: "AR", label: "Arkansas" },
+  { value: "CA", label: "California" },
+  { value: "CO", label: "Colorado" },
+  { value: "CT", label: "Connecticut" },
+  { value: "DE", label: "Delaware" },
+  { value: "FL", label: "Florida" },
+  { value: "GA", label: "Georgia" },
+  { value: "HI", label: "Hawaii" },
+  { value: "ID", label: "Idaho" },
+  { value: "IL", label: "Illinois" },
+  { value: "IN", label: "Indiana" },
+  { value: "IA", label: "Iowa" },
+  { value: "KS", label: "Kansas" },
+  { value: "KY", label: "Kentucky" },
+  { value: "LA", label: "Louisiana" },
+  { value: "ME", label: "Maine" },
+  { value: "MD", label: "Maryland" },
+  { value: "MA", label: "Massachusetts" },
+  { value: "MI", label: "Michigan" },
+  { value: "MN", label: "Minnesota" },
+  { value: "MS", label: "Mississippi" },
+  { value: "MO", label: "Missouri" },
+  { value: "MT", label: "Montana" },
+  { value: "NE", label: "Nebraska" },
+  { value: "NV", label: "Nevada" },
+  { value: "NH", label: "New Hampshire" },
+  { value: "NJ", label: "New Jersey" },
+  { value: "NM", label: "New Mexico" },
+  { value: "NY", label: "New York" },
+  { value: "NC", label: "North Carolina" },
+  { value: "ND", label: "North Dakota" },
+  { value: "OH", label: "Ohio" },
+  { value: "OK", label: "Oklahoma" },
+  { value: "OR", label: "Oregon" },
+  { value: "PA", label: "Pennsylvania" },
+  { value: "RI", label: "Rhode Island" },
+  { value: "SC", label: "South Carolina" },
+  { value: "SD", label: "South Dakota" },
+  { value: "TN", label: "Tennessee" },
+  { value: "TX", label: "Texas" },
+  { value: "UT", label: "Utah" },
+  { value: "VT", label: "Vermont" },
+  { value: "VA", label: "Virginia" },
+  { value: "WA", label: "Washington" },
+  { value: "WV", label: "West Virginia" },
+  { value: "WI", label: "Wisconsin" },
+  { value: "WY", label: "Wyoming" },
+];
 
 const pad = (n: number) => String(n).padStart(2, "0");
 const span = (start: number, end: number) =>
@@ -88,13 +146,15 @@ const latest = to ?? new Date().getFullYear();
 const earliest = from ?? latest - 100;
 
 const choices: SelectOption[] =
-  variant === "month"
-    ? span(1, 12).map(pad)
-    : variant === "day"
-      ? span(1, 31).map(pad)
-      : variant === "year"
-        ? span(earliest, latest).reverse().map(String)
-        : (options ?? []);
+  variant === "state"
+    ? STATES
+    : variant === "month"
+      ? span(1, 12).map(pad)
+      : variant === "day"
+        ? span(1, 31).map(pad)
+        : variant === "year"
+          ? span(earliest, latest).reverse().map(String)
+          : (options ?? []);
 
 const entries = choices.map((choice) =>
   typeof choice === "string" ? { value: choice, label: choice } : choice,
