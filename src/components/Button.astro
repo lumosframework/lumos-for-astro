@@ -192,27 +192,35 @@ const named = {
         --button-text-hover: var(--link-text-hover);
         --button-border-hover: var(--link-border);
 
-        position: relative;
         padding: 0.4em 0;
         border: 0;
         border-bottom: var(--border-width) solid var(--button-border);
         border-radius: 0;
-        &::after {
-          content: "";
-          position: absolute;
-          inset-inline: 0;
-          bottom: calc(var(--border-width) * -1);
-          height: var(--border-width);
-          background-color: var(--link-border-hover);
-          transform: scaleX(0);
-          transform-origin: right;
-          transition: transform calc(var(--hover-duration) * 2)
-            var(--hover-ease);
-        }
+        /*
+         * The sliding line is a background of its own, sitting over the resting
+         * border. It grows from the left on hover, then collapses to the right
+         * on hover out — the side it is anchored to switches at once while the
+         * width is what travels — which reads as one line moving left to right
+         * in both directions. Painting it rather than positioning a pseudo
+         * element leaves the button unpositioned and its ::after free, so a
+         * card can stretch that pseudo over itself and take the click.
+         */
+        background-image: linear-gradient(
+          var(--link-border-hover),
+          var(--link-border-hover)
+        );
+        background-repeat: no-repeat;
+        background-origin: border-box;
+        background-position: 100% 100%;
+        background-size: 0 var(--border-width);
+        transition:
+          background-size calc(var(--hover-duration) * 2) var(--hover-ease),
+          color var(--hover-duration) var(--hover-ease),
+          border-color var(--hover-duration) var(--hover-ease);
         @media (hover: hover) {
-          &:hover:not(:disabled)::after {
-            transform: scaleX(1);
-            transform-origin: left;
+          &:hover:not(:disabled) {
+            background-position: 0 100%;
+            background-size: 100% var(--border-width);
           }
         }
       }

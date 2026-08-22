@@ -16,13 +16,16 @@ type ImageSource = ImageMetadata | string;
 type Base = HTMLAttributes<"div"> & {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
-  /** Small line of text above the heading. */
+  /** Small line of text above the heading. Inline markup is rendered. */
   eyebrow?: string;
-  /** The card's title. */
+  /** The card's title. Inline markup is rendered. */
   heading?: string;
   /** Heading level, for the page outline. Every card heading is the same size. */
   headingTag?: HeadingTag;
-  /** Body copy under the heading. */
+  /**
+   * Body copy under the heading. Inline markup is rendered, so it can carry a
+   * link — one inside a clickable card stays clickable on its own.
+   */
   text?: string;
   /** Label of the closing button. Nothing renders without one. */
   buttonLabel?: string;
@@ -135,11 +138,15 @@ if (import.meta.env.DEV && render) {
       )}
       {hasContent && (
         <div class="card_content margin-trim">
-          <Eyebrow>{eyebrow}</Eyebrow>
+          <Eyebrow>
+            <Fragment set:html={eyebrow} />
+          </Eyebrow>
           <Heading tag={headingTag} variant="h5">
-            {heading}
+            <Fragment set:html={heading} />
           </Heading>
-          <Paragraph>{text}</Paragraph>
+          <Paragraph>
+            <Fragment set:html={text} />
+          </Paragraph>
           <ButtonWrapper>
             {buttonHref ? (
               <Button
@@ -212,14 +219,45 @@ if (import.meta.env.DEV && render) {
       max-width: 100%;
       padding: var(--_padding);
 
+      /* Raised without being positioned — a flex item can do that — so the
+         card stays the containing block for the click overlay below. */
       .cover > & {
-        position: relative;
         z-index: 1;
       }
 
       .stacked > & {
         padding-inline: 0;
         padding-top: 0;
+      }
+    }
+
+    /* A card that closes with a button is clickable across its whole face: the
+       button's ::after stretches over the card, so the card is the hit area
+       while the anchor stays the only link in the markup. */
+    .card:has(.button) {
+      .button::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+      }
+
+      /* Links written into the copy sit above that overlay, keeping a click
+         target of their own. */
+      .card_content a:not(.button) {
+        position: relative;
+        z-index: 1;
+      }
+
+      .image {
+        transition: scale calc(var(--hover-duration) * 2) var(--hover-ease);
+      }
+
+      /* Hovering anywhere on the card is hovering the overlay, so the button
+         reads as hovered too and the image lifts with it. */
+      @media (hover: hover) {
+        &:hover .image {
+          scale: 1.04;
+        }
       }
     }
   }
