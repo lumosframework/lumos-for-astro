@@ -193,3 +193,40 @@
   justify-content: inherit;
   text-align: inherit;
 }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.field_label {
+  display: flex;
+}
+
+.field_star {
+  color: var(--text-2);
+}
+
+.field_control {
+  width: 100%;
+  padding: 0.75em 1em;
+  background: none;
+  color: inherit;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-small);
+  transition: border-color var(--hover-duration) var(--hover-ease);
+  &::placeholder {
+    color: var(--text-2);
+  }
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      border-color: var(--text);
+    }
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

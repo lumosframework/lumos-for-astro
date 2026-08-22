@@ -102,11 +102,11 @@ const text = label ?? wording.label;
 
 {
   render && entries.length > 0 && (
-    <label class:list={["form-select", className]}>
-      <span class="form-select_label text-style-main">
+    <label class:list={["field", "form-select", className]}>
+      <span class="field_label text-style-main">
         <span>{text}</span>
         {required && (
-          <span class="form-select_star" aria-hidden="true">
+          <span class="field_star" aria-hidden="true">
             *
           </span>
         )}
@@ -114,7 +114,7 @@ const text = label ?? wording.label;
 
       <span class="form-select_control">
         <select
-          class="form-select_field text-style-main"
+          class="field_control form-select_field text-style-main"
           name={name ?? variant}
           required={required || undefined}
           {...rest}
@@ -136,21 +136,6 @@ const text = label ?? wording.label;
 
 <style is:global>
   @layer components {
-    .form-select {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      width: 100%;
-    }
-
-    .form-select_label {
-      display: flex;
-    }
-
-    .form-select_star {
-      color: var(--text-2);
-    }
-
     .form-select_control {
       position: relative;
       display: block;
@@ -158,25 +143,10 @@ const text = label ?? wording.label;
 
     .form-select_field {
       appearance: none;
-      width: 100%;
-      padding: 0.75em 3em 0.75em 1em;
-      background: none;
-      color: inherit;
-      border: var(--border-width) solid var(--border);
-      border-radius: var(--radius-small);
-      transition: border-color var(--hover-duration) var(--hover-ease);
+      padding-inline-end: 3em;
       /* An unmade choice reads as a placeholder, not as an answer. */
       &:has(option[value=""]:checked) {
         color: var(--text-2);
-      }
-      @media (hover: hover) {
-        &:hover:not(:disabled) {
-          border-color: var(--text);
-        }
-      }
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
       }
     }
 

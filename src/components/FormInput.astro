@@ -96,17 +96,17 @@ const text = label ?? kind.label;
 
 {
   render && (
-    <label class:list={["form-input", className]}>
-      <span class="form-input_label text-style-main">
+    <label class:list={["field", "form-input", className]}>
+      <span class="field_label text-style-main">
         <span>{text}</span>
         {required && (
-          <span class="form-input_star" aria-hidden="true">
+          <span class="field_star" aria-hidden="true">
             *
           </span>
         )}
       </span>
       <input
-        class="form-input_field text-style-main"
+        class="field_control text-style-main"
         type={kind.type}
         name={name ?? variant}
         placeholder={placeholder ?? text}
@@ -119,44 +119,3 @@ const text = label ?? kind.label;
     </label>
   )
 }
-
-<style is:global>
-  @layer components {
-    .form-input {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      width: 100%;
-    }
-
-    .form-input_label {
-      display: flex;
-    }
-
-    .form-input_star {
-      color: var(--text-2);
-    }
-
-    .form-input_field {
-      width: 100%;
-      padding: 0.75em 1em;
-      background: none;
-      color: inherit;
-      border: var(--border-width) solid var(--border);
-      border-radius: var(--radius-small);
-      transition: border-color var(--hover-duration) var(--hover-ease);
-      &::placeholder {
-        color: var(--text-2);
-      }
-      @media (hover: hover) {
-        &:hover:not(:disabled) {
-          border-color: var(--text);
-        }
-      }
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
-    }
-  }
-</style>
