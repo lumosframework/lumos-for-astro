@@ -64,11 +64,11 @@ type Kind =
       direction?: "forward" | "back";
     };
 
-type Props = Tag &
-  Kind & {
-    /** Set to `false` to skip rendering this component and its children. */
-    render?: boolean;
-  };
+type Props = {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+} & Tag &
+  Kind;
 
 type AllProps = HTMLAttributes<"button"> &
   Omit<HTMLAttributes<"a">, "type"> & {
