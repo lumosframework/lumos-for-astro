@@ -170,7 +170,7 @@ const named = {
         color var(--hover-duration) var(--hover-ease),
         border-color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
-        &:hover {
+        &:hover:not(:disabled) {
           background-color: var(--button-background-hover);
           color: var(--button-text-hover);
           border-color: var(--button-border-hover);
@@ -210,7 +210,7 @@ const named = {
             var(--hover-ease);
         }
         @media (hover: hover) {
-          &:hover::after {
+          &:hover:not(:disabled)::after {
             transform: scaleX(1);
             transform-origin: left;
           }
