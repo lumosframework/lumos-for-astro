@@ -222,14 +222,26 @@
   color: inherit;
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-small);
-  transition: border-color var(--hover-duration) var(--hover-ease);
+  transition:
+    background-color var(--hover-duration) var(--hover-ease),
+    border-color var(--hover-duration) var(--hover-ease);
   &::placeholder {
     color: var(--text-2);
   }
   @media (hover: hover) {
+    /* A pointer warms the field rather than drawing its edge. Focus owns the
+       edge, and the two have to be told apart at a glance. */
     &:hover:not(:disabled) {
-      border-color: var(--text);
+      background-color: color-mix(in lab, var(--text) 6%, transparent);
     }
+  }
+  /* Focus is the edge going solid. The page rings every focused element from
+     the outside, which around a field that already has a border reads as two
+     lines; pulling the ring in by its own width lands it flush over the
+     border, so one edge thickens and darkens instead of a second appearing. */
+  &:focus-visible {
+    border-color: var(--text);
+    outline-offset: var(--focus-offset-inner);
   }
   &:disabled {
     cursor: not-allowed;
