@@ -1,0 +1,93 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { slotContent } from "@/utils/slots.ts";
+
+interface Props extends HTMLAttributes<"fieldset"> {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** What the fields inside have in common, named above them. */
+  legend?: string;
+  /**
+   * How the fields inside are set out. Each column arrangement stacks below
+   * the width `Grid` calls medium.
+   *
+   * - `stack` — one under another (default)
+   * - `columns` — two abreast
+   * - `thirds` — three abreast
+   * - `inline` — in a row that wraps, for a run of choices
+   */
+  variant?: "stack" | "columns" | "thirds" | "inline";
+}
+
+const {
+  render = true,
+  legend,
+  variant = "stack",
+  class: className,
+  ...rest
+} = Astro.props;
+
+const content = await slotContent(Astro.slots);
+---
+
+{
+  render && legend && content && (
+    <fieldset
+      class:list={["form-fieldset", variant !== "stack" && variant, className]}
+      {...rest}
+    >
+      <legend class="form-fieldset_legend text-style-main">{legend}</legend>
+      <div class="form-fieldset_fields">
+        <Fragment set:html={content} />
+      </div>
+    </fieldset>
+  )
+}
+
+<style is:global>
+  @layer components {
+    /* A fieldset carries a border, padding and a min-width of its content,
+       none of which is wanted: the last of the three stops anything inside it
+       from being narrower than its widest field. */
+    .form-fieldset {
+      width: 100%;
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .form-fieldset_legend {
+      padding: 0;
+    }
+
+    .form-fieldset_fields {
+      display: grid;
+      gap: var(--space-5);
+
+      .form-fieldset.inline & {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3) var(--space-5);
+        /* A field fills the width it is given, which in a row means a row of
+           one. Here they take the width they need and wrap when they run
+           out, which is what a run of choices wants. */
+        > * {
+          width: auto;
+        }
+      }
+
+      @media (width >= 48rem) {
+        .form-fieldset.columns & {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .form-fieldset.thirds & {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+    }
+  }
+</style>

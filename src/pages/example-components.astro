@@ -12,6 +12,7 @@ import lumos_background from "@/assets/lumos-background.svg";
 import Grid from "@/components/Grid.astro";
 import Card from "@/components/Card.astro";
 import Form from "@/components/Form.astro";
+import FormFieldset from "@/components/FormFieldset.astro";
 import FormInput from "@/components/FormInput.astro";
 import FormSelect from "@/components/FormSelect.astro";
 import Tabs from "@/components/Tabs.astro";
@@ -273,14 +274,11 @@ const lorem =
             <FormSelect label="State" name="state" options={states} />
             <FormInput variant="zip-code" placeholder="" />
           </Grid>
-          <div class="field">
-            <span class="field_label text-style-main">Date of Birth</span>
-            <Grid medium={3}>
-              <FormSelect variant="month" labelHidden={true} />
-              <FormSelect variant="day" labelHidden={true} />
-              <FormSelect variant="year" from={1920} labelHidden={true} />
-            </Grid>
-          </div>
+          <FormFieldset legend="Date of Birth" variant="thirds">
+            <FormSelect variant="month" labelHidden={true} />
+            <FormSelect variant="day" labelHidden={true} />
+            <FormSelect variant="year" from={1920} labelHidden={true} />
+          </FormFieldset>
           <FormInput
             variant="phone"
             label="Phone Number"
