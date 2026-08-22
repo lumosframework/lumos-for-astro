@@ -1,0 +1,228 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Icon from "@/components/Icon.astro";
+import check from "@/assets/icons/check.svg";
+import { slug } from "@/utils/text.ts";
+
+type Base = {
+  /** Set to `false` to skip rendering this component and its children. */
+  render?: boolean;
+  /** The text beside the control, and what it is called. */
+  label?: string;
+  /** What it submits when it is chosen. Defaults to `on`. */
+  value?: string;
+  /**
+   * How the control is drawn.
+   *
+   * - `default` — a box or a circle beside the text
+   * - `toggle` — a switch that slides
+   * - `button` — the whole of it reads as one button, and fills when chosen
+   */
+  variant?: "default" | "toggle" | "button";
+  /** Whether it starts out chosen. */
+  checked?: boolean;
+  /** Marks the choice as needed. */
+  required?: boolean;
+};
+
+type Props = Omit<HTMLAttributes<"input">, "type" | "value"> &
+  Base &
+  (
+    | {
+        type?: "checkbox";
+        /** The name it submits under. Taken from the label where it is not set. */
+        name?: string;
+      }
+    | {
+        type: "radio";
+        /** The name every choice in the group shares, which is what groups them. */
+        name: string;
+      }
+  );
+
+type AllProps = Omit<HTMLAttributes<"input">, "type" | "value"> &
+  Base & { type?: "checkbox" | "radio"; name?: string };
+
+const {
+  render = true,
+  label,
+  value,
+  type = "checkbox",
+  variant = "default",
+  name,
+  checked = false,
+  required = false,
+  class: className,
+  ...rest
+} = Astro.props as AllProps;
+---
+
+{
+  render && label && (
+    <label
+      class:list={[
+        "form-choice",
+        variant !== "default" && `form-choice-${variant}`,
+        className,
+      ]}
+    >
+      <input
+        class="form-choice_input"
+        type={type}
+        name={name ?? slug(label)}
+        value={value}
+        checked={checked || undefined}
+        required={required || undefined}
+        {...rest}
+      />
+      <span class="form-choice_mark" aria-hidden="true">
+        <Icon class="form-choice_tick" src={check} variant="small" />
+      </span>
+      <span class="form-choice_text text-style-main">{label}</span>
+    </label>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .form-choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75em;
+      cursor: pointer;
+    }
+
+    /* Kept where it is rather than hidden away, so it still takes the pointer
+       and the caret. What is drawn instead is the mark beside it. */
+    .form-choice_input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .form-choice_mark {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 1.5em;
+      height: 1.5em;
+      border: var(--border-width) solid var(--border);
+      border-radius: var(--radius-small);
+      transition:
+        background-color var(--hover-duration) var(--hover-ease),
+        border-color var(--hover-duration) var(--hover-ease);
+    }
+
+    .form-choice:has(.form-choice_input[type="radio"]) .form-choice_mark {
+      border-radius: var(--radius-round);
+    }
+
+    .form-choice_tick {
+      opacity: 0;
+      color: var(--background);
+      transition: opacity var(--hover-duration) var(--hover-ease);
+    }
+
+    .form-choice:has(:checked) .form-choice_mark {
+      background-color: var(--text);
+      border-color: var(--text);
+    }
+
+    .form-choice:has(:checked) .form-choice_tick {
+      opacity: 1;
+    }
+
+    /* A radio fills rather than ticks: a dot cannot be mistaken for a box
+       that has been crossed. */
+    .form-choice:has(.form-choice_input[type="radio"]) .form-choice_tick {
+      display: none;
+    }
+
+    .form-choice:has(.form-choice_input[type="radio"]) .form-choice_mark {
+      background-color: transparent;
+      border-color: var(--border);
+    }
+
+    .form-choice:has(.form-choice_input[type="radio"]:checked)
+      .form-choice_mark {
+      border-color: var(--text);
+      &::after {
+        content: "";
+        width: 0.6em;
+        height: 0.6em;
+        border-radius: var(--radius-round);
+        background-color: var(--text);
+      }
+    }
+
+    @media (hover: hover) {
+      .form-choice:hover .form-choice_mark {
+        border-color: var(--text);
+      }
+    }
+
+    .form-choice_input:focus-visible ~ .form-choice_mark {
+      outline: var(--focus-width) solid var(--text);
+      outline-offset: var(--focus-offset);
+    }
+
+    /* Toggle: the mark is the track, and the tick gives way to a knob that
+       travels the length of it. */
+    .form-choice-toggle {
+      & .form-choice_mark {
+        width: 2.75em;
+        height: 1.5em;
+        border-radius: var(--radius-round);
+        place-items: center start;
+        padding: 0.15em;
+      }
+      & .form-choice_tick {
+        display: none;
+      }
+      & .form-choice_mark::after {
+        content: "";
+        width: 1.1em;
+        height: 1.1em;
+        border-radius: var(--radius-round);
+        background-color: var(--text);
+        transition: translate var(--hover-duration) var(--hover-ease);
+      }
+      &:has(:checked) .form-choice_mark::after {
+        translate: 1.2em 0;
+        background-color: var(--background);
+      }
+    }
+
+    /* Button: the whole of it is the control, so the box it sits in is what
+       fills. */
+    .form-choice-button {
+      padding: 0.75em 1.5em;
+      border: var(--border-width) solid var(--border);
+      border-radius: var(--radius-round);
+      transition:
+        background-color var(--hover-duration) var(--hover-ease),
+        color var(--hover-duration) var(--hover-ease),
+        border-color var(--hover-duration) var(--hover-ease);
+      &:has(:checked) {
+        background-color: var(--text);
+        color: var(--background);
+        & .form-choice_mark {
+          border-color: var(--background);
+          background-color: var(--background);
+        }
+        & .form-choice_tick {
+          color: var(--text);
+        }
+      }
+      & .form-choice_input:focus-visible ~ .form-choice_mark {
+        outline: 0;
+      }
+      &:has(.form-choice_input:focus-visible) {
+        outline: var(--focus-width) solid var(--text);
+        outline-offset: var(--focus-offset);
+      }
+    }
+  }
+</style>
