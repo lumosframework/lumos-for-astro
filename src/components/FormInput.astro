@@ -32,6 +32,8 @@ interface Props extends Omit<HTMLAttributes<"input">, "type"> {
   placeholder?: string;
   /** Marks the field as needed, and stars its label. */
   required?: boolean;
+  /** Keeps the label for a screen reader, and takes it off the page. */
+  labelHidden?: boolean;
 }
 
 const {
@@ -42,6 +44,7 @@ const {
   name,
   placeholder,
   required = false,
+  labelHidden = false,
   class: className,
   ...rest
 } = Astro.props;
@@ -97,7 +100,12 @@ const text = label ?? kind.label;
 {
   render && (
     <label class:list={["field", "form-input", className]}>
-      <span class="field_label text-style-main">
+      <span
+        class:list={[
+          "field_label text-style-main",
+          labelHidden && "visually-hidden",
+        ]}
+      >
         <span>{text}</span>
         {required && (
           <span class="field_star" aria-hidden="true">

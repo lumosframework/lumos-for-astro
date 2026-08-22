@@ -18,6 +18,8 @@ type Base = {
   placeholder?: string;
   /** Marks the field as needed, and stars its label. */
   required?: boolean;
+  /** Keeps the label for a screen reader, and takes it off the page. */
+  labelHidden?: boolean;
 };
 
 type Props = HTMLAttributes<"select"> &
@@ -65,6 +67,7 @@ const {
   name,
   placeholder,
   required = false,
+  labelHidden = false,
   class: className,
   ...rest
 } = Astro.props as AllProps;
@@ -103,7 +106,12 @@ const text = label ?? wording.label;
 {
   render && entries.length > 0 && (
     <label class:list={["field", "form-select", className]}>
-      <span class="field_label text-style-main">
+      <span
+        class:list={[
+          "field_label text-style-main",
+          labelHidden && "visually-hidden",
+        ]}
+      >
         <span>{text}</span>
         {required && (
           <span class="field_star" aria-hidden="true">

@@ -11,14 +11,32 @@ import Img from "@/components/Img.astro";
 import lumos_background from "@/assets/lumos-background.svg";
 import Grid from "@/components/Grid.astro";
 import Card from "@/components/Card.astro";
+import Form from "@/components/Form.astro";
+import FormInput from "@/components/FormInput.astro";
+import FormSelect from "@/components/FormSelect.astro";
 import Tabs from "@/components/Tabs.astro";
 import TabLink from "@/components/TabLink.astro";
 import Dropdown from "@/components/Dropdown.astro";
 import Overlay from "@/components/Overlay.astro";
+import Modal from "@/components/Modal.astro";
+import Slider from "@/components/Slider.astro";
+import Accordion from "@/components/Accordion.astro";
+import AccordionItem from "@/components/AccordionItem.astro";
 
 const heading = "We build things that help people work smarter";
+const states = [
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+];
+
 const text =
   "We build things that help people work smarter, move faster, and grow further.";
+const lorem =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 ---
 
 <Layout
@@ -33,7 +51,7 @@ const text =
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/about" variant="close">Button Text</Button>
+        <Button element="link" href="/about">Button Text</Button>
         <Dropdown label="Dropdown">
           <Paragraph>Some text</Paragraph>
         </Dropdown>
@@ -190,7 +208,7 @@ const text =
   </Section>
   <!-- card -->
   <Section paddingTop="small" paddingBottom="large">
-    <ContentWrapper variant="card" mediaOpacity={20}>
+    <ContentWrapper variant="card" mediaOpacity={50}>
       <Eyebrow variant="tag">card</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
@@ -236,13 +254,49 @@ const text =
       />
     </Grid>
   </Section>
+  <!-- form -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>form</Eyebrow>
+      <Heading tag="h2" variant="h4">Contact Details</Heading>
+      <Form name="contact" submitLabel="Send enquiry">
+        <Grid medium={2}>
+          <FormInput variant="first-name" required />
+          <FormInput variant="last-name" required />
+          <FormInput
+            variant="email"
+            label="Email Address"
+            placeholder="email@company.com"
+            required
+          />
+          <Grid medium={2}>
+            <FormSelect label="State" name="state" options={states} />
+            <FormInput variant="zip-code" placeholder="" />
+          </Grid>
+          <div class="field">
+            <span class="field_label text-style-main">Date of Birth</span>
+            <Grid medium={3}>
+              <FormSelect variant="month" labelHidden={true} />
+              <FormSelect variant="day" labelHidden={true} />
+              <FormSelect variant="year" from={1920} labelHidden={true} />
+            </Grid>
+          </div>
+          <FormInput
+            variant="phone"
+            label="Phone Number"
+            placeholder="000-000-0000"
+          />
+        </Grid>
+      </Form>
+    </ContentWrapper>
+  </Section>
   <!-- buttons -->
   <Section paddingTop="small" paddingBottom="small">
     <ContentWrapper>
       <Eyebrow>buttons</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <ButtonWrapper>
-        <Button element="link" href="/about">Button Text</Button>
+        <Button element="link" href="/about" variant="arrow">Button Text</Button>
         <Button emphasis="secondary">Button Text</Button>
         <Button emphasis="link">Button Text</Button>
       </ButtonWrapper>
@@ -250,7 +304,7 @@ const text =
         <Button variant="arrow" direction="back" />
         <Button variant="arrow" />
         <Button variant="play" />
-        <Button variant="play" pressed />
+        <Button variant="play" pressed={true} />
         <Button variant="close" />
       </ButtonWrapper>
       <ButtonWrapper>
@@ -379,6 +433,144 @@ const text =
       </ContentWrapper>
     </Tabs>
   </Section>
+  <!-- slider -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>slider · bleed</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Slider label="Services" small={2} medium={3}>
+      <Card
+        heading="Strategy"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Design"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Development"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Research"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Support"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+    </Slider>
+  </Section>
+  <!-- slider bleed -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>slider · crop-start</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Slider
+      variant="crop-start"
+      label="Case studies"
+      small={2}
+      medium={3}
+      large={3.27}
+    >
+      <Card
+        heading="Strategy"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+      <Card
+        heading="Design"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+      <Card
+        heading="Development"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+      <Card
+        heading="Research"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+      <Card
+        heading="Support"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+        variant="cover"
+        theme="dark"
+        image={lumos_background}
+      />
+    </Slider>
+  </Section>
+  <!-- slider contained -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>slider · contained</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Slider variant="contained" label="Services" small={2} medium={3}>
+      <Card
+        heading="Strategy"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Design"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Development"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Research"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+      <Card
+        heading="Support"
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."
+        buttonHref="/about"
+        buttonLabel="Button Text"
+      />
+    </Slider>
+  </Section>
   <!-- hero -->
   <Section paddingTop="small" paddingBottom="small" fullHeight={true}>
     <Img src={lumos_background} slot="background" />
@@ -394,4 +586,78 @@ const text =
       </ButtonWrapper>
     </ContentWrapper>
   </Section>
+  <!-- accordion -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper variant="sticky-content">
+      <Eyebrow>accordion</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+      <Accordion slot="column2">
+        <AccordionItem heading="This is some text inside of a div block." open>
+          <Paragraph>{lorem}</Paragraph>
+        </AccordionItem>
+        <AccordionItem heading="This is some text inside of a div block.">
+          <Paragraph>{lorem}</Paragraph>
+        </AccordionItem>
+        <AccordionItem heading="This is some text inside of a div block.">
+          <Paragraph>{lorem}</Paragraph>
+        </AccordionItem>
+        <AccordionItem heading="This is some text inside of a div block.">
+          <Paragraph>{lorem}</Paragraph>
+        </AccordionItem>
+        <AccordionItem heading="This is some text inside of a div block.">
+          <Paragraph>{lorem}</Paragraph>
+        </AccordionItem>
+      </Accordion>
+    </ContentWrapper>
+  </Section>
+  <!-- modal -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper centered={true}>
+      <Eyebrow>modal</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+      <Paragraph maxWidth={36}>{text}</Paragraph>
+      <ButtonWrapper>
+        <Button data-modal-open="modal-small">Open Modal</Button>
+        <Button data-modal-open="modal-side" emphasis="secondary">
+          Open Side Panel
+        </Button>
+        <Button data-modal-open="modal-full" emphasis="secondary">
+          Open Full Screen
+        </Button>
+      </ButtonWrapper>
+    </ContentWrapper>
+  </Section>
+  <!-- small -->
+
+  <Modal id="modal-small" label="Small modal">
+    <ContentWrapper centered={true}>
+      <Heading tag="h2" variant="h4">{heading}</Heading>
+      <Paragraph>{text}</Paragraph>
+      <ButtonWrapper>
+        <Button element="link" href="/about">Button Text</Button>
+      </ButtonWrapper>
+    </ContentWrapper>
+  </Modal>
+  <!-- side panel -->
+
+  <Modal id="modal-side" label="Side panel" variant="side-panel">
+    <ContentWrapper>
+      <Heading tag="h2" variant="h4">{heading}</Heading>
+      <Paragraph>{text}</Paragraph>
+      <ButtonWrapper>
+        <Button element="link" href="/about">Button Text</Button>
+      </ButtonWrapper>
+    </ContentWrapper>
+  </Modal>
+  <!-- full screen -->
+
+  <Modal id="modal-full" label="Full screen" variant="full-screen">
+    <ContentWrapper centered={true}>
+      <Heading tag="h2" variant="h3">{heading}</Heading>
+      <Paragraph>{text}</Paragraph>
+      <ButtonWrapper>
+        <Button element="link" href="/about">Button Text</Button>
+      </ButtonWrapper>
+    </ContentWrapper>
+  </Modal>
 </Layout>
