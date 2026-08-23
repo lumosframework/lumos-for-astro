@@ -9,6 +9,7 @@ import ButtonWrapper from "@/components/Wrapper/ButtonWrapper.astro";
 import Button from "@/components/Button.astro";
 import Img from "@/components/Media/Img.astro";
 import lumos_background from "@/assets/graphics/lumos-background.svg";
+import logo_icon from "@/assets/logo/logo-icon.svg";
 import Grid from "@/components/Wrapper/Grid.astro";
 import Card from "@/components/Item/Card.astro";
 import Form from "@/components/Form/Form.astro";
@@ -25,6 +26,7 @@ import Overlay from "@/components/Media/Overlay.astro";
 import Modal from "@/components/Interactive/Modal.astro";
 import Slider from "@/components/Interactive/Slider.astro";
 import Accordion from "@/components/Interactive/Accordion.astro";
+import Marquee from "@/components/Interactive/Marquee.astro";
 import AccordionItem from "@/components/Interactive/AccordionItem.astro";
 
 const heading = "We build things that help people work smarter";
@@ -594,6 +596,35 @@ const lorem =
         buttonLabel="Button Text"
       />
     </Slider>
+  </Section>
+  <!-- marquee -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>marquee</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Marquee label="What we do">
+      <Paragraph variant="large">Strategy</Paragraph>
+      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Paragraph variant="large">Design</Paragraph>
+      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Paragraph variant="large">Development</Paragraph>
+      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Paragraph variant="large">Research</Paragraph>
+      <Img src={logo_icon} width={199} height={194} variant="densities" />
+    </Marquee>
+  </Section>
+  <!-- marquee end -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>marquee · end</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+    </ContentWrapper>
+    <Marquee variant="end" speed={6} label="Partners">
+      <Paragraph variant="large">Strategy</Paragraph>
+      <Paragraph variant="large">Design</Paragraph>
+      <Paragraph variant="large">Development</Paragraph>
+    </Marquee>
   </Section>
   <!-- hero -->
   <Section paddingTop="small" paddingBottom="small" fullHeight={true}>
