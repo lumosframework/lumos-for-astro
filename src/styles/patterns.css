@@ -213,15 +213,10 @@
   --field-pad-block: 0.75em;
   --field-pad-inline: 1em;
   width: 100%;
-  /* A line of text, whatever the control makes of it. A date input lays its
-     own content out and pays no attention to line-height, so it comes up
-     short of every field beside it without a floor to hold it. */
   min-height: calc(1lh + var(--field-pad-block) * 2 + var(--border-width) * 2);
   padding: var(--field-pad-block) var(--field-pad-inline);
   background-color: var(--background-2);
   color: inherit;
-  /* Transparent rather than absent: the box keeps the size it would have with
-     a border, so nothing shifts when focus colours one in. */
   border: var(--border-width) solid transparent;
   border-radius: var(--radius-small);
   transition:
@@ -231,16 +226,10 @@
     color: var(--text-2);
   }
   @media (hover: hover) {
-    /* A pointer lifts the field rather than drawing its edge. Focus owns the
-       edge, and the two have to be told apart at a glance. */
     &:hover:not(:disabled) {
       background-color: var(--background-3);
     }
   }
-  /* Focus is the edge going solid. The page rings every focused element from
-     the outside, which around a field that already has a border reads as two
-     lines; pulling the ring in by its own width lands it flush over the
-     border, so one edge thickens and darkens instead of a second appearing. */
   &:focus-visible {
     border-color: var(--text);
     outline-offset: var(--focus-offset-inner);

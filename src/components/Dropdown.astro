@@ -120,8 +120,6 @@ const content = await slotContent(Astro.slots);
       rotate: -90deg;
     }
 
-    /* The panel is laid out by this element and revealed by the pseudo the
-       browser wraps it in, which is the part that can be animated open. */
     .dropdown::details-content {
       opacity: 0;
       content-visibility: hidden;

@@ -219,8 +219,6 @@ if (import.meta.env.DEV && render) {
       max-width: 100%;
       padding: var(--_padding);
 
-      /* Raised without being positioned — a flex item can do that — so the
-         card stays the containing block for the click overlay below. */
       .cover > & {
         z-index: 1;
       }
@@ -231,9 +229,6 @@ if (import.meta.env.DEV && render) {
       }
     }
 
-    /* A card that closes with a button is clickable across its whole face: the
-       button's ::after stretches over the card, so the card is the hit area
-       while the anchor stays the only link in the markup. */
     .card:has(.button) {
       .button::after {
         content: "";
@@ -241,8 +236,6 @@ if (import.meta.env.DEV && render) {
         inset: 0;
       }
 
-      /* Links written into the copy sit above that overlay, keeping a click
-         target of their own. */
       .card_content a:not(.button) {
         position: relative;
         z-index: 1;
@@ -252,8 +245,6 @@ if (import.meta.env.DEV && render) {
         transition: scale calc(var(--hover-duration) * 2) var(--hover-ease);
       }
 
-      /* Hovering anywhere on the card is hovering the overlay, so the button
-         reads as hovered too and the image lifts with it. */
       @media (hover: hover) {
         &:hover .image {
           scale: 1.04;

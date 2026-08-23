@@ -109,8 +109,6 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
 
 <style is:global>
   @layer components {
-    /* Until a script is placing them, the browser's own handle is what
-       moves, and the drawn parts are not there to disagree with it. */
     .form-range {
       --_handle: 1.75rem;
       --_handle-face: currentColor;
@@ -132,8 +130,6 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
       height: var(--_handle);
     }
 
-    /* The input keeps the whole width and the pointer; what is drawn under it
-       is the rail, how far it has come, and the handle. */
     .form-range_input {
       appearance: none;
       position: relative;
@@ -180,9 +176,6 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
       background-color: var(--border);
     }
 
-    /* Ends where the handle is, which is not where the track ends: a handle
-       stops half its own width short of each end, so a fill measured against
-       the whole width runs past it. */
     .form-range_fill {
       width: calc(
         var(--_progress, 0) * (100% - var(--_handle)) + var(--_handle) / 2
@@ -190,8 +183,6 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
       background-color: var(--text);
     }
 
-    /* Kept a handle's width in from each end, so it travels the same path the
-       browser gives the one it is standing in for. */
     .form-range_handle {
       position: absolute;
       inset-inline-start: calc(
@@ -200,8 +191,6 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
       translate: -50% 0;
       width: var(--_handle);
       height: var(--_handle);
-      /* Doubled: a hairline reads thinner than the rail it stands on, and the
-         handle is the part of this that is meant to be grabbed. */
       border: calc(var(--border-width) * 2) solid var(--text);
       border-radius: var(--radius-round);
       background-color: var(--background);
@@ -209,10 +198,6 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
     }
 
     .form-range_output {
-      /* The field lays its rows out with flex, so it is align-self that lets
-         this one shrink to its number instead of stretching the width of the
-         track. Flex also drops the whitespace between the number and its
-         unit, which inline layout would have kept as a gap. */
       display: flex;
       align-self: start;
       margin-inline-start: calc(

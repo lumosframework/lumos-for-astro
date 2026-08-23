@@ -66,9 +66,6 @@ const {
 <style is:global>
   @layer components {
     .form-textarea_field {
-      /* Grows with what is typed into it, between a floor and a ceiling set
-         in lines. Both count the padding as well, since the box is measured
-         border to border. */
       field-sizing: content;
       min-height: calc(
         var(--_min-lines, 3) * 1lh + var(--field-pad-block) * 2 +

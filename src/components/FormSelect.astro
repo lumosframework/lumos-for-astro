@@ -81,10 +81,6 @@ const WORDING = {
   year: { label: "Year", placeholder: "YYYY" },
 };
 
-/* The fifty states, by the codes a form is filled in with and the names it is
-   read in. Neither the District of Columbia nor the territories are here: a
-   field that asks for a state is not always the field that should offer them,
-   and a page that wants them can pass its own list. */
 const STATES: SelectOption[] = [
   { value: "AL", label: "Alabama" },
   { value: "AK", label: "Alaska" },
@@ -213,15 +209,11 @@ const text = label ?? wording.label;
     .form-select_field {
       appearance: none;
       padding-inline-end: 3em;
-      /* An unmade choice reads as a placeholder, not as an answer. */
       &:has(option[value=""]:checked) {
         color: var(--text-2);
       }
     }
 
-    /* The mark the browser would draw is turned off above, so this one is
-       drawn instead — and kept out of the way of the pointer, which belongs
-       to the field underneath it. */
     .form-select_mark {
       position: absolute;
       inset-inline-end: 1em;
@@ -232,32 +224,20 @@ const text = label ?? wording.label;
       color: var(--text-2);
     }
 
-    /* Where a browser hands the list over, it becomes a panel like any other:
-       the same surface, the same radius, the same opening motion as a dropdown
-       or a modal, instead of whatever the operating system draws. Every other
-       browser keeps its native menu untouched, which is why none of this is
-       written outside the query. */
+    /* The list the browser draws itself, where it will */
     @supports (appearance: base-select) {
       .form-select_field,
       .form-select_field::picker(select) {
         appearance: base-select;
       }
 
-      /* The browser offers an arrow of its own once it owns the list. Ours is
-         already over the field, and it is the one the rest of the site uses. */
       .form-select_field::picker-icon {
         display: none;
       }
 
       .form-select_field {
-        /* Once the select lays out its own content, that content needs putting
-           in the middle of the height the padding gives it. */
         display: flex;
         align-items: center;
-        /* The leading trim every text style lays down is meant for a run of
-           prose, and a select was never subject to it: nothing renders inside
-           a control the browser draws itself. Drawing its own content puts the
-           two trim rows inside it, where they drag the text off centre. */
         &::before,
         &::after {
           content: none;
@@ -272,9 +252,6 @@ const text = label ?? wording.label;
         rotate: -90deg;
       }
 
-      /* Open, the field and its list are one thing rather than a control and a
-         panel that happen to be near each other: the same lifted surface, and
-         no gap or corner between them. */
       .form-select_field:open {
         background-color: var(--background-3);
         border-end-start-radius: 0;
@@ -282,34 +259,16 @@ const text = label ?? wording.label;
       }
 
       .form-select_field::picker(select) {
-        /* Both block sides: the browser turns the list over to open upwards
-           when there is no room below it, and the gap has to turn with it. */
         margin-block: 0;
         padding: var(--space-1);
-        /* Long enough to read a list from, short enough to stay a menu. Left
-           alone it stretches to the edge of the viewport, which for fifty
-           states means a menu the height of the window — and a menu that tall
-           will reach the nav, which nothing can paint over it. */
         max-height: min(18rem, calc(100dvh - 6rem));
-        /* The browser would otherwise open it on whichever side has the most
-           room, which for a field in the upper half of the page means opening
-           upwards over everything above it. Under the field unless it will not
-           fit there, which capping the height above makes the usual case. */
         position-try-order: normal;
         overscroll-behavior: contain;
         background-color: var(--background-3);
         border: 0;
-        /* Square where it meets the field, so the two read as one panel rather
-           than as two chips pinched together. Which pair to square is a guess:
-           the browser can turn the list over when there is no room below, and
-           a corner is not one of the things @position-try is allowed to set,
-           so it cannot be turned over with it. Under the field is the ordinary
-           case, and this is squared for it. */
         border-radius: var(--radius-small);
         border-start-start-radius: 0;
         border-start-end-radius: 0;
-        /* Growing from its middle rather than sliding from an edge, since
-           which edge it is anchored to is not settled until it opens. */
         opacity: 0;
         scale: 0.98;
         transition:
@@ -324,8 +283,6 @@ const text = label ?? wording.label;
         scale: 1;
       }
 
-      /* A panel in the top layer has no state to animate from until it is
-         opened, so it is given one. */
       @starting-style {
         .form-select_field:open::picker(select) {
           opacity: 0;
@@ -333,9 +290,6 @@ const text = label ?? wording.label;
         }
       }
 
-      /* A row in a menu, not a field in a form: a step down in size and the
-         tight leading a list wants, so eight of them are in view rather than
-         four. */
       .form-select_field option {
         display: flex;
         align-items: center;
@@ -348,8 +302,6 @@ const text = label ?? wording.label;
         border-radius: var(--radius-small);
         cursor: pointer;
         transition: background-color var(--hover-duration) var(--hover-ease);
-        /* The list is the lifted surface now, so a row under the pointer steps
-           back towards the field's own rather than further away from it. */
         &:hover,
         &:focus {
           background-color: var(--background-2);
@@ -357,17 +309,10 @@ const text = label ?? wording.label;
         }
       }
 
-      /* A hidden option is kept out of the native menu by the attribute alone.
-         The list a browser draws for itself honours the paint, not the
-         attribute, so the placeholder is taken out of it here — it is the
-         prompt above the choices, not one of them. The button still reads it,
-         since what it shows is a copy rather than the option itself. */
       .form-select_field option[hidden] {
         display: none;
       }
 
-      /* The tick belongs at the end of the row it marks, not in front of the
-         word it is about. */
       .form-select_field option::checkmark {
         order: 1;
         margin-inline-start: auto;

@@ -7,9 +7,9 @@
 // about twice as tall as it is wide, which makes those dots square and gives
 // four times the pixels of a half block for the same space on screen.
 //
-// Two renderings are produced. The colour one puts each cell on a dark card,
+// Two renderings are produced. The color one puts each cell on a dark card,
 // since Lumi is white with transparent eyes and would otherwise disappear on a
-// light terminal. The plain one is used when colour is off.
+// light terminal. The plain one is used when color is off.
 
 import sharp from "sharp";
 import { readFile, writeFile } from "node:fs/promises";
@@ -113,7 +113,7 @@ const isEye = (x, y) =>
   eyes.some(([ex, ey]) => Math.abs(ex - x) < 1 && Math.abs(ey - y) < 1);
 const lit = (x, y) => !isEye(x, y) && data[(y * W + x) * 4 + 3] > 128;
 
-const colour = [];
+const color = [];
 const plain = [];
 for (let cy = 0; cy < H / 4; cy++) {
   let line = "";
@@ -133,7 +133,7 @@ for (let cy = 0; cy < H / 4; cy++) {
         tally.set(key, (tally.get(key) ?? 0) + 1);
       }
     }
-    // One colour per cell, so the dominant one wins.
+    // One color per cell, so the dominant one wins.
     const top = [...tally.entries()].sort((a, b) => b[1] - a[1])[0];
     const code = `\x1b[38;2;${top ? top[0] : "255;255;255"}m\x1b[48;2;${CARD.join(";")}m`;
     if (code !== last) {
@@ -144,7 +144,7 @@ for (let cy = 0; cy < H / 4; cy++) {
     line += glyph;
     flat += glyph;
   }
-  colour.push(`${line}\x1b[0m`);
+  color.push(`${line}\x1b[0m`);
   plain.push(flat.replace(/⠀+$/, ""));
 }
 
@@ -153,7 +153,7 @@ const p = "packages/create-lumos/bin/create-lumos.js";
 let s = await readFile(p, "utf8");
 s = s.replace(
   /const MASCOT = \[[\s\S]*?\n\];\n\nconst MASCOT_PLAIN = \[[\s\S]*?\n\];/,
-  `const MASCOT = [\n${list(colour)}\n];\n\nconst MASCOT_PLAIN = [\n${list(plain)}\n];`,
+  `const MASCOT = [\n${list(color)}\n];\n\nconst MASCOT_PLAIN = [\n${list(plain)}\n];`,
 );
 s = s.replace(/const CARD_COLS = \d+;/, `const CARD_COLS = ${CELLS};`);
 await writeFile(p, s);

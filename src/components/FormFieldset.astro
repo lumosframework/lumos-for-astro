@@ -69,9 +69,6 @@ const content = await slotContent(Astro.slots);
 
 <style is:global>
   @layer components {
-    /* A fieldset carries a border, padding and a min-width of its content,
-       none of which is wanted: the last of the three stops anything inside it
-       from being narrower than its widest field. */
     .form-fieldset {
       width: 100%;
       min-width: 0;
@@ -80,19 +77,11 @@ const content = await slotContent(Astro.slots);
       border: 0;
     }
 
-    /* Whatever it is set in, a legend needs two things a heading or a label
-       set elsewhere does not: the padding a browser gives it taken off, and
-       the space beneath it put on by hand — a legend is set outside the box's
-       flow, so no gap of its parent's ever reaches it. A legend hidden away
-       drops both, since the utility that hides it is laid down later. */
     .form-fieldset_legend {
       padding: 0;
       margin-bottom: var(--space-2);
     }
 
-    /* A legend set as a heading is a size above the labels under it, and asks
-       for the room that size asks for. Set as a label it is one of them, and
-       sits as close as they do. */
     .form-fieldset_legend-heading {
       margin-bottom: var(--space-3);
     }
@@ -105,9 +94,6 @@ const content = await slotContent(Astro.slots);
         display: flex;
         flex-wrap: wrap;
         gap: var(--space-3) var(--space-5);
-        /* A field fills the width it is given, which in a row means a row of
-           one. Here they take the width they need and wrap when they run
-           out, which is what a run of choices wants. */
         > * {
           width: auto;
         }

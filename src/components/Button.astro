@@ -197,15 +197,6 @@ const named = {
         border: 0;
         border-bottom: var(--border-width) solid var(--button-border);
         border-radius: 0;
-        /*
-         * The sliding line is a background of its own, sitting over the resting
-         * border. It grows from the left on hover, then collapses to the right
-         * on hover out — the side it is anchored to switches at once while the
-         * width is what travels — which reads as one line moving left to right
-         * in both directions. Painting it rather than positioning a pseudo
-         * element leaves the button unpositioned and its ::after free, so a
-         * card can stretch that pseudo over itself and take the click.
-         */
         background-image: linear-gradient(
           var(--link-border-hover),
           var(--link-border-hover)
@@ -225,7 +216,6 @@ const named = {
           }
         }
       }
-      /* A mark on its own, so the padding is even and the shape is round. */
       &:is(.play, .close, .arrow) {
         gap: 0;
         padding: 0.75em;

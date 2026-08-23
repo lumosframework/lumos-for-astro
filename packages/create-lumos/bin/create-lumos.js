@@ -22,7 +22,7 @@ const TARBALL = `https://codeload.github.com/${REPO}/tar.gz/refs/heads/${BRANCH}
 // should be a date the framework was actually tested against.
 const COMPAT_DATE = "2026-08-13";
 
-// Lumi, drawn with half-block characters. The colour version sits on a dark
+// Lumi, drawn with half-block characters. The color version sits on a dark
 // card, since the mascot is white with transparent eyes and would vanish on a
 // light terminal. Rebuild both with .github/assets/build-ascii.mjs.
 const MASCOT = [
@@ -68,7 +68,7 @@ function header() {
   labels[middle + 1] = dim("Components and styling for Astro sites.");
 
   // Only rows carrying a label are padded, so piped output keeps no trailing
-  // blanks. Colour rows are already a full card wide.
+  // blanks. Color rows are already a full card wide.
   const rows = art.map((line, i) => {
     if (!labels[i]) return line;
     const pad = styled ? "" : " ".repeat(Math.max(0, CARD_COLS - line.length));
