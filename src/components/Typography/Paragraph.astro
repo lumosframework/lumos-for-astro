@@ -19,15 +19,23 @@ type ParagraphStyle =
 interface Props extends HTMLAttributes<"p"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
+  /** The element the text is written as. Defaults to `p`. */
   tag?: ParagraphTag;
   /**
-   * Type style. Defaults to `inherit`.
+   * Type style.
    *
    * - `display`, `h1`–`h6` — the heading sizes
    * - `large`, `main`, `small` — the body sizes
-   * - `inherit` — take the style from its surroundings
+   * - `inherit` — take the style from its surroundings (default)
    */
   variant?: ParagraphStyle;
+  /**
+   * Longest line, in characters, before the text wraps. Unset, it fills
+   * its column.
+   *
+   * @min 1
+   * @int
+   */
   maxWidth?: number;
 }
 

@@ -16,13 +16,29 @@ type Props = HTMLAttributes<"div"> & {
    * - `contained` — within the container on both sides
    */
   variant?: "bleed" | "crop-start" | "contained";
-  /** Slides in view below 30rem, the base every larger size falls back to. Must be greater than 0. Defaults to 1.02. */
+  /** Slides in view below 30rem, the base every larger size falls back to. Must be greater than 0. Defaults to 1.02.
+   *
+   * @min 1
+   * @max 12
+   * @int */
   xsmall?: number;
-  /** Slides in view from 30rem up. Must be greater than 0. Inherits xsmall when unset. */
+  /** Slides in view from 30rem up. Must be greater than 0. Inherits xsmall when unset.
+   *
+   * @min 1
+   * @max 12
+   * @int */
   small?: number;
-  /** Slides in view from 48rem up. Must be greater than 0. Inherits small when unset. */
+  /** Slides in view from 48rem up. Must be greater than 0. Inherits small when unset.
+   *
+   * @min 1
+   * @max 12
+   * @int */
   medium?: number;
-  /** Slides in view from 64rem up. Must be greater than 0. Inherits medium when unset. */
+  /** Slides in view from 64rem up. Must be greater than 0. Inherits medium when unset.
+   *
+   * @min 1
+   * @max 12
+   * @int */
   large?: number;
 };
 

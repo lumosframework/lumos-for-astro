@@ -30,8 +30,11 @@ type Props = Head &
   (
     | {
         /**
-         * Aspect ratio, applied with the matching `ratio-*` utility. Presets
-         * run from widest to tallest. Defaults to `16-9`.
+         * Aspect ratio, applied with the matching `ratio-*` utility.
+         *
+         * - `2-1`, `16-9` — widescreen (`16-9` is the default)
+         * - `3-2`, `5-4`, `1-1` — squarer
+         * - `4-5`, `2-3` — upright, for a phone
          *
          * `custom` takes a ratio of your own. `auto` matches the file, but its
          * height is unknown until the file's metadata arrives, so the page

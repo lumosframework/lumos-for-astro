@@ -19,14 +19,20 @@ interface Props extends HTMLAttributes<"div"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
   /**
-   * Type style the whole block is spaced and sized from. Defaults to
-   * `inherit`.
+   * Type style the whole block is spaced and sized from.
    *
    * - `display`, `h1`–`h6` — the heading sizes
    * - `large`, `main`, `small` — the body sizes
-   * - `inherit` — take the style from its surroundings
+   * - `inherit` — take the style from its surroundings (default)
    */
   variant?: RichTextStyle;
+  /**
+   * Longest line, in characters, before the text wraps. Unset, it fills
+   * its column.
+   *
+   * @min 1
+   * @int
+   */
   maxWidth?: number;
 }
 

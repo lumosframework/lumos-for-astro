@@ -63,7 +63,9 @@ type Props = Base &
          * @int
          */
         maxColumnCount?: number;
-        /** Smallest a column may get, in rem, before the count drops. Must be greater than 0. Defaults to 12. */
+        /** Smallest a column may get, in rem, before the count drops. Must be greater than 0. Defaults to 12.
+         *
+         * @min 1 */
         minColumnWidth?: number;
         xsmall?: never;
         small?: never;

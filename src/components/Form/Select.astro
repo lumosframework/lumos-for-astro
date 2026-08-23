@@ -27,6 +27,13 @@ type Props = HTMLAttributes<"select"> &
   Base &
   (
     | {
+        /**
+         * What the field offers.
+         *
+         * - `list` — options you supply (default)
+         * - `month`, `day`, `state` — a built-in list
+         * - `year` — a range, set with `from` and `to`
+         */
         variant?: "list";
         /** What there is to choose from. A plain string is its own label. */
         options: SelectOption[];
@@ -42,9 +49,13 @@ type Props = HTMLAttributes<"select"> &
     | {
         variant: "year";
         options?: never;
-        /** The earliest year offered. Defaults to a hundred before `to`. */
+        /** The earliest year offered. Defaults to a hundred before `to`.
+         *
+         * @int */
         from?: number;
-        /** The latest year offered. Defaults to the year this was built. */
+        /** The latest year offered. Defaults to the year this was built.
+         *
+         * @int */
         to?: number;
       }
   );

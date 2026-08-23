@@ -26,9 +26,15 @@ type Base = Omit<
   src: ImageMetadata | string;
   /** Leave unset on decorative images — renders `alt=""`. */
   alt?: string;
-  /** Overrides the width Astro reads from the source. Omit either dimension and it is inferred. */
+  /** Overrides the width Astro reads from the source. Omit either dimension and it is inferred.
+   *
+   * @min 1
+   * @int */
   width?: number;
-  /** Overrides the height Astro reads from the source. Omit either dimension and it is inferred. */
+  /** Overrides the height Astro reads from the source. Omit either dimension and it is inferred.
+   *
+   * @min 1
+   * @int */
   height?: number;
   /** For logos and cutouts: fit the whole image in rather than cropping, and drop the skeleton tint. */
   transparent?: boolean;

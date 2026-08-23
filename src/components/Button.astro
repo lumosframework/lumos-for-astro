@@ -11,13 +11,16 @@ type Emphasis = "primary" | "secondary";
 
 type Tag =
   | (HTMLAttributes<"button"> & {
+      /** What it renders as. Defaults to `button`. */
       element?: "button";
       type?: "button" | "submit" | "reset";
+      /** Greys it out and stops it responding. */
       disabled?: boolean;
       href?: never;
     })
   | (Omit<HTMLAttributes<"a">, "type"> & {
       element: "link";
+      /** Where the link goes. */
       href?: string;
       type?: never;
       disabled?: never;

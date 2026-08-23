@@ -24,12 +24,27 @@ interface Props extends HTMLAttributes<"section"> {
   render?: boolean;
   /** Colors this section and everything inside it. */
   theme?: "inherit" | "light" | "dark" | "brand";
+  /**
+   * Space above the content.
+   *
+   * - `medium` — the usual gap between sections (default)
+   * - `none` — flush, for a section that meets the one above it
+   * - `even` — the site margin, matching the space at the sides
+   * - `small`, `large` — tighter or looser than usual
+   * - `navoverlap` — clears a nav sitting over the page
+   */
   paddingTop?: SectionSpace;
+  /** Space below the content. Takes the same values as `paddingTop`. */
   paddingBottom?: SectionSpace;
+  /** Space between the children, from the spacing scale. Defaults to `8`. */
   gap?: ContainerGap;
+  /** Where the content sits across the section. Defaults to `start`. */
   align?: "start" | "center" | "end";
+  /** Fills the screen's height, however little content there is. */
   fullHeight?: boolean;
+  /** Classes for the container inside the section, which sets the width. */
   containerClass?: string;
+  /** Attributes for that same container. */
   containerAttrs?: HTMLAttributes<"div">;
 }
 

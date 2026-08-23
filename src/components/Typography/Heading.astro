@@ -19,6 +19,7 @@ type HeadingStyle =
 interface Props extends HTMLAttributes<"div"> {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
+  /** The heading level, for the page outline. Defaults to `h2`. */
   tag?: HeadingTag;
   /**
    * Type style, chosen apart from `tag` so a heading can change level without
@@ -29,6 +30,13 @@ interface Props extends HTMLAttributes<"div"> {
    * - `inherit` — take the style from its surroundings
    */
   variant?: HeadingStyle;
+  /**
+   * Longest line, in characters, before the text wraps. Unset, it fills
+   * its column.
+   *
+   * @min 1
+   * @int
+   */
   maxWidth?: number;
 }
 

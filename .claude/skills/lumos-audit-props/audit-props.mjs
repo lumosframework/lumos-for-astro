@@ -62,23 +62,28 @@ function readComponent(file) {
     }
     blocks.push(fm.slice(decl.index, i + 1));
   }
-  const multiBlock = blocks.length > 1;
-
   const re = /(?:\/\*\*([\s\S]*?)\*\/\s*)?^(\s{2,8})([a-zA-Z_]\w*)(\?)?:\s*([^\n]+)$/gm;
-  const scanned = blocks.join("\n");
-  for (const m of scanned.matchAll(re)) {
-    const [, doc, , name, , type] = m;
-    if (name === "type" && /^\s*(never|"[^"]*")/.test(type)) continue;
-    if (seen.has(name)) continue;
-    /* `never` marks a prop that belongs to a different variant branch. */
-    if (/^never;?$/.test(type.trim())) continue;
-    seen.add(name);
-    props.push({
-      name,
-      type: type.replace(/;$/, "").trim(),
-      doc: doc ? doc.replace(/^\s*\*\s?/gm, "").replace(/\s+/g, " ").trim() : null,
-    });
+  /* Only a declaration that actually holds props counts towards "spans a
+     union" — a bare `type Tag = "span" | "p"` is a vocabulary, not a shape. */
+  let blocksWithProps = 0;
+  for (const block of blocks) {
+    const before = props.length;
+    for (const m of block.matchAll(re)) {
+      const [, doc, , name, , type] = m;
+      if (name === "type" && /^\s*(never|"[^"]*")/.test(type)) continue;
+      if (seen.has(name)) continue;
+      /* `never` marks a prop that belongs to a different variant branch. */
+      if (/^never;?$/.test(type.trim())) continue;
+      seen.add(name);
+      props.push({
+        name,
+        type: type.replace(/;$/, "").trim(),
+        doc: doc ? doc.replace(/^\s*\*\s?/gm, "").replace(/\s+/g, " ").trim() : null,
+      });
+    }
+    if (props.length > before) blocksWithProps++;
   }
+  const multiBlock = blocksWithProps > 1;
 
   const d = fm.match(/const \{([\s\S]*?)\} = Astro\.props/);
   const destructured = d
@@ -92,13 +97,14 @@ const components = walk(root).map(readComponent).filter((c) => c.props.length);
 
 /* ---------- 1. render, the one prop every component shares ---------- */
 const renderIssues = [];
+const renderAdvisories = [];
 for (const c of components) {
   const i = c.props.findIndex((p) => p.name === "render");
   if (i === -1) renderIssues.push([c.file, "no render prop"]);
   else if (i !== 0 && !c.multiBlock)
     renderIssues.push([c.file, `render is #${i + 1}, not first`]);
   else if (i !== 0)
-    renderIssues.push([c.file, `render is #${i + 1} in file order — props span several type aliases, so check by hand`]);
+    renderAdvisories.push([c.file, `render is #${i + 1} in file order — props span several type aliases, so read it by hand`]);
   else if (c.props[0].doc !== RENDER_DOC)
     renderIssues.push([c.file, `render's wording differs: "${c.props[0].doc ?? "(none)"}"`]);
 }
@@ -108,7 +114,13 @@ for (const c of components) {
    the order should be the same everywhere. Where it is not, the majority is
    the convention and the rest are the drift. */
 const pairOrder = new Map();
+/* A discriminated union writes its branches in the order the variants demand:
+   the discriminant leads each branch, and shared props sit in a base type.
+   There is no single declaration order to compare, so these are listed for a
+   hand read instead of being reported as drift. */
+const unionComponents = components.filter((c) => c.multiBlock).map((c) => c.file);
 for (const c of components) {
+  if (c.multiBlock) continue;
   const names = c.props.map((p) => p.name);
   for (let i = 0; i < names.length; i++) {
     for (let j = i + 1; j < names.length; j++) {
@@ -145,8 +157,6 @@ orderConflicts.sort((x, y) => y.majority - x.majority || y.offenders.length - x.
    The prose differs by necessity — `variant` means a different thing in every
    component. The shape should not: how a default is marked, whether options
    are listed, whether a number says its range. */
-const inlineDefault = [];   // "- `x` — thing (default)"
-const sentenceDefault = []; // "Defaults to `x`."
 const variantNoOptions = [];
 const numberNoRange = [];
 
@@ -154,25 +164,39 @@ for (const c of components) {
   for (const p of c.props) {
     if (!p.doc) continue;
     const hasBullets = /- `/.test(p.doc);
-    if (/\(default\)/.test(p.doc)) inlineDefault.push(`${c.file}:${p.name}`);
-    if (/Defaults to `/.test(p.doc)) sentenceDefault.push(`${c.file}:${p.name}`);
     if (p.name === "variant" && !hasBullets) variantNoOptions.push(`${c.file}`);
-    if (/^number$/.test(p.type.replace(/\s/g, "")) && !/@min/.test(p.doc)) {
+    if (/^number$/.test(p.type.replace(/\s/g, "")) && !/@(min|max|int)\b/.test(p.doc)) {
       numberNoRange.push(`${c.file}:${p.name}`);
     }
   }
 }
 
 const styleFindings = [];
-if (inlineDefault.length && sentenceDefault.length) {
-  const minority = inlineDefault.length <= sentenceDefault.length
-    ? { style: "(default) in the option list", list: inlineDefault }
-    : { style: "a \"Defaults to `x`.\" sentence", list: sentenceDefault };
-  const majority = minority.list === inlineDefault ? sentenceDefault : inlineDefault;
+/* The two styles are not rivals — they suit different props. A list of options
+   marks its own default inline; a prop with a single value says so in a
+   sentence. What is inconsistent is using the wrong one for the shape. */
+const bulletedWithSentence = [];
+const plainWithInline = [];
+for (const c of components) {
+  for (const p of c.props) {
+    if (!p.doc) continue;
+    const hasBullets = /- `/.test(p.doc);
+    if (hasBullets && /Defaults to `/.test(p.doc)) bulletedWithSentence.push(`${c.file}:${p.name}`);
+    if (!hasBullets && /\(default\)/.test(p.doc)) plainWithInline.push(`${c.file}:${p.name}`);
+  }
+}
+if (bulletedWithSentence.length) {
   styleFindings.push({
-    what: "two ways of marking the default",
-    detail: `${majority.length} use one style, ${minority.list.length} use ${minority.style}`,
-    where: minority.list,
+    what: "option list that states its default in a sentence",
+    detail: "elsewhere the option itself is marked `(default)`",
+    where: bulletedWithSentence,
+  });
+}
+if (plainWithInline.length) {
+  styleFindings.push({
+    what: "single-value prop marked `(default)`",
+    detail: "with no options to mark, say \"Defaults to `x`.\"",
+    where: plainWithInline,
   });
 }
 if (variantNoOptions.length) {
@@ -185,7 +209,7 @@ if (variantNoOptions.length) {
 if (numberNoRange.length) {
   styleFindings.push({
     what: "number prop with no @min/@max",
-    detail: "Grid and Overlay annotate their ranges; these do not",
+    detail: "Grid and Overlay state @min/@max/@int; these say nothing",
     where: numberNoRange,
   });
 }
@@ -200,6 +224,7 @@ for (const c of components) {
 /* ---------- 5. destructuring that disagrees with declaration ---------- */
 const destructureIssues = [];
 for (const c of components) {
+  if (c.multiBlock) continue; // branch order is not a style choice
   const declared = c.props.map((p) => p.name);
   const inBoth = c.destructured.filter((n) => declared.includes(n));
   const expected = declared.filter((n) => inBoth.includes(n));
@@ -219,10 +244,14 @@ const rule = "─".repeat(70);
 console.log(`${components.length} components in ${root}\n${rule}`);
 
 console.log("\nRENDER — the prop every component shares");
-if (!renderIssues.length) console.log("  consistent everywhere");
+if (!renderIssues.length && !renderAdvisories.length) console.log("  consistent everywhere");
 for (const [file, why] of renderIssues) console.log(`  ${file.padEnd(34)} ${why}`);
+for (const [file, why] of renderAdvisories) console.log(`  note  ${file.padEnd(28)} ${why}`);
 
 console.log("\nPROP ORDER — pairs declared in conflicting orders");
+if (unionComponents.length) {
+  console.log(`  (skipped, props span a union: ${unionComponents.join(", ")})`);
+}
 if (!orderConflicts.length) console.log("  no conflicts");
 for (const c of orderConflicts) {
   console.log(`  ${c.convention.padEnd(30)} in ${c.majority} component(s); differs in:`);
@@ -250,5 +279,5 @@ for (const [file, detail] of destructureIssues) console.log(`  ${file}\n      ${
 const total =
   renderIssues.length + orderConflicts.length + styleFindings.length +
   undocumented.length + destructureIssues.length;
-console.log(`\n${rule}\n${total} finding(s). None break a build; all are felt in autocomplete.`);
+console.log(`\n${rule}\n${total} finding(s)${renderAdvisories.length ? ` and ${renderAdvisories.length} note(s)` : ""}. None break a build; all are felt in autocomplete.`);
 process.exit(total ? 1 : 0);

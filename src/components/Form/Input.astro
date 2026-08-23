@@ -25,6 +25,12 @@ interface Props extends Omit<HTMLAttributes<"input">, "type"> {
   /**
    * What the field is for. It settles the input's type, keyboard, autofill
    * and wording together, so a field only has to say which one it is.
+   *
+   * - `text` — anything else, with no assumptions (default)
+   * - `first-name`, `last-name`, `zip-code` — autofilled from an address
+   * - `email`, `phone`, `url`, `number`, `date` — a keyboard and validation
+   *   to match
+   * - `search`, `password` — the browser's own handling of each
    */
   variant?: InputVariant;
   /** The name it submits under. Taken from the label where it is not set. */

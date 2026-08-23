@@ -8,25 +8,25 @@ type Props = HTMLAttributes<"div"> & {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
   /**
-   * How the label is drawn.
-   *
-   * - `default` — a marker beside the text (default)
-   * - `tag` — no marker; the text sits in a filled pill
-   */
-  variant?: "default" | "tag";
-  /**
    * What the text is written as. Defaults to `p`. The type style is fixed
    * whichever is chosen, so a label can take a heading level — where it
    * titles the section that follows it — or `span`, where it is part of a
    * sentence, without changing how it looks.
    */
   tag?: EyebrowTag;
+  /**
+   * How the label is drawn.
+   *
+   * - `default` — a marker beside the text (default)
+   * - `tag` — no marker; the text sits in a filled pill
+   */
+  variant?: "default" | "tag";
 };
 
 const {
   render = true,
-  variant = "default",
   tag = "p",
+  variant = "default",
   class: className,
   ...rest
 } = Astro.props;

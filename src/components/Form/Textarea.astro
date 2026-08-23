@@ -13,9 +13,15 @@ interface Props extends Omit<HTMLAttributes<"textarea">, "rows"> {
   name?: string;
   /** The text shown in an empty field. */
   placeholder?: string;
-  /** How short it may be, in lines. Defaults to `3`. */
+  /** How short it may be, in lines. Defaults to `3`.
+   *
+   * @min 1
+   * @int */
   minLines?: number;
-  /** How tall it grows to before it scrolls, in lines. Defaults to `12`. */
+  /** How tall it grows to before it scrolls, in lines. Defaults to `12`.
+   *
+   * @min 1
+   * @int */
   maxLines?: number;
   /** Marks the field as needed, and stars its label. */
   required?: boolean;

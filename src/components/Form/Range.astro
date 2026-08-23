@@ -7,13 +7,24 @@ interface Props extends Omit<HTMLAttributes<"input">, "type" | "value"> {
   render?: boolean;
   /** The text above the track. */
   label?: string;
-  /** Where the handle starts. Defaults to halfway. */
+  /** Where the handle starts. Defaults to halfway.
+   *
+   * @min 0
+   * @max 100
+   * @int */
   value?: number;
-  /** The lowest it goes. Defaults to `0`. */
+  /** The lowest it goes. Defaults to `0`.
+   *
+   * @int */
   min?: number;
-  /** The highest it goes. Defaults to `100`. */
+  /** The highest it goes. Defaults to `100`.
+   *
+   * @int */
   max?: number;
-  /** How far it moves at a time. Defaults to `1`. */
+  /** How far it moves at a time. Defaults to `1`.
+   *
+   * @min 1
+   * @int */
   step?: number;
   /** What the number is measured in, shown after it. */
   unit?: string;
