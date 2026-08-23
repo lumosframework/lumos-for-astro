@@ -89,7 +89,7 @@ const locals =
 {
   render && items && (
     <div
-      class:list={["marquee", variant !== "start" && variant, className]}
+      class:list={["marquee_wrap", variant !== "start" && variant, className]}
       style={locals}
       role="group"
       aria-label={label}
@@ -130,7 +130,9 @@ const locals =
 </noscript>
 
 <script>
-  for (const marquee of document.querySelectorAll<HTMLElement>(".marquee")) {
+  for (const marquee of document.querySelectorAll<HTMLElement>(
+    ".marquee_wrap",
+  )) {
     const toggle = marquee.querySelector<HTMLButtonElement>(
       "[data-marquee-toggle]",
     );
@@ -156,7 +158,7 @@ const locals =
 
 <style is:global>
   @layer components {
-    .marquee {
+    .marquee_wrap {
       --_gap-size: var(--space-6);
       --_item-height: 3rem;
       --_speed: 4s;
@@ -189,27 +191,22 @@ const locals =
        gap, which lands the second where the first began. */
     .marquee_track {
       display: flex;
-      /* Sized by what it holds, and never narrower than the strip it runs in,
-         so a short set spreads across rather than bunching at the start. Half
-         the track plus half the gap is the distance the keyframe travels,
-         which holds either way: with the panels packed it is one panel and one
-         gap, and with them spread the space between them grows by exactly what
-         the halves gain. */
+      /* Sized by the two panels it holds, so half the track plus half the gap
+         is one panel and one gap — the distance the keyframe travels, which
+         lands the copy exactly where the original began. */
       width: max-content;
-      min-width: 100cqw;
-      justify-content: space-around;
       align-items: center;
       gap: var(--_gap-size);
       animation: marquee var(--_duration) linear infinite;
 
-      .marquee.end & {
+      .marquee_wrap.end & {
         animation-direction: reverse;
       }
 
       /* Held while something inside has focus, so a link can't travel out from
          under the person reading it. The toggle sits outside the track. */
       &:focus-within,
-      .marquee[data-state="paused"] & {
+      .marquee_wrap[data-state="paused"] & {
         animation-play-state: paused;
       }
     }
@@ -217,6 +214,12 @@ const locals =
     .marquee_panel {
       display: flex;
       flex: none;
+      /* A panel is never narrower than the strip it runs in. That is what keeps
+         the loop full: the track travels one panel and one gap, so the copy has
+         to be wide enough to still cover the strip when the original has left
+         it. A short set spreads across rather than bunching at the start. */
+      min-width: 100cqw;
+      justify-content: space-around;
       align-items: center;
       gap: var(--_gap-size);
 
@@ -255,7 +258,7 @@ const locals =
         animation-name: none;
       }
 
-      .marquee[data-state="playing"] .marquee_track {
+      .marquee_wrap[data-state="playing"] .marquee_track {
         animation-name: marquee;
         animation-duration: var(--_duration) !important;
       }
