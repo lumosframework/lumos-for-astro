@@ -10,20 +10,12 @@ type Props = HTMLAttributes<"div"> & {
   label?: string;
   /** Which way the items travel. Defaults to `start`, which runs them leftwards. */
   variant?: "start" | "end";
-  /**
-   * Seconds spent on each item, so a strip keeps its pace however many it
-   * holds. Must be greater than 0. Defaults to 4.
-   *
-   * @min 0.1
-   */
-  speed?: number;
 };
 
 const {
   render = true,
   label = "Marquee",
   variant = "start",
-  speed = 4,
   class: className,
   ...rest
 } = Astro.props;
@@ -71,19 +63,9 @@ const countItems = (html: string) => {
 
 const count = countItems(items);
 
-const validSpeed = Number.isFinite(speed) && speed > 0;
-
-if (import.meta.env.DEV && render && !validSpeed) {
-  console.warn(
-    `[lumos] <Marquee speed={${speed}}> must be greater than 0; the default is used instead.`,
-  );
-}
-
-/* The stylesheet holds the defaults, so only what differs is written out. */
-const locals =
-  [`--_count: ${count}`, validSpeed && speed !== 4 && `--_speed: ${speed}s`]
-    .filter(Boolean)
-    .join("; ") || undefined;
+/* The one thing the stylesheet cannot work out for itself. The pace it is
+   multiplied by is set there, beside the rest of the animation. */
+const locals = `--_count: ${count}`;
 ---
 
 {
@@ -161,6 +143,8 @@ const locals =
     .marquee_wrap {
       --_gap-size: var(--space-6);
       --_item-height: 3rem;
+      /* Seconds spent on each item, so a strip keeps its pace however many it
+         holds — the count comes in on the element. */
       --_speed: 4s;
       --_count: 1;
       --_duration: calc(var(--_count) * var(--_speed));
