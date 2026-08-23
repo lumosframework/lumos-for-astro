@@ -8,14 +8,14 @@ type Props = HTMLAttributes<"div"> & {
   render?: boolean;
   /** What the strip holds, for anyone who cannot see it. Defaults to `Marquee`. */
   label?: string;
-  /** Which way the items travel. Defaults to `start`, which runs them leftwards. */
-  variant?: "start" | "end";
+  /** Which way the items travel. Defaults to `forwards`, which runs them leftwards. */
+  direction?: "forwards" | "backwards";
 };
 
 const {
   render = true,
   label = "Marquee",
-  variant = "start",
+  direction = "forwards",
   class: className,
   ...rest
 } = Astro.props;
@@ -71,7 +71,11 @@ const locals = `--_count: ${count}`;
 {
   render && items && (
     <div
-      class:list={["marquee_wrap", variant !== "start" && variant, className]}
+      class:list={[
+        "marquee_wrap",
+        direction !== "forwards" && direction,
+        className,
+      ]}
       style={locals}
       role="group"
       aria-label={label}
@@ -101,15 +105,6 @@ const locals = `--_count: ${count}`;
     </div>
   )
 }
-
-{/* Without scripting the toggle can't do anything, so it isn't offered. */}
-<noscript>
-  <style>
-    .marquee_toggle {
-      display: none;
-    }
-  </style>
-</noscript>
 
 <script>
   for (const marquee of document.querySelectorAll<HTMLElement>(
@@ -183,7 +178,7 @@ const locals = `--_count: ${count}`;
       gap: var(--_gap-size);
       animation: marquee var(--_duration) linear infinite;
 
-      .marquee_wrap.end & {
+      .marquee_wrap.backwards & {
         animation-direction: reverse;
       }
 
