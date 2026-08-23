@@ -28,6 +28,13 @@ import Slider from "@/components/Interactive/Slider.astro";
 import Accordion from "@/components/Interactive/Accordion.astro";
 import Marquee from "@/components/Interactive/Marquee.astro";
 import AccordionItem from "@/components/Interactive/AccordionItem.astro";
+import Video from "@/components/Media/Video.astro";
+import Icon from "@/components/Media/Icon.astro";
+import RichText from "@/components/Typography/RichText.astro";
+import arrow from "@/assets/icons/arrow.svg";
+import play from "@/assets/icons/play.svg";
+import close from "@/assets/icons/close.svg";
+import check from "@/assets/icons/check.svg";
 
 const heading = "We build things that help people work smarter";
 const text =
@@ -605,13 +612,13 @@ const lorem =
     </ContentWrapper>
     <Marquee label="What we do">
       <Paragraph variant="large">Strategy</Paragraph>
-      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Icon src={logo_icon} variant="large" />
       <Paragraph variant="large">Design</Paragraph>
-      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Icon src={logo_icon} variant="large" />
       <Paragraph variant="large">Development</Paragraph>
-      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Icon src={logo_icon} variant="large" />
       <Paragraph variant="large">Research</Paragraph>
-      <Img src={logo_icon} width={199} height={194} variant="densities" />
+      <Icon src={logo_icon} variant="large" />
     </Marquee>
   </Section>
   <!-- marquee end -->
@@ -620,7 +627,7 @@ const lorem =
       <Eyebrow>marquee · end</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
     </ContentWrapper>
-    <Marquee variant="end" speed={6} label="Partners">
+    <Marquee variant="end" label="Partners">
       <Paragraph variant="large">Strategy</Paragraph>
       <Paragraph variant="large">Design</Paragraph>
       <Paragraph variant="large">Development</Paragraph>
@@ -638,6 +645,57 @@ const lorem =
         <Dropdown label="Dropdown">
           <Paragraph />
         </Dropdown>
+      </ButtonWrapper>
+    </ContentWrapper>
+  </Section>
+  <!-- video -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>video</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+      <Paragraph maxWidth={36}>{text}</Paragraph>
+      <Video
+        src="https://timothyricks.us.getafile.online/background-video"
+        variant="16-9"
+        loop={true}
+        autoplay={true}
+        muted={true}
+      />
+    </ContentWrapper>
+  </Section>
+  <!-- rich-text -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>rich-text</Eyebrow>
+      <RichText maxWidth={60}>
+        <h2>A heading the editor wrote</h2>
+        <p>
+          Rich text takes whatever a CMS hands it and gives every element the
+          same rhythm the rest of the page uses, without a class on any of them.
+        </p>
+        <h3>A second level</h3>
+        <ul>
+          <li>An item in a list</li>
+          <li>
+            Another item, longer, so it wraps onto a second line and the spacing
+            between items can be read
+          </li>
+        </ul>
+        <blockquote>A pull quote, styled from the parent.</blockquote>
+        <p>A closing paragraph with <a href="/about">a link</a> inside it.</p>
+      </RichText>
+    </ContentWrapper>
+  </Section>
+  <!-- icon -->
+  <Section paddingTop="small" paddingBottom="small">
+    <ContentWrapper>
+      <Eyebrow>icon</Eyebrow>
+      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
+      <ButtonWrapper>
+        <Icon src={arrow} variant="small" />
+        <Icon src={play} variant="medium" />
+        <Icon src={close} variant="large" />
+        <Icon src={check} variant="medium" />
       </ButtonWrapper>
     </ContentWrapper>
   </Section>
