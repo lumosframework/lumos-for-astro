@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import Icon from "@/components/Icon.astro";
+import Icon from "@/components/Media/Icon.astro";
 import arrow from "@/assets/icons/arrow.svg";
 import { slotContent } from "@/utils/slots.ts";
 
@@ -9,18 +9,29 @@ type Props = HTMLAttributes<"div"> & {
   render?: boolean;
   /** The text on the control that opens it. */
   label?: string;
+  /** Holds the panel open while the visual builder is in design mode, so the content can be edited. Nothing changes on the published page. */
+  preview?: boolean;
 };
 
-const { render = true, label, class: className, ...rest } = Astro.props;
+const {
+  render = true,
+  label,
+  preview = false,
+  class: className,
+  ...rest
+} = Astro.props;
 
 const content = await slotContent(Astro.slots);
 ---
 
 {
   render && label && content && (
-    <details class:list={["dropdown", className]} {...rest}>
+    <details
+      class:list={["dropdown_wrap", preview && "preview", className]}
+      {...rest}
+    >
       <summary class="dropdown_toggle">
-        <span class="dropdown_label text-style-main">{label}</span>
+        <span class="dropdown_label text-style-trim">{label}</span>
         <Icon class="dropdown_icon" src={arrow} variant="small" />
       </summary>
 
@@ -35,7 +46,7 @@ const content = await slotContent(Astro.slots);
 
 <script>
   for (const dropdown of document.querySelectorAll<HTMLDetailsElement>(
-    ".dropdown",
+    ".dropdown_wrap",
   )) {
     const summary = dropdown.querySelector<HTMLElement>(".dropdown_toggle");
     const content = dropdown.querySelector<HTMLElement>(".dropdown_content");
@@ -83,7 +94,7 @@ const content = await slotContent(Astro.slots);
 
 <style is:global>
   @layer components {
-    .dropdown {
+    .dropdown_wrap {
       --_control-pad: 0.75em;
       --_leaving: calc(var(--open-duration) * 0.7);
       position: relative;
@@ -91,8 +102,11 @@ const content = await slotContent(Astro.slots);
       display: inline-block;
     }
 
+    /* Block-level, not inline: an inline box would sit on a line of its own
+       inside the `details`, and the leading around it would push the control
+       off the centre its neighbours are aligned to. */
     .dropdown_toggle {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 0.5em;
       padding: var(--_control-pad) 0;
@@ -116,11 +130,14 @@ const content = await slotContent(Astro.slots);
       transition: rotate var(--open-duration) var(--open-ease);
     }
 
-    .dropdown[open] .dropdown_icon {
+    /* The builder cannot set the `open` attribute, so its own classes dress
+       the control as open alongside it, as `Modal` does. */
+    .dropdown_wrap:is([open], .stacki-opened) .dropdown_icon,
+    .stacki-designer .dropdown_wrap.preview .dropdown_icon {
       rotate: -90deg;
     }
 
-    .dropdown::details-content {
+    .dropdown_wrap::details-content {
       opacity: 0;
       content-visibility: hidden;
       transition:
@@ -128,7 +145,8 @@ const content = await slotContent(Astro.slots);
         content-visibility var(--_leaving) var(--open-ease) allow-discrete;
     }
 
-    .dropdown[open]::details-content {
+    .dropdown_wrap:is([open], .stacki-opened)::details-content,
+    .stacki-designer .dropdown_wrap.preview::details-content {
       opacity: 1;
       content-visibility: visible;
       transition:
@@ -153,7 +171,8 @@ const content = await slotContent(Astro.slots);
         scale var(--_leaving) var(--open-ease);
     }
 
-    .dropdown[open] .dropdown_content {
+    .dropdown_wrap:is([open], .stacki-opened) .dropdown_content,
+    .stacki-designer .dropdown_wrap.preview .dropdown_content {
       translate: 0 0;
       scale: 1;
       transition:

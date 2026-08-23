@@ -16,7 +16,8 @@ import { spawn } from "node:child_process";
 
 const REPO = "lumosframework/lumos-for-astro";
 const BRANCH = "main";
-const TARBALL = `https://codeload.github.com/${REPO}/tar.gz/refs/heads/${BRANCH}`;
+const TARBALL = (ref) => `https://codeload.github.com/${REPO}/tar.gz/${ref}`;
+const COMMIT = `https://api.github.com/repos/${REPO}/commits/${BRANCH}`;
 
 // Pinned rather than current-dated: it selects Workers runtime behaviour, and
 // should be a date the framework was actually tested against.
@@ -192,8 +193,25 @@ async function main() {
     die(`${target} already exists and is not empty.`);
   }
 
+  // Resolve the branch to one commit before downloading. Two things come of
+  // it: the download is of a single exact state rather than whatever lands
+  // mid-fetch, and the site can record where it came from. Upgrades need that
+  // record — without it there is no way to know which Lumos a site started on,
+  // and a merge has nothing to merge against.
+  let commit = null;
+  try {
+    const meta = await fetch(COMMIT, {
+      headers: { accept: "application/vnd.github+json" },
+    });
+    if (meta.ok) commit = (await meta.json())?.sha ?? null;
+  } catch {
+    // Offline, or the API is rate limited. Scaffolding still works; the site
+    // just goes out unstamped and upgrades fall back to assuming the earliest
+    // version.
+  }
+
   stdout.write(dim("Downloading template... "));
-  const res = await fetch(TARBALL);
+  const res = await fetch(TARBALL(commit ?? `refs/heads/${BRANCH}`));
   if (!res.ok) die(`Could not download the template (HTTP ${res.status}).`);
   const tar = gunzipSync(Buffer.from(await res.arrayBuffer()));
   console.log(green("done"));
@@ -236,6 +254,11 @@ async function main() {
     const pkg = JSON.parse(await readFile(manifest, "utf8"));
     pkg.name = name;
     pkg.version = "0.0.1";
+    // The site's own version is its own business; this is the framework
+    // commit it was built from, which is what an upgrade reads.
+    if (commit) {
+      pkg.lumos = { commit, scaffolded: new Date().toISOString().slice(0, 10) };
+    }
     delete pkg.homepage;
     delete pkg.repository;
     delete pkg.bugs;

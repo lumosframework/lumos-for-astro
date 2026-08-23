@@ -1,6 +1,6 @@
 ---
-import Icon from "@/components/Icon.astro";
-import logo from "@/assets/logo.svg";
+import Icon from "@/components/Media/Icon.astro";
+import logo from "@/assets/logo/logo.svg";
 import { SITE_NAME } from "@/consts.ts";
 
 interface Props {
@@ -13,7 +13,7 @@ const { render = true } = Astro.props;
 
 {
   render && (
-    <footer class="footer">
+    <footer class="footer_wrap">
       <div class="footer_inner">
         <div class="footer_top">
           <a class="footer_logo" href="/" aria-label={SITE_NAME}>
@@ -55,7 +55,7 @@ const { render = true } = Astro.props;
 
 <style is:global>
   @layer components {
-    .footer {
+    .footer_wrap {
       display: flex;
       justify-content: center;
       padding-block: var(--section-space-small);

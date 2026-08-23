@@ -49,10 +49,10 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
       class:list={["field", "form-range", className]}
       style={`--_progress: ${progress};`}
     >
-      <label class="field_label text-style-main" for={fieldId}>
+      <label class="field-label text-style-main" for={fieldId}>
         <span>{label}</span>
         {required && (
-          <span class="field_star" aria-hidden="true">
+          <span class="field-star" aria-hidden="true">
             *
           </span>
         )}

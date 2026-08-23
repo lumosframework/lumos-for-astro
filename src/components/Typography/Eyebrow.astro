@@ -2,6 +2,8 @@
 import type { HTMLAttributes } from "astro/types";
 import { slotContent } from "@/utils/slots.ts";
 
+type EyebrowTag = "span" | "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
 type Props = HTMLAttributes<"div"> & {
   /** Set to `false` to skip rendering this component and its children. */
   render?: boolean;
@@ -12,14 +14,24 @@ type Props = HTMLAttributes<"div"> & {
    * - `tag` — no marker; the text sits in a filled pill
    */
   variant?: "default" | "tag";
+  /**
+   * What the text is written as. Defaults to `p`. The type style is fixed
+   * whichever is chosen, so a label can take a heading level — where it
+   * titles the section that follows it — or `span`, where it is part of a
+   * sentence, without changing how it looks.
+   */
+  tag?: EyebrowTag;
 };
 
 const {
   render = true,
   variant = "default",
+  tag = "p",
   class: className,
   ...rest
 } = Astro.props;
+
+const Tag = tag;
 
 const content = await slotContent(Astro.slots);
 ---
@@ -27,22 +39,22 @@ const content = await slotContent(Astro.slots);
 {
   render && content && (
     <div
-      class:list={["eyebrow", variant !== "default" && variant, className]}
+      class:list={["eyebrow_wrap", variant !== "default" && variant, className]}
       {...rest}
     >
       {variant === "default" && (
         <span class="eyebrow_marker" aria-hidden="true" />
       )}
-      <p class="eyebrow_text text-style-small">
+      <Tag class="eyebrow_text text-style-small">
         <Fragment set:html={content} />
-      </p>
+      </Tag>
     </div>
   )
 }
 
 <style is:global>
   @layer components {
-    .eyebrow {
+    .eyebrow_wrap {
       display: inline-flex;
       align-items: center;
       justify-content: var(--_alignment, start);

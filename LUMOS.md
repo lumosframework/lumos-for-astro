@@ -27,13 +27,23 @@ Every box has to be ticked before new styling is accepted.
 - [ ] Uses utilities only to override one instance of a variant — a change or two that stand on their own. The moment several have to hold together to make a look, that look is a variant, not a stack of classes.
 - [ ] Doesn't repeat the same utility, prop value or attribute on every instance of an element — that means the default is wrong. Fix it at the source rather than in the markup: a token in `src/styles/base.css`, the prop's default in the component, or a new prop defaulting to whichever version is used more often.
 - [ ] Ships with the new component that needs it, in that component's own `<style is:global>` under `@layer components`. A page carries no CSS.
-- [ ] Gives its root element a class no other component uses — `.blog-gallery`, `.hero-condensed`, `.cta-impact` — and prefixes every child with it: `.blog-gallery_layout`, `.blog-gallery_title`, `.blog-gallery_text`.
+- [ ] Ends its root class in `_wrap` — `.blog-gallery_wrap`, `.hero-condensed_wrap`, `.cta-impact_wrap` — and prefixes every child with the family name: `.blog-gallery_layout`, `.blog-gallery_title`, `.blog-gallery_text`. A variant is a bare class beside the root (`.tabs_wrap.side`), so the two share a namespace: without `_wrap`, a variant named for a component — `button`, `card` — quietly inherits that component's styles.
+- [ ] Skips `_wrap` when the component has no children to prefix. A primitive is its own name: `.heading`, `.text`, `.section`, `.container`, `.layout`. These are the classes `patterns.css` styles, and nothing in that file carries an underscore.
 - [ ] Names children for their role, never their mechanism: `_layout` or `_list`, not `_grid` or `_flex`, since the property behind them changes.
 - [ ] Carries a pattern class beside the custom one wherever one fits — `text-style-h3`, `theme-invert` — leaving the custom class to hold only what it overrides. Editing a pattern then reaches every component using it.
+- [ ] Styles emphasis inside a heading from the parent — `.heading-accent strong`, `.heading-accent em` — rather than classing the `strong` or `em`, which rich text can't carry.
 - [ ] Uses no `px`. Lengths are `rem`, a max width on text is `ch`, and anything that should track the font size — letter spacing, an icon or flourish sitting in text — is `em`.
 - [ ] Keeps each media query nested in the rule it changes, and shares one query across the whole component. Split into one per variant only where variants wrap at different widths, as `ContentWrapper` does. Never one per child or per property: that spreads a single value across the file.
 - [ ] Uses the breakpoints `Grid` declares, read from there rather than from memory, since a site may change them. Any other breakpoint needs a reason.
 - [ ] Doesn't lean on a nested component's own media queries — leave a `Grid`'s column props unset, one column at every width, and make it responsive from your own class. Share the breakpoint values, not the queries.
+
+## Graphics built from elements
+
+A graphic that has to scale as one piece — an illustration, diagram or mockup
+whose parts are still swappable and animatable — is an artboard with
+`container-type: inline-size`, an `aspect-ratio`, and every length inside in
+`cqw`. It is the one place the rem tokens are deliberately not used. See the
+`lumos-scaling-graphic` skill.
 
 ## New component checklist
 
@@ -44,3 +54,4 @@ Every box has to be ticked before a component is done.
 - [ ] Orders props the same way as other components in the type and the destructure: `render`, content that changes per instance, `variant`, props that only apply to some variants, then occasional settings. `class` and `...rest` last.
 - [ ] Puts variant-specific props behind a discriminated union on `variant`, `never` on the variants that don't take them, so the wrong prop fails to type-check rather than being ignored. Destructure through a widened `AllProps` alias, as `Card` and `Img` do.
 - [ ] Documents each prop with the exact wording other components already use for it. A shared prop only gets its own description where it genuinely behaves differently.
+- [ ] Adds no comments beyond those prop tooltips, the banners dividing a stylesheet into sections, and one line labelling each section of a page.

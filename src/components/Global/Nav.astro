@@ -1,7 +1,7 @@
 ---
-import Icon from "@/components/Icon.astro";
-import NavLink from "@/components/NavLink.astro";
-import logo from "@/assets/logo.svg";
+import Icon from "@/components/Media/Icon.astro";
+import NavLink from "@/components/Global/NavLink.astro";
+import logo from "@/assets/logo/logo.svg";
 import { SITE_NAME } from "@/consts.ts";
 
 interface Props {
@@ -20,7 +20,7 @@ const { render = true, overlap = false } = Astro.props;
 
 {
   render && (
-    <header class:list={["nav", overlap && "overlap"]}>
+    <header class:list={["nav_wrap", overlap && "overlap"]}>
       <div class="nav_inner">
         <a class="nav_logo" href="/" aria-label={SITE_NAME}>
           <Icon src={logo} variant="full-width" />
@@ -64,7 +64,7 @@ const { render = true, overlap = false } = Astro.props;
 </noscript>
 
 <script>
-  const nav = document.querySelector<HTMLElement>(".nav");
+  const nav = document.querySelector<HTMLElement>(".nav_wrap");
   const toggle = nav?.querySelector<HTMLButtonElement>(".nav_toggle");
 
   if (nav && toggle) {
@@ -104,7 +104,7 @@ const { render = true, overlap = false } = Astro.props;
 
 <style is:global>
   @layer components {
-    .nav {
+    .nav_wrap {
       position: sticky;
       top: 0;
       z-index: 100;
@@ -189,7 +189,7 @@ const { render = true, overlap = false } = Astro.props;
       }
     }
 
-    .nav.open .nav_toggle_icon {
+    .nav_wrap.open .nav_toggle_icon {
       &::before {
         transform: translateY(calc(var(--_bar-gap) / 2)) rotate(45deg);
       }
@@ -222,12 +222,12 @@ const { render = true, overlap = false } = Astro.props;
       transition: opacity var(--open-duration) var(--open-ease);
     }
 
-    .nav.open .nav_menu {
+    .nav_wrap.open .nav_menu {
       grid-template-rows: 1fr;
       visibility: visible;
     }
 
-    .nav.open .nav_menu_inner {
+    .nav_wrap.open .nav_menu_inner {
       opacity: 1;
       overflow-y: auto;
     }

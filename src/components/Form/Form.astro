@@ -32,7 +32,7 @@ const content = await slotContent(Astro.slots);
 {
   render && name && content && (
     <div
-      class:list={["form", className]}
+      class:list={["form_wrap", className]}
       data-state="idle"
       data-endpoint={action}
     >
@@ -57,7 +57,7 @@ const content = await slotContent(Astro.slots);
 }
 
 <script>
-  for (const form of document.querySelectorAll<HTMLElement>(".form")) {
+  for (const form of document.querySelectorAll<HTMLElement>(".form_wrap")) {
     const fields = form.querySelector<HTMLFormElement>(".form_fields");
     if (!fields) continue;
 
@@ -66,11 +66,8 @@ const content = await slotContent(Astro.slots);
     );
 
     fields.addEventListener("submit", async (event) => {
-      // Read when it is sent rather than when the page loads, so a form whose
-      // endpoint is decided later still posts where it is told to.
       const endpoint = form.dataset.endpoint;
 
-      // Let the browser say which field is wrong before anything else runs.
       if (!fields.checkValidity()) return;
 
       event.preventDefault();
@@ -98,7 +95,7 @@ const content = await slotContent(Astro.slots);
 
 <style is:global>
   @layer components {
-    .form {
+    .form_wrap {
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
@@ -109,10 +106,10 @@ const content = await slotContent(Astro.slots);
       display: flex;
       flex-direction: column;
       gap: var(--space-5);
+      row-gap: var(--space-8);
+      column-gap: var(--space-8);
     }
 
-    /* Both notes are in the page from the start, so that a screen reader is
-       already watching them when one is filled in. */
     .form_note {
       display: none;
       padding: var(--space-4) var(--space-5);
@@ -120,7 +117,7 @@ const content = await slotContent(Astro.slots);
       border-radius: var(--radius-small);
     }
 
-    .form[data-state="sent"] {
+    .form_wrap[data-state="sent"] {
       & .form_fields {
         display: none;
       }
@@ -129,7 +126,7 @@ const content = await slotContent(Astro.slots);
       }
     }
 
-    .form[data-state="failed"] .form_note-failed {
+    .form_wrap[data-state="failed"] .form_note-failed {
       display: block;
       color: var(--text);
     }

@@ -1,22 +1,21 @@
-/* ==========================================================================
-   1. Design tokens
-   ========================================================================== */
-
+/* 1. Design tokens */
 :root {
   /* Swatches */
   --light-100: #ffffff;
   --light-200: #ebebeb;
+  --light-300: #d9d9d9;
+  --dark-700: #453e42;
   --dark-800: #2f2b2d;
   --dark-900: #1f1d1e;
   --brand-500: #c6fb50;
   --brand-text: var(--dark-900);
 
   /* Typography primitives */
-  --primary-family: system-ui, sans-serif;
+  --primary-family: var(--font-inter, system-ui, sans-serif);
   --primary-regular: 400;
   --primary-medium: 500;
   --primary-bold: 700;
-  --primary-trim-top: 0.33em;
+  --primary-trim-top: 0.4em;
   --primary-trim-bottom: 0.38em;
 
   /* Letter spacing */
@@ -39,10 +38,7 @@
   --hover-duration: 200ms;
   --hover-ease: ease;
 
-  /* Opening motion
-     What a click opens or closes — a menu, a panel — rather than what a
-     pointer touches. It follows the hover pair unless it is given its own
-     value, so the two can be told apart later without being unpicked now. */
+  /* Opening motion */
   --open-duration: var(--hover-duration);
   --open-ease: var(--hover-ease);
 
@@ -255,24 +251,16 @@
   --section-space-nav-overlap-max: 224;
 }
 
-/* ==========================================================================
-   2. Color themes
-   ========================================================================== */
-
-/* Three surfaces to a theme: the page, what sits on it, and what a pointer
-   lifts. The third steps away from the second by whatever room the theme has
-   left — lighter where the page is dark, and a shade off white where it is
-   already as light as it goes. */
-
+/* 2. Color themes */
 :root,
 .theme-light,
 .theme-dark .theme-invert,
 .theme-brand .theme-invert {
   color-scheme: light;
 
-  --background: var(--light-200);
-  --background-2: var(--light-100);
-  --background-3: color-mix(in lab, var(--background-2) 96%, var(--text));
+  --background: var(--light-300);
+  --background-2: var(--light-200);
+  --background-3: var(--light-100);
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
   --text: var(--dark-900);
   --text-2: color-mix(in lab, currentcolor 60%, transparent);
@@ -308,7 +296,7 @@
 
   --background: var(--dark-900);
   --background-2: var(--dark-800);
-  --background-3: color-mix(in lab, var(--background-2) 90%, var(--text));
+  --background-3: var(--dark-700);
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
   --text: var(--light-100);
   --text-2: color-mix(in lab, currentcolor 60%, transparent);
@@ -342,8 +330,8 @@
   color-scheme: dark;
 
   --background: var(--brand-500);
-  --background-2: var(--brand-500);
-  --background-3: color-mix(in lab, var(--background-2) 90%, var(--text));
+  --background-2: color-mix(in lab, var(--background) 90%, var(--text));
+  --background-3: color-mix(in lab, var(--background) 80%, var(--text));
   --background-skeleton: color-mix(in lab, currentcolor 10%, transparent);
   --text: var(--brand-text);
   --text-2: color-mix(in lab, currentcolor 60%, transparent);
@@ -379,10 +367,7 @@
   color: var(--text);
 }
 
-/* ==========================================================================
-   3. Reset & base
-   ========================================================================== */
-
+/* 3. Reset & base */
 *,
 ::before,
 ::after {
@@ -501,10 +486,7 @@ select:has(option[value=""]:checked) {
   }
 }
 
-/* ==========================================================================
-   4. Text styles
-   ========================================================================== */
-
+/* 4. Text styles */
 body,
 .text-style-main {
   font-family: var(--text-main-font-family);

@@ -1068,13 +1068,16 @@
   order: 1;
 }
 
-.visually-hidden {
-  position: absolute;
+/* Accessibility */
+.sr-only {
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+  border-width: 0;
   width: 1px;
   height: 1px;
-  margin: -1px;
+  margin-inline: auto;
   padding: 0;
+  position: absolute;
+  inset: 0% 0% auto;
   overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }

@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import Icon from "@/components/Icon.astro";
+import Icon from "@/components/Media/Icon.astro";
 import arrow from "@/assets/icons/arrow-full.svg";
 import close from "@/assets/icons/close.svg";
 import play from "@/assets/icons/play.svg";
@@ -25,15 +25,30 @@ type Tag =
 
 type Kind =
   | {
+      /**
+       * What kind of button it is.
+       *
+       * - `main` — a labelled button (default)
+       * - `link` — text on a rule that travels across on hover
+       * - `play`, `close`, `arrow` — a mark on its own, with a label for
+       *   anyone who cannot see it
+       */
       variant?: "main";
       /**
        * How much weight the button carries.
        *
        * - `primary` — filled, for the main action (default)
        * - `secondary` — outlined, for anything sitting beside a primary
-       * - `link` — text on a rule that travels across on hover
        */
-      emphasis?: Emphasis | "link";
+      emphasis?: Emphasis;
+      label?: never;
+      pressed?: never;
+      direction?: never;
+    }
+  | {
+      variant: "link";
+      /** A link carries no weight of its own: it is already the quietest. */
+      emphasis?: never;
       label?: never;
       pressed?: never;
       direction?: never;
@@ -74,8 +89,8 @@ type Props = {
 type AllProps = HTMLAttributes<"button"> &
   Omit<HTMLAttributes<"a">, "type"> & {
     render?: boolean;
-    variant?: "main" | "play" | "close" | "arrow";
-    emphasis?: Emphasis | "link";
+    variant?: "main" | "link" | "play" | "close" | "arrow";
+    emphasis?: Emphasis;
     label?: string;
     pressed?: boolean;
     direction?: "forward" | "back";
@@ -105,8 +120,9 @@ const tagAttrs = isLink
   : { type: type === "submit" ? undefined : type };
 
 const marks = { play, close, arrow };
-const isMain = variant === "main";
-const content = isMain ? await slotContent(Astro.slots) : "";
+/* main and link are written, the rest are marks with a label. */
+const isWritten = variant === "main" || variant === "link";
+const content = isWritten ? await slotContent(Astro.slots) : "";
 
 const named = {
   play: pressed ? "Pause" : "Play",
@@ -116,21 +132,21 @@ const named = {
 ---
 
 {
-  render && (isMain ? content : true) && (
+  render && (isWritten ? content : true) && (
     <Tag
       class:list={[
-        "button",
+        "button_wrap",
         emphasis !== "primary" && emphasis,
-        !isMain && variant,
+        variant !== "main" && variant,
         variant === "arrow" && direction === "back" && "back",
         className,
       ]}
-      aria-label={isMain ? undefined : (label ?? named[variant])}
+      aria-label={isWritten ? undefined : (label ?? named[variant])}
       aria-pressed={variant === "play" ? pressed : undefined}
       {...tagAttrs}
       {...rest}
     >
-      {isMain && (
+      {isWritten && (
         <span class="button_text text-style-trim">
           <Fragment set:html={content} />
         </span>
@@ -153,7 +169,7 @@ const named = {
 
 <style is:global>
   @layer components {
-    .button {
+    .button_wrap {
       display: inline-flex;
       justify-content: center;
       align-items: center;

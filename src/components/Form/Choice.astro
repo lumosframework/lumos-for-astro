@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import Icon from "@/components/Icon.astro";
+import Icon from "@/components/Media/Icon.astro";
 import check from "@/assets/icons/check.svg";
 import { slug } from "@/utils/text.ts";
 
@@ -33,9 +33,9 @@ type Settings = {
    *
    * - `default` — a box or a circle beside the text
    * - `toggle` — a switch that slides
-   * - `button` — the whole of it reads as one button, and fills when chosen
+   * - `chip` — the whole of it reads as one control, and fills when chosen
    */
-  variant?: "default" | "toggle" | "button";
+  variant?: "default" | "toggle" | "chip";
   /** Whether it starts out chosen. */
   checked?: boolean;
   /** Marks the choice as needed. */
@@ -67,11 +67,7 @@ const {
 {
   render && label && (
     <label
-      class:list={[
-        "form-choice",
-        variant !== "default" && `form-choice-${variant}`,
-        className,
-      ]}
+      class:list={["form-choice", variant !== "default" && variant, className]}
     >
       <input
         class="form-choice_input"
@@ -173,7 +169,7 @@ const {
     }
 
     /* Toggle */
-    .form-choice-toggle {
+    .form-choice.toggle {
       & .form-choice_mark {
         width: 2.75em;
         height: 1.5em;
@@ -200,8 +196,8 @@ const {
       }
     }
 
-    /* Button */
-    .form-choice-button {
+    /* Chip */
+    .form-choice.chip {
       padding: 0.75em 1.5em;
       background-color: var(--background-2);
       border: var(--border-width) solid transparent;

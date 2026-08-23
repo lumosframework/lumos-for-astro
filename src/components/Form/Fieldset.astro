@@ -38,8 +38,8 @@ const {
 
 const LEGEND_STYLES: Record<NonNullable<Props["legendStyle"]>, string> = {
   heading: "text-style-h5",
-  label: "field_label text-style-main",
-  hidden: "visually-hidden",
+  label: "field-label text-style-main",
+  hidden: "sr-only",
 };
 
 const content = await slotContent(Astro.slots);

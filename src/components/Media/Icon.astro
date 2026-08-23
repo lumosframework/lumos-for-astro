@@ -55,7 +55,9 @@ if (import.meta.env.DEV && render) {
       flex: none;
       display: block;
       width: var(--_size);
-      height: var(--_size);
+      height: auto;
+      aspect-ratio: 1 / 1;
+      max-width: 100%;
 
       &.small {
         --_size: 1em;
@@ -67,7 +69,7 @@ if (import.meta.env.DEV && render) {
 
       &.full-width {
         width: 100%;
-        height: auto;
+        aspect-ratio: unset;
       }
     }
   }

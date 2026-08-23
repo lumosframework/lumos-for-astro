@@ -116,7 +116,7 @@ const columns =
   (variant !== "columns"
     ? [
         maxColumnCount !== undefined && `--_max-cols: ${maxColumnCount}`,
-        validMinColumnWidth && `--_min-col: ${minColumnWidth}`,
+        validMinColumnWidth && `--_min-col-width: ${minColumnWidth}`,
       ]
     : [
         xsmall !== 1 && `--_cols-xs: ${xsmall}`,
@@ -136,7 +136,7 @@ const columns =
       style={columns}
       {...rest}
     >
-      <slot />
+      <Fragment set:html={content} />
     </div>
   )
 }
@@ -166,10 +166,13 @@ const columns =
       }
       &:is(.autofit, .autofill) {
         --_max-cols: 12;
-        --_min-col: 12;
+        --_min-col-width: 12;
         --_fit: (100% - (var(--_max-cols) - 1) * var(--_gap-size)) /
           var(--_max-cols);
-        --_track: min(max(calc(var(--_min-col) * 1rem), var(--_fit)), 100%);
+        --_track: min(
+          max(calc(var(--_min-col-width) * 1rem), var(--_fit)),
+          100%
+        );
       }
       &.autofit {
         grid-template-columns: repeat(auto-fit, minmax(var(--_track), 1fr));

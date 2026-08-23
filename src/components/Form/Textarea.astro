@@ -41,16 +41,16 @@ const {
       class:list={["field", "form-textarea", className]}
       style={`--_min-lines: ${minLines}; --_max-lines: ${maxLines};`}
     >
-      <span class="field_label text-style-main">
+      <span class="field-label text-style-main">
         <span>{label}</span>
         {required && (
-          <span class="field_star" aria-hidden="true">
+          <span class="field-star" aria-hidden="true">
             *
           </span>
         )}
       </span>
       <textarea
-        class="field_control form-textarea_field text-style-main"
+        class="field-control form-textarea_field text-style-main"
         name={name ?? slug(label)}
         placeholder={placeholder}
         required={required || undefined}

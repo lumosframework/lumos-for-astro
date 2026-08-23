@@ -1,7 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { slug } from "@/utils/text.ts";
-import Icon from "@/components/Icon.astro";
+import Icon from "@/components/Media/Icon.astro";
 import arrow from "@/assets/icons/arrow.svg";
 
 type SelectOption = string | { value: string; label: string };
@@ -164,14 +164,11 @@ const text = label ?? wording.label;
   render && entries.length > 0 && (
     <label class:list={["field", "form-select", className]}>
       <span
-        class:list={[
-          "field_label text-style-main",
-          labelHidden && "visually-hidden",
-        ]}
+        class:list={["field-label text-style-main", labelHidden && "sr-only"]}
       >
         <span>{text}</span>
         {required && (
-          <span class="field_star" aria-hidden="true">
+          <span class="field-star" aria-hidden="true">
             *
           </span>
         )}
@@ -179,7 +176,7 @@ const text = label ?? wording.label;
 
       <span class="form-select_control">
         <select
-          class="field_control form-select_field text-style-main"
+          class="field-control form-select_field text-style-main"
           name={name ?? slug(text)}
           required={required || undefined}
           {...rest}
