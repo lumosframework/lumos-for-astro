@@ -93,12 +93,12 @@ const hasImage = variant !== "default" && !!image;
 const hasContent = !!(eyebrow || heading || text || buttonLabel);
 const hasTheme = variant !== "stacked" && theme !== "inherit";
 
-const buttonEmphasis =
-  variant === "cover"
-    ? "primary"
-    : variant === "stacked"
-      ? "link"
-      : "secondary";
+/* The button each variant closes with, so a set of cards reads as one system.
+   A link carries no emphasis of its own, so the two are picked together. */
+const buttonKind =
+  variant === "stacked"
+    ? ({ variant: "link" } as const)
+    : ({ emphasis: variant === "cover" ? "primary" : "secondary" } as const);
 
 if (import.meta.env.DEV && render) {
   if (variant === "stacked" && theme !== "inherit") {
@@ -149,15 +149,11 @@ if (import.meta.env.DEV && render) {
           </Paragraph>
           <ButtonWrapper>
             {buttonHref ? (
-              <Button
-                element="link"
-                href={buttonHref}
-                emphasis={buttonEmphasis}
-              >
+              <Button element="link" href={buttonHref} {...buttonKind}>
                 {buttonLabel}
               </Button>
             ) : (
-              <Button emphasis={buttonEmphasis}>{buttonLabel}</Button>
+              <Button {...buttonKind}>{buttonLabel}</Button>
             )}
           </ButtonWrapper>
         </div>
