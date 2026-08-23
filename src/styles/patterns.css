@@ -59,6 +59,11 @@
 .image {
   background-color: var(--background-skeleton);
 
+  &.densities {
+    width: auto;
+    max-width: 100%;
+  }
+
   &.transparent {
     background-color: transparent;
     object-fit: contain;

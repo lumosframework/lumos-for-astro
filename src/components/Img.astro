@@ -200,7 +200,12 @@ const srcset =
             ...(cropsToRatio ? { widths: withinCrop([width, width * 2]) } : {}),
           };
 
-const classes = ["image", transparent && "transparent", className];
+const classes = [
+  "image",
+  variant === "densities" && "densities",
+  transparent && "transparent",
+  className,
+];
 
 const shared = {
   src,
