@@ -605,7 +605,7 @@ const lorem =
     </Slider>
   </Section>
   <!-- marquee -->
-  <Section paddingTop="small" paddingBottom="small">
+  <Section>
     <ContentWrapper>
       <Eyebrow>marquee</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
@@ -620,17 +620,15 @@ const lorem =
       <Paragraph variant="large">Research</Paragraph>
       <Icon src={logo_icon} variant="large" />
     </Marquee>
-  </Section>
-  <!-- marquee end -->
-  <Section paddingTop="small" paddingBottom="small">
-    <ContentWrapper>
-      <Eyebrow>marquee · end</Eyebrow>
-      <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
-    </ContentWrapper>
-    <Marquee variant="end" label="Partners">
+    <Marquee label="What we do" direction="backwards">
       <Paragraph variant="large">Strategy</Paragraph>
+      <Icon src={logo_icon} variant="large" />
       <Paragraph variant="large">Design</Paragraph>
+      <Icon src={logo_icon} variant="large" />
       <Paragraph variant="large">Development</Paragraph>
+      <Icon src={logo_icon} variant="large" />
+      <Paragraph variant="large">Research</Paragraph>
+      <Icon src={logo_icon} variant="large" />
     </Marquee>
   </Section>
   <!-- hero -->
@@ -660,6 +658,7 @@ const lorem =
         loop={true}
         autoplay={true}
         muted={true}
+        slot="column2"
       />
     </ContentWrapper>
   </Section>
