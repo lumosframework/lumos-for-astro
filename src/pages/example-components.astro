@@ -1,31 +1,31 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
-import Section from "@/components/Section.astro";
-import ContentWrapper from "@/components/ContentWrapper.astro";
-import Eyebrow from "@/components/Eyebrow.astro";
-import Heading from "@/components/Heading.astro";
-import Paragraph from "@/components/Paragraph.astro";
-import ButtonWrapper from "@/components/ButtonWrapper.astro";
+import Section from "@/components/Wrapper/Section.astro";
+import ContentWrapper from "@/components/Wrapper/ContentWrapper.astro";
+import Eyebrow from "@/components/Typography/Eyebrow.astro";
+import Heading from "@/components/Typography/Heading.astro";
+import Paragraph from "@/components/Typography/Paragraph.astro";
+import ButtonWrapper from "@/components/Wrapper/ButtonWrapper.astro";
 import Button from "@/components/Button.astro";
-import Img from "@/components/Img.astro";
-import lumos_background from "@/assets/lumos-background.svg";
-import Grid from "@/components/Grid.astro";
-import Card from "@/components/Card.astro";
-import Form from "@/components/Form.astro";
-import FormFieldset from "@/components/FormFieldset.astro";
-import FormInput from "@/components/FormInput.astro";
-import FormSelect from "@/components/FormSelect.astro";
-import FormChoice from "@/components/FormChoice.astro";
-import FormRange from "@/components/FormRange.astro";
-import FormTextarea from "@/components/FormTextarea.astro";
-import Tabs from "@/components/Tabs.astro";
-import TabLink from "@/components/TabLink.astro";
-import Dropdown from "@/components/Dropdown.astro";
-import Overlay from "@/components/Overlay.astro";
-import Modal from "@/components/Modal.astro";
-import Slider from "@/components/Slider.astro";
-import Accordion from "@/components/Accordion.astro";
-import AccordionItem from "@/components/AccordionItem.astro";
+import Img from "@/components/Media/Img.astro";
+import lumos_background from "@/assets/graphics/lumos-background.svg";
+import Grid from "@/components/Wrapper/Grid.astro";
+import Card from "@/components/Item/Card.astro";
+import Form from "@/components/Form/Form.astro";
+import Fieldset from "@/components/Form/Fieldset.astro";
+import Input from "@/components/Form/Input.astro";
+import Select from "@/components/Form/Select.astro";
+import Choice from "@/components/Form/Choice.astro";
+import Range from "@/components/Form/Range.astro";
+import Textarea from "@/components/Form/Textarea.astro";
+import Tabs from "@/components/Interactive/Tabs.astro";
+import TabLink from "@/components/Interactive/TabLink.astro";
+import Dropdown from "@/components/Interactive/Dropdown.astro";
+import Overlay from "@/components/Media/Overlay.astro";
+import Modal from "@/components/Interactive/Modal.astro";
+import Slider from "@/components/Interactive/Slider.astro";
+import Accordion from "@/components/Interactive/Accordion.astro";
+import AccordionItem from "@/components/Interactive/AccordionItem.astro";
 
 const heading = "We build things that help people work smarter";
 const text =
@@ -255,71 +255,59 @@ const lorem =
       <Eyebrow>form</Eyebrow>
     </ContentWrapper>
     <Form name="contact">
-      <FormFieldset legend="Contact Details" variant="columns">
-        <FormInput variant="first-name" required />
-        <FormInput variant="last-name" required />
-        <FormInput
+      <Fieldset legend="Contact Details" variant="columns">
+        <Input variant="first-name" required />
+        <Input variant="last-name" required />
+        <Input
           variant="email"
           label="Email Address"
           placeholder="email@company.com"
           required
         />
         <Grid medium={2}>
-          <FormSelect variant="state" />
-          <FormInput variant="zip-code" placeholder="" />
+          <Select variant="state" />
+          <Input variant="zip-code" placeholder="" />
         </Grid>
-        <FormFieldset
-          legend="Date of Birth"
-          variant="thirds"
-          legendStyle="label"
-        >
-          <FormSelect variant="month" labelHidden={true} />
-          <FormSelect variant="day" labelHidden={true} />
-          <FormSelect variant="year" from={1920} labelHidden={true} />
-        </FormFieldset>
-        <FormInput
+        <Fieldset legend="Date of Birth" variant="thirds" legendStyle="label">
+          <Select variant="month" labelHidden={true} />
+          <Select variant="day" labelHidden={true} />
+          <Select variant="year" from={1920} labelHidden={true} />
+        </Fieldset>
+        <Input
           variant="phone"
           label="Phone Number"
           placeholder="000-000-0000"
         />
-      </FormFieldset>
+      </Fieldset>
 
-      <FormFieldset legend="Legend" variant="columns">
-        <FormFieldset
-          legend="Favorite Color"
-          variant="inline"
-          legendStyle="label"
-        >
-          <FormChoice
+      <Fieldset legend="Legend" variant="columns">
+        <Fieldset legend="Favorite Color" variant="inline" legendStyle="label">
+          <Choice
             type="radio"
-            name="colour"
+            name="color"
             label="Red"
             value="red"
             checked={true}
           />
-          <FormChoice type="radio" name="colour" label="Green" value="green" />
-          <FormChoice type="radio" name="color" label="Blue" value="blue" />
-        </FormFieldset>
-        <FormFieldset
+          <Choice type="radio" name="color" label="Green" value="green" />
+          <Choice type="radio" name="color" label="Blue" value="blue" />
+        </Fieldset>
+        <Fieldset
           legend="Terms & Conditions"
           variant="inline"
           legendStyle="label"
         >
-          <FormChoice
-            label="I agree to the terms"
-            name="terms"
-            checked={true}
-          />
-          <FormChoice label="I agree to the terms" name="updates" />
-        </FormFieldset>
-        <FormSelect
+          <Choice label="I agree to the terms" name="terms" checked={true} />
+          <Choice label="I agree to the terms" name="updates" />
+        </Fieldset>
+        <Select
           label="Job Title"
           options={["Designer", "Developer", "Producer", "Something else"]}
         />
-        <FormInput variant="date" label="Completion Date" />
-        <FormRange label="Label" unit="%" />
-        <FormTextarea label="Message" placeholder="Your message" required />
-      </FormFieldset>
+        <Input variant="date" label="Completion Date" />
+        <Range label="Label" unit="%" />
+        <Textarea label="Message" placeholder="Your message" required />
+      </Fieldset>
 
       <ButtonWrapper marginTop="4">
         <Button type="submit">Submit</Button>
@@ -334,7 +322,7 @@ const lorem =
       <ButtonWrapper>
         <Button element="link" href="/about">Button Text</Button>
         <Button emphasis="secondary">Button Text</Button>
-        <Button emphasis="link">Button Text</Button>
+        <Button variant="link">Button Text</Button>
       </ButtonWrapper>
       <ButtonWrapper>
         <Button variant="arrow" direction="back" />
