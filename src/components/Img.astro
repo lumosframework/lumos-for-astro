@@ -153,14 +153,52 @@ const displayWidth = (width ?? VIEWPORT_MAX) / 16;
 
 const defaultSizes = `(min-width: ${displayWidth}rem) ${displayWidth}rem, 100vw`;
 
+const BREAKPOINTS = [640, 750, 828, 1080, 1280, 1668, 2048, 2560];
+
+const source = typeof src === "string" ? undefined : src;
+const cropsToRatio =
+  source !== undefined && width !== undefined && height !== undefined;
+
+const cropLimit = cropsToRatio
+  ? Math.min(source.width, Math.round(source.height * (width / height)))
+  : undefined;
+
+const withinCrop = (widths: number[]) => {
+  const limit = cropLimit as number;
+  const kept = widths.filter((w) => w <= limit);
+  return kept.at(-1) === limit ? kept : [...kept, limit];
+};
+
+if (import.meta.env.DEV && cropsToRatio) {
+  const dropped = BREAKPOINTS.filter(
+    (w) => w <= (source as ImageMetadata).width && w > (cropLimit as number),
+  );
+  if (variant === "full-width" && dropped.length) {
+    console.warn(
+      `[lumos] <Img> crops to ${width}×${height}, which a ${source!.width}×${source!.height} source can only hold up to ${cropLimit}px wide. Widths ${dropped.join(", ")} were dropped rather than enlarged; a source that tall is needed to serve them.`,
+    );
+  }
+}
+
 const srcset =
   unoptimizedRemote || isSvg
     ? { layout: "none" as const }
     : variant === "densities"
-      ? { densities: [1, 2] }
+      ? {
+          densities:
+            cropsToRatio && width * 2 > (cropLimit as number) ? [1] : [1, 2],
+        }
       : variant === "full-width"
-        ? { layout: variant, ...(loading === "lazy" ? { sizes: "auto" } : {}) }
-        : { sizes: sizes ?? defaultSizes, layout: variant };
+        ? {
+            layout: variant,
+            ...(cropsToRatio ? { widths: withinCrop(BREAKPOINTS) } : {}),
+            ...(loading === "lazy" ? { sizes: "auto" } : {}),
+          }
+        : {
+            sizes: sizes ?? defaultSizes,
+            layout: variant,
+            ...(cropsToRatio ? { widths: withinCrop([width, width * 2]) } : {}),
+          };
 
 const classes = ["image", transparent && "transparent", className];
 
