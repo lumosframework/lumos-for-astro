@@ -200,7 +200,9 @@ const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
       translate: -50% 0;
       width: var(--_handle);
       height: var(--_handle);
-      border: var(--border-width) solid var(--text);
+      /* Doubled: a hairline reads thinner than the rail it stands on, and the
+         handle is the part of this that is meant to be grabbed. */
+      border: calc(var(--border-width) * 2) solid var(--text);
       border-radius: var(--radius-round);
       background-color: var(--background);
       pointer-events: none;
