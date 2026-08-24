@@ -422,7 +422,7 @@ img {
 }
 
 button {
-  background: none;
+  background-color: transparent;
   text-align: inherit;
   padding: 0;
 }
