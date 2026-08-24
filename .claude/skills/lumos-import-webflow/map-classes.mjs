@@ -55,6 +55,7 @@ for (const file of walk(exportDir, [".html"])) {
    component's <style>, wherever it sits in a selector. */
 const defined = new Set();
 const owner = new Map();
+const componentNames = new Map();
 for (const file of walk(srcDir, [".css", ".astro"])) {
   const text = readFileSync(file, "utf8");
   const isAstro = extname(file) === ".astro";
@@ -85,6 +86,7 @@ for (const file of walk(srcDir, [".css", ".astro"])) {
   literals.forEach((c) => defined.add(c));
 
   const name = file.split("/").pop().replace(".astro", "");
+  componentNames.set(name.toLowerCase(), file.replace(`${srcDir}/components/`, ""));
   for (const c of roots) {
     const exact = name.toLowerCase() === c.replace(/-/g, "").toLowerCase();
     const held = owner.get(c);
@@ -117,6 +119,33 @@ for (const [name, count] of [...used].sort((a, b) => b[1] - a[1])) {
   else if (!defined.has(name)) orphans.push([name, count]);
   else if (owner.has(name)) components.push([name, count, owner.get(name).file]);
   else renames.push([name, count]);
+}
+
+/* A run of classes sharing a first segment that names a component is that
+   component's internals — eyebrow-wrapper, eyebrow-marker and eyebrow-text are
+   the Eyebrow component, not three utilities to keep. */
+/* Where the two systems name the same thing differently. */
+const FAMILY_ALIAS = { image: "img", layout: "contentwrapper", richtext: "richtext" };
+
+const families = new Map();
+for (const [name, count] of orphans) {
+  const head = name.split("-")[0];
+  const target =
+    componentNames.get(head) ??
+    componentNames.get(head.replace(/s$/, "")) ??
+    componentNames.get(FAMILY_ALIAS[head] ?? "");
+  if (!target) continue;
+  const f = families.get(head) ?? { target, classes: [], uses: 0 };
+  f.classes.push(name);
+  f.uses += count;
+  families.set(head, f);
+}
+for (const [head, f] of families) {
+  if (f.classes.length < 2) { families.delete(head); continue; }
+  for (const c of f.classes) {
+    const i = orphans.findIndex(([n]) => n === c);
+    if (i !== -1) orphans.splice(i, 1);
+  }
 }
 
 if (asSed) {
@@ -155,6 +184,15 @@ if (known.length) {
   for (const [name, count, answer] of known) {
     console.log(`  u-${name.padEnd(22)} ×${String(count).padEnd(6)} ${answer}`);
   }
+}
+
+if (families.size) {
+  console.log(`\nCOMPONENT INTERNALS — a family of classes that is one component (${families.size})`);
+  for (const [head, f] of families) {
+    console.log(`  ${head}-*  ×${f.uses}  →  ${f.target}`);
+    console.log(`      ${f.classes.map((c) => `u-${c}`).join(", ")}`);
+  }
+  console.log("  Swap the markup for the component, then style the component to match.");
 }
 
 console.log(`\nNO EQUIVALENT — the site's own, keep them (${orphans.length})`);

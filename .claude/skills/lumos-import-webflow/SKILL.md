@@ -234,6 +234,38 @@ them is how a substitution turns into a rewrite.
 
 ## Then the components, one at a time
 
+**A swap has two halves, and the second is the one that gets skipped.** Replace
+the markup with the Lumos component, _then style that component to match the
+original_. Keeping `u-eyebrow-wrapper` markup because it already looks right
+leaves the site with no component, no reuse, and the Webflow class still in it
+— the design survived and the substitution did not.
+
+The framework's components are placeholders, exactly like `BaseLayout` was.
+`Button.astro`, `Typography/Eyebrow.astro`, `Wrapper/ButtonWrapper.astro` ship
+with defaults meant to be replaced by the site being imported. Change them.
+Every instance across every page then inherits the design, which is the whole
+reason to use a component.
+
+For each component:
+
+1. **Find its markup and its CSS.** `map-classes` names the families —
+   `u-eyebrow-wrapper`, `u-eyebrow-layout`, `u-eyebrow-marker`,
+   `u-eyebrow-text` are one component, not four utilities. `split-css --prefix
+eyebrow` prints their rules.
+2. **Move those rules into the Lumos component's `<style>`**, replacing what is
+   there. The two components have the same anatomy — a marker and a text node
+   in `Eyebrow`, a wrapper and a label in `Button` — so the rules transfer
+   nearly as they are.
+3. **Map the Webflow variants onto the component's props**, from the
+   `data-wf--<component>--variant` values the scanner found.
+4. **Swap the markup and delete the Webflow classes.** They are expressed by
+   the component now. A class left behind is a rule that will contradict the
+   component later.
+5. **Diff the page.** Nothing should move.
+
+If a Webflow variant has no matching prop, add the prop — it is the framework's
+own component and the site needs it. Say so in the report.
+
 For a Lumos for Webflow site this is mostly a table. The variants are already
 the prop values:
 
@@ -359,6 +391,10 @@ usually decides it.
 component markup, `webflow.js`, and any rule a Lumos token or component now
 expresses.
 
+Grep for it. A page still containing `u-eyebrow-wrapper`, `u-heading` or
+`u-button-wrapper` is a component that was never swapped — the design will look
+right, which is why this is worth checking rather than eyeballing.
+
 **What should still be there:** the site's own classes, its own CSS, its own
 JavaScript and its own libraries — each now living with the component that uses
 it rather than in a global file. A migration that deleted them rewrote the site
@@ -393,5 +429,5 @@ new site answers.
 
 ## Versions
 
-Skill 3.2.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 3.3.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
