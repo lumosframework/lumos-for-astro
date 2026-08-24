@@ -7,8 +7,13 @@ description: Move a site built in Webflow onto Lumos for Astro. Use when someone
 
 **The finished site is indistinguishable from the published one and contains no
 Webflow.** Every section is a Lumos component, every value a Lumos token, every
-utility a Lumos utility. Not a near-miss rebuilt in the framework's own taste —
-the same site, built properly.
+utility a Lumos utility.
+
+**It is a substitution, not a rewrite.** Keep the original HTML, CSS and
+JavaScript. Swap three things — variables, classes, components — for their
+Lumos equivalents, and move what Webflow kept in global files into the
+component that uses it. Markup you re-author is markup you have to re-verify,
+and the export is the only record of what the site actually was.
 
 That is achievable because Lumos for Webflow and Lumos for Astro are one design
 system under two naming conventions. `--swatch--light-200` here is
@@ -19,11 +24,11 @@ the destination is the same.
 
 ## The passes
 
-|       |                                                                              | Verified by                        |
-| ----- | ---------------------------------------------------------------------------- | ---------------------------------- |
-| **1** | Rebuild each page exactly, Webflow's own CSS intact                          | Matches the live site              |
-| **2** | Port the variables, swap in Lumos components, delete the CSS each swap kills | Still matches pass 1               |
-| **3** | Bind the CMS, routes and forms                                               | Item counts and content match live |
+|       |                                                                                                | Verified by                        |
+| ----- | ---------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **1** | Bring it across as it is — HTML, CSS, JS, fonts — and split the global stylesheet by component | Matches the live site              |
+| **2** | Substitute variables, then classes, then components; relocate the JS                           | Still matches pass 1               |
+| **3** | Bind the CMS, routes and forms                                                                 | Item counts and content match live |
 
 Pass 1 produces a **provable baseline**: parity exact, screenshots overlaying,
 because the CSS is Webflow's own. Everything after is measured against it, so a
@@ -143,7 +148,27 @@ a regression.
 Theme colours live in the `.theme-*` blocks, not `:root`. A site with dark
 sections has a value for each.
 
-## Then swap, one component at a time
+## Then the classes
+
+```bash
+node .claude/skills/lumos-import-webflow/map-classes.mjs path/to/export
+node .claude/skills/lumos-import-webflow/map-classes.mjs path/to/export --sed
+```
+
+Lumos for Webflow prefixes its utilities `u-`; this framework does not. The
+vocabulary is otherwise largely identical, so most of this is a rename over the
+markup you already have. On a real site, **256 of 359 classes rename cleanly**,
+ten belong to a component, and the rest need a decision. `--sed` writes the
+rename script.
+
+A class a component owns is a signal rather than an order: `u-section` means
+that markup wants `Wrapper/Section`, which is the next step anyway.
+
+**Classes with no equivalent stay exactly as they are.** They are the site's
+own, their rules came across in pass 1, and inventing framework utilities to
+absorb them is how a substitution turns into a rewrite.
+
+## Then the components, one at a time
 
 For a Lumos for Webflow site this is mostly a table. The variants are already
 the prop values:
@@ -177,10 +202,13 @@ button's own label, a video URL passed as a property.
 **Widgets, where Webflow's own were used.** `w-slider` → `Interactive/Slider`,
 `w-tabs` → `Interactive/Tabs`, `w-dropdown`, `w-nav`, `w-form`, `w-richtext`.
 Do not expect to find them: a Lumos for Webflow site builds its own, so the
-carousel is Swiper and the nav is custom markup. The library list is the better
-guide — Swiper, GSAP, Three.js and Lenis on every page means motion is
-third-party, and each library is a decision: reimplement, carry across, or
-drop.
+carousel is Swiper and the nav is custom markup.
+
+**Third-party libraries come across as they are.** Swiper, GSAP, Three.js and
+Lenis are the site's behaviour, not Webflow's, and swapping Swiper for
+`Interactive/Slider` changes how the site moves. Install them, keep the
+initialisation code with the component that needs it, and only replace a
+library where its markup was Webflow's own widget.
 
 **Styles that came with a section — how it was set in Webflow decides.**
 
@@ -195,11 +223,17 @@ drop.
 stylesheet carrying styles for components that no longer exist is how this kind
 of migration fails.
 
-**Interactions.** As each widget goes, account for its IX2 behaviour: rebuild
-hovers, fades and scroll reveals in CSS or with an `IntersectionObserver`.
-Timelines and scrub-linked animation are not readable from `data-w-id` — watch
-them live, describe them, ask whether they are worth rebuilding. When the last
-widget is gone, so is `webflow.js`.
+**JavaScript moves; it does not get rewritten.** A custom embed goes into the
+component that owns the markup it acts on, unchanged. A site-wide script stays
+site-wide, in the layout.
+
+The single exception is Webflow's own IX2, which is compiled into `webflow.js`
+against `data-w-id` attributes and cannot be lifted out. Only that gets
+rebuilt: hovers, fades and scroll reveals in CSS or with an
+`IntersectionObserver`; timelines and scrub-linked animation watched on the
+live site, described, and confirmed as worth the effort before anyone starts.
+When the last Webflow widget is gone, so is `webflow.js` — and nothing else
+about the site's behaviour should have changed.
 
 **Verify against the pass-1 baseline, not against live.** A difference now was
 caused by the swap just made. It is a defect, not drift: the tokens are the
@@ -246,10 +280,17 @@ usually decides it.
 
 ## Finish
 
-**The gate:** no `.w-` classes outside the framework reset, no rules left in
-the site stylesheet that a component or token now covers, no `webflow.js`, and
-every page still matching. If Webflow CSS survives, name each rule in the
-report and why nothing here replaced it.
+**What should be gone:** `u-` prefixes, Webflow's variable names, Webflow's
+component markup, `webflow.js`, and any rule a Lumos token or component now
+expresses.
+
+**What should still be there:** the site's own classes, its own CSS, its own
+JavaScript and its own libraries — each now living with the component that uses
+it rather than in a global file. A migration that deleted them rewrote the site
+instead of moving it.
+
+Every page still matches. Anything Webflow that survived is named in the report
+with the reason nothing here replaced it.
 
 **Hosting.** Recommend **Cloudflare Workers**, which this framework is
 configured for, with Cloudflare Email Service for form mail.
@@ -277,5 +318,5 @@ new site answers.
 
 ## Versions
 
-Skill 3.0.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
-147 variables, a 363 KB stylesheet. All four scripts read only.
+Skill 3.1.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
