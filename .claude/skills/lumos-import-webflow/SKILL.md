@@ -259,6 +259,67 @@ eyebrow` prints their rules.
    component later.
 5. **Diff the page.** Nothing should move.
 
+### Variables that stand in for selectors
+
+Webflow's UI cannot author a `:hover` rule on a nested element, so Lumos for
+Webflow encodes state as numbers that cascade. Three systems do this, and none
+of them is needed here.
+
+**Trigger** — `--_trigger---on` / `---off`, a 1/0 pair flipped by real
+selectors and then read by descendants:
+
+```css
+[data-trigger] {
+  --_trigger---on: 0;
+  --_trigger---off: 1;
+}
+@media (hover: hover) {
+  [data-trigger~="hover"]:hover {
+    --_trigger---on: 1;
+    --_trigger---off: 0;
+  }
+}
+[data-trigger~="focus"]:is(:focus-visible, :has(:focus-visible)) {
+  --_trigger---on: 1;
+}
+```
+
+The selector at the top is the real one. Write it directly on the element that
+changes — `&:hover`, `&:focus-visible`, or `:has()` where the change is on a
+descendant — and delete the flag, the `calc()` that read it, and the
+`data-trigger` attribute.
+
+**State** — `--_state---true` / `---false`, the same trick for `checked`,
+`current`, `active` and external links. These become `:checked`,
+`[aria-current]`, `.is-active` and `[target="_blank"]`, which is what the
+Webflow CSS is already testing for underneath.
+
+**Responsive** — `--_responsive---large` / `medium` / `small` / `xsmall`, set
+at `:root` and flipped by max-width queries at 50em, 35em and 20em, so a value
+elsewhere can be selected by arithmetic. Replace the arithmetic with a media
+query. **Use this framework's breakpoints**, the ones `Wrapper/Grid` already
+uses, rather than carrying Webflow's across:
+
+| Webflow                 | Here                        |
+| ----------------------- | --------------------------- |
+| `@media (width < 20em)` | base — write it unqualified |
+| `@media (width < 35em)` | `@media (width >= 30rem)`   |
+| `@media (width < 50em)` | `@media (width >= 48rem)`   |
+| desktop default         | `@media (width >= 64rem)`   |
+
+The direction inverts: Webflow's are max-width and shrink downward, this
+framework's are min-width and build upward, so the rule that was the default
+becomes the largest breakpoint and vice versa. The numbers do not line up
+either — Webflow's largest is 800px against 1024px here — so read what each
+query was for rather than converting the number.
+
+**Container queries go the same way.** The export uses `@container (width <
+40em)` and friends for component-level responsiveness. Unless a component
+genuinely has to respond to its own width rather than the page's — a card in a
+narrow column — a media query at the framework's breakpoints is what belongs
+here. `/lumos-scaling-graphic` covers the case where container units are
+genuinely the answer.
+
 ### Markup Webflow needed and this framework does not
 
 Webflow cannot make a component's own element a link, or style text without a
@@ -432,7 +493,10 @@ expresses.
 
 Grep for it. A page still containing `u-eyebrow-wrapper`, `u-heading` or
 `u-button-wrapper` is a component that was never swapped — the design will look
-right, which is why this is worth checking rather than eyeballing.
+right, which is why this is worth checking rather than eyeballing. The same
+goes for `--_trigger`, `--_state`, `--_responsive`, `data-trigger`,
+`data-state` and `@container`: each is a selector or a media query that was
+copied instead of written.
 
 **What should still be there:** the site's own classes, its own CSS, its own
 JavaScript and its own libraries — each now living with the component that uses
@@ -468,5 +532,5 @@ new site answers.
 
 ## Versions
 
-Skill 3.4.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 3.5.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
