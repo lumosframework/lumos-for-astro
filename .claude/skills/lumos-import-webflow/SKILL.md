@@ -193,6 +193,58 @@ component's design — `split-css --prefix eyebrow`, then into
 them into a page's own `<style>` is the mistake this ordering exists to
 prevent: pass 2 then has to delete rules pass 1 just wrote.
 
+### Margins are held by a different element here
+
+**Do not carry a margin across with the rule it sat in.** Webflow gives a block
+its own `margin-bottom`; this framework gives the space to the element
+receiving it, as a `margin-top`, and makes the bottom margin conditional. The
+value is right and the declaration is wrong, which is the hardest kind of
+difference to see — the page looks nearly correct and the rhythm is doubled or
+missing by one gap.
+
+The system is five rules in `patterns.css`:
+
+```css
+.heading,
+.text {
+  margin-top: var(--_margin-top);
+}
+.heading:has(+ .text) {
+  margin-bottom: var(--_margin-bottom);
+}
+.heading + .text {
+  margin-top: 0;
+}
+.container > [class] {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.button-wrapper {
+  margin-top: var(--space-6);
+}
+```
+
+`--_margin-top` and `--_margin-bottom` resolve per type variant, so the value
+is a token: `--h1-margin-top` … `--h6-margin-bottom`, `--display-*`,
+`--text-{small,main,large}-*` — twenty of them in `base.css`.
+
+| Webflow puts it                                 | Here it is                                                               |
+| ----------------------------------------------- | ------------------------------------------------------------------------ |
+| `margin-bottom` on `u-eyebrow-wrapper`          | `--h*-margin-top` on the heading below — `Eyebrow` carries no margin     |
+| `margin-bottom` on `u-heading`                  | `--h*-margin-bottom`, and only when `.heading:has(+ .text)` matches      |
+| `margin-top` on `u-text` under a heading        | nothing — `.heading + .text` zeroes it; the heading's bottom margin wins |
+| `margin-top` on `u-button-wrapper`              | `.button-wrapper`'s own, or `ButtonWrapper`'s `marginTop` prop           |
+| margins between the blocks inside `u-container` | `Section`'s `gap` — the container zeroes its children's margins          |
+
+**Port the number, not the declaration.** Read the value off the Webflow rule,
+find which of the twenty tokens expresses it, and set that. Writing
+`margin-bottom` into `Eyebrow.astro` puts a margin where the `:has()` and `+`
+selectors cannot see it, so it stacks with the one the heading already applies
+the moment a paragraph follows.
+
+Which makes this variable work, not component work — do it in the same step as
+the colours, before anything is compared.
+
 **A hand-built Webflow site gets none of this.** With no `u-` prefix there is
 no lookup, only judgement about what a div was for — and judgement belongs
 after the baseline proves what the div did. Bring those across as they are and
@@ -386,7 +438,9 @@ eyebrow` prints their rules.
 2. **Move those rules into the Lumos component's `<style>`**, replacing what is
    there. The two components have the same anatomy — a marker and a text node
    in `Eyebrow`, a wrapper and a label in `Button` — so the rules transfer
-   nearly as they are.
+   nearly as they are. **Margins are the exception**: they are held by a
+   different element here, and go to a token rather than into the component.
+   See "Margins are held by a different element here".
 3. **Map the Webflow variants onto the component's props**, from the
    `data-wf--<component>--variant` values the scanner found.
 4. **Swap the markup and delete the Webflow classes.** They are expressed by
@@ -696,5 +750,5 @@ new site answers.
 
 ## Versions
 
-Skill 4.1.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 4.2.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
