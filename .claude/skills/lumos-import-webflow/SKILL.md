@@ -22,22 +22,61 @@ have the same shape. Port the variables and the components render the original
 design with no hand-written CSS. A hand-built Webflow site takes more work, but
 the destination is the same.
 
-## The passes
+## The passes, and the order to apply them
 
-|       |                                                                                                | Verified by                        |
-| ----- | ---------------------------------------------------------------------------------------------- | ---------------------------------- |
-| **1** | Bring it across as it is — HTML, CSS, JS, fonts — and split the global stylesheet by component | Matches the live site              |
-| **2** | Substitute variables, then classes, then components; relocate the JS                           | Still matches pass 1               |
-| **3** | Bind the CMS, routes and forms                                                                 | Item counts and content match live |
+Three kinds of work:
+
+|       |                                                                     | Verified by                        |
+| ----- | ------------------------------------------------------------------- | ---------------------------------- |
+| **1** | Bring it across as it is — HTML, CSS, JS, fonts                     | Matches the live site              |
+| **2** | Substitute variables, breakpoints, classes, components; relocate JS | Still matches pass 1               |
+| **3** | Bind the CMS, routes and forms                                      | Item counts and content match live |
 
 Pass 1 produces a **provable baseline**: parity exact, screenshots overlaying,
 because the CSS is Webflow's own. Everything after is measured against it, so a
-difference has one possible cause — the change just made. Rebuild and
-restructure together and every difference has three causes and no way to tell
-them apart.
+difference has one cause — the change just made.
 
-Resist finishing a page end-to-end. A half-converted page looks finished and
-verifies against nothing.
+**Do not run each pass across the whole site.** The site-wide substitutions
+happen once, but the page work does not: convert one page at a time and stop
+after the first.
+
+1. **Groundwork, once.** Fonts, images, the split stylesheet, the variables,
+   the breakpoints, the class renames. All of it is mechanical and all of it is
+   shared, so it is done before any page is finished.
+2. **The first slice: nav, footer, homepage — all the way to done.** Pass 1,
+   then 2, then 3, on those three alone.
+3. **Stop and show it.** Expect several rounds of revision here, and take them:
+   this is where the patterns are decided.
+4. **Then the rest, a page at a time**, following the pattern the first slice
+   established.
+
+**Why the chrome and the homepage.** Every other page depends on the nav and
+footer, so they cannot be provisional. And a homepage exercises nearly the
+whole library at once — sections, layout, buttons, headings, eyebrows, a
+slider, CMS lists — so getting it right decides almost every question the
+remaining pages will ask. A mistake found here costs one page; the same mistake
+found on the last page has already been made fifty-nine times, which is exactly
+how a nav ends up copied into forty-seven of them.
+
+### The gate before page two
+
+Nothing else starts until the homepage passes all of this:
+
+- **It matches the live site** — content parity exact, screenshots side by
+  side at desktop and mobile.
+- **`grep -rn "u-" src/pages src/components` is empty** except classes with no
+  equivalent, listed and justified.
+- **No `--_theme---`, `--_spacing---`, `--_trigger`, `--_state`,
+  `--_responsive`, `data-trigger`, `data-state` or `@container` survive.**
+- **The chrome is in the layout**, not in the page — `grep navbar_wrapper
+src/pages` finds nothing.
+- **Sections, headings, buttons and eyebrows are components**, not divs
+  wearing Webflow classes.
+- **The person who owns the site has looked at it** and asked for whatever they
+  are going to ask for.
+
+The last one is not a formality. Revisions to the homepage are cheap and
+revisions to a pattern already applied to fifty-nine pages are not.
 
 ## Collect first
 
@@ -118,7 +157,9 @@ the export was written.
 Title and description props on a new layout rebuild what the framework does.
 
 **Pages, one for one**, at the same routes, body markup as-is with Webflow's
-class names intact — those classes _are_ the styling.
+class names intact — those classes _are_ the styling. Bring across the
+homepage first and leave the rest until the first slice is signed off; the
+groundwork below is shared, but converted pages are not.
 
 **CSS.** `normalize.css` and `webflow.css` are framework and stay global. The
 site stylesheet holds every component's rules, scattered across breakpoints.
@@ -449,6 +490,12 @@ live site, described, and confirmed as worth the effort before anyone starts.
 When the last Webflow widget is gone, so is `webflow.js` — and nothing else
 about the site's behaviour should have changed.
 
+**Later pages will need variants the homepage never used** — a button style,
+a layout arrangement, a section theme. Add them to the component as they come
+up rather than starting a second component; the inventory from the scanner says
+how many variants each component has, so the shape of what is coming is known
+from the start.
+
 **Verify against the pass-1 baseline, not against live.** Capture the pages
 before starting pass 2 and again after each swap; the sibling skill's
 `visual-check.mjs` does both and pixel-diffs the pairs:
@@ -550,5 +597,5 @@ new site answers.
 
 ## Versions
 
-Skill 3.6.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 4.0.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
