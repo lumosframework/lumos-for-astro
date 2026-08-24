@@ -90,12 +90,10 @@ Not idiomatic. Identical.
 ## The layout comes first
 
 **Change the framework's own files. Never create a second version of one.** An
-import runs on a fresh scaffold, where `BaseLayout.astro`, `Global/Nav.astro`,
+import runs on a fresh scaffold: `BaseLayout.astro`, `Global/Nav.astro`,
 `Global/Footer.astro` and `base.css` are placeholders that exist to be
-overwritten. A `WebflowLayout` beside `BaseLayout` leaves the site with two
-layouts, one wired to nothing, and every later step has to ask which is real.
-The same goes for `Nav`: replace what is inside it rather than building a
-second nav elsewhere.
+overwritten. A `WebflowLayout` beside `BaseLayout` leaves two layouts, one
+wired to nothing. Replace what is inside `Nav`; do not build a second one.
 
 **Webflow has no layout, so every exported page repeats the chrome.** The
 scanner's SITE CHROME table names the blocks — on a real site,
@@ -112,14 +110,12 @@ one **once**:
 | `main.page_main`                                              | `<main><slot /></main>` in `BaseLayout`       |
 | everything inside `page_main`                                 | the page file, and nothing else               |
 
-**A page file holds only what was inside `main`.** If nav markup appears in a
-page it is in the wrong place — and it will be in every page, because that is
-how the export was written.
+**A page file holds only what was inside `main`.** Nav markup in a page means
+it is in the wrong place — and it will be in every page, because that is how
+the export was written.
 
-**Page metadata uses what the layout already has.** Each Webflow page's title,
-description and OG image map onto `BaseLayout`'s existing `SeoProps` and
-`Utility/BaseHead`. Putting title and description props on a new layout
-rebuilds something the framework already does.
+**Page metadata uses the layout's existing `SeoProps` and `Utility/BaseHead`.**
+Title and description props on a new layout rebuild what the framework does.
 
 **Pages, one for one**, at the same routes, body markup as-is with Webflow's
 class names intact — those classes _are_ the styling.
@@ -262,6 +258,49 @@ eyebrow` prints their rules.
    the component now. A class left behind is a rule that will contradict the
    component later.
 5. **Diff the page.** Nothing should move.
+
+### Markup Webflow needed and this framework does not
+
+Webflow cannot make a component's own element a link, or style text without a
+wrapper, so its components carry scaffolding. **Drop the scaffolding, keep what
+carries design.** The test: does this element exist because the design has it,
+or because Webflow had no other way?
+
+- **Eyebrow** arrives as four nested divs — `u-eyebrow-wrapper`,
+  `u-eyebrow-layout`, then the marker and the text. `Typography/Eyebrow` is the
+  whole thing; the outer two are Webflow's and go.
+- **Heading** arrives as `<div class="u-heading" data-wf--typography-heading--variant="h2"><h1>…</h1></div>`.
+  Read it before deleting it: the inner tag is the semantics and the attribute
+  is the style, which is the pair `Heading` separates — `<Heading tag="h1"
+variant="h2">`. Take both, drop the div. `u-text` is `Typography/Paragraph`
+  the same way.
+- **`clickable`** is pure workaround, and on this site the most-used component
+  of all at 1445 instances: an empty, absolutely positioned button laid over
+  its parent, because a Webflow component cannot be a link itself.
+
+```html
+<div class="button_main_wrap" data-wf--button-main--variant="link-reversed">
+  <div class="clickable_wrap u-cover-absolute">
+    <button type="button" aria-label="Back" class="clickable_btn"></button>
+  </div>
+  <div class="button_main_element">
+    <div aria-hidden="true" class="button_main_text">Back</div>
+    <svg class="button_main_arrow">…</svg>
+  </div>
+</div>
+```
+
+`Button` renders the `<button>` or `<a>` itself, so the whole `clickable_wrap`
+subtree goes, and the label wrappers with it. **Carry the accessible name as
+you delete it**: the name lived on the empty button and the visible text is
+`aria-hidden`, so collapsing the structure without moving it leaves a button
+with no accessible name. The text becomes the label and the `aria-hidden` comes
+off.
+
+**The SVG stays** — that is design. Bring it through `Media/Icon`, or as
+`Button`'s `arrow` variant where it matches. Anything else a custom button
+holds is design too, and if `Button` has no place for it, that is a prop to
+add.
 
 If a Webflow variant has no matching prop, add the prop — it is the framework's
 own component and the site needs it. Say so in the report.
@@ -429,5 +468,5 @@ new site answers.
 
 ## Versions
 
-Skill 3.3.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 3.4.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.

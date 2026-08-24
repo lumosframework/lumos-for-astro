@@ -76,12 +76,15 @@ for (const file of walk(srcDir, [".css", ".astro"])) {
   for (const m of template.matchAll(/class="([^"{]*)"/g)) {
     m[1].split(/\s+/).filter(Boolean).forEach((c) => literals.add(c));
   }
+  let first = true;
   for (const m of template.matchAll(/class:list=\{\[([\s\S]*?)\]\}/g)) {
     const quoted = [...m[1].matchAll(/"([a-z][\w-]*)"/g)].map((q) => q[1]);
     quoted.forEach((c) => literals.add(c));
-    /* The identity class comes first in a class:list; the rest are utilities
-       the component happens to use, which belong to nobody. */
-    if (quoted.length) roots.add(quoted[0]);
+    /* Identity means the first class on the component's own root element —
+       the first class:list in the file. A utility listed first on some nested
+       label belongs to nobody. */
+    if (first && quoted.length) roots.add(quoted[0]);
+    first = false;
   }
   literals.forEach((c) => defined.add(c));
 
