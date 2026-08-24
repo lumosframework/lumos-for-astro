@@ -49,9 +49,9 @@ Task-specific procedures live in `.claude/skills/`, one folder each, with a
   consistency across the component library.
 - `lumos-scaling-graphic` — build an illustration or mockup that scales as one
   piece while staying real elements, using an aspect-ratio artboard and `cqw`.
-- `lumos-import-webflow` — move a site off Webflow. Scans the code export for
-  what it can prove, then uses the Webflow MCP for the CMS and component
-  bindings the export strips.
+- `lumos-import-webflow` — move a site off Webflow in three passes: rebuild it
+  exactly from the export, swap in the components Lumos already has, then
+  connect the CMS. Each pass is verified against the one before.
 - `lumos-upgrade-version` — move a site onto the latest framework without losing its
   customizations. Three-way merges against the commit it was scaffolded from,
   and pixel-diffs every page before and after.
