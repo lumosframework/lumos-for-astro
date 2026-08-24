@@ -108,6 +108,7 @@ const report = {
   lumosAttrs: {},
   libraries: {},
   chrome: {},
+  breakpoints: {},
   embeds: [],
   externalScripts: {},
 };
@@ -257,6 +258,13 @@ for (const file of files) {
     entry.variants.add(body);
   }
 
+  /* Where the design actually reflows. Webflow writes max-width queries that
+     shrink downward; this framework writes min-width ones that build upward. */
+  for (const m of html.matchAll(/@media[^{]*?\(\s*(?:width\s*<|max-width:)\s*([\d.]+)(em|rem|px)\s*\)/g)) {
+    const rem = m[2] === "px" ? Number(m[1]) / 16 : Number(m[1]);
+    report.breakpoints[rem] = (report.breakpoints[rem] ?? 0) + 1;
+  }
+
   const embeds = (html.match(/\bw-embed\b/g) ?? []).length;
   if (embeds) report.embeds.push({ page, embeds });
 
@@ -308,6 +316,21 @@ console.log("\nINTERACTIONS — element tagged, timeline compiled away");
 if (!report.interactions.length) console.log("  none");
 for (const i of report.interactions) {
   console.log(`  ${i.page.padEnd(28)} ${i.animatedElements} animated element(s)`);
+}
+
+const breaks = Object.entries(report.breakpoints)
+  .map(([rem, n]) => [Number(rem), n])
+  .sort((a, b) => a[0] - b[0]);
+if (breaks.length) {
+  console.log("\nBREAKPOINTS — where the original reflows");
+  console.log("  Webflow writes these as max-width, shrinking down. Inverted to the");
+  console.log("  min-width form this framework uses, the design breaks at:");
+  for (const [rem, n] of breaks) {
+    console.log(`    @media (width >= ${rem}rem)   ${String(rem * 16).padStart(5)}px   (${n} rule(s))`);
+  }
+  console.log("  The framework ships 30rem / 48rem / 64rem. To reflow where the");
+  console.log("  original did, change those literals — they are not tokens, so they");
+  console.log("  live in the components themselves.");
 }
 
 const pageCount = report.pages.length;
