@@ -26,7 +26,12 @@ An upgrade is only as good as its knowledge of the starting point.
 node -p "JSON.parse(require('fs').readFileSync('package.json')).lumos ?? 'unstamped'"
 ```
 
-- **Stamped** — `{ commit, scaffolded }` written by `create-lumos`. That commit
+- **Stamped** — `{ version, commit, scaffolded }` written by `create-lumos`.
+  The version is the release the site came from, for reading; the commit is
+  what to merge against, and it is the one that matters. They are not
+  redundant: a site scaffolded between releases is that version plus whatever
+  landed after it, and only the commit says how much. Sites stamped before the
+  version was added carry the commit alone, which is enough. That commit
   is the merge base. Fetch it and you know exactly which lines are the
   framework's and which are the user's.
 - **Unstamped** — the site predates stamping. Treat `v0.0.1` as the base. Say
@@ -83,12 +88,12 @@ Now three trees exist: `base` (where they started), the site (where they are),
 
 For each file in the framework's surface — components, layouts, styles, utils:
 
-| base vs site | base vs latest | What it is | What to do |
-| --- | --- | --- | --- |
-| same | same | untouched both sides | leave |
-| same | **changed** | framework moved, user never touched it | take latest wholesale |
-| **changed** | same | user's override, framework unchanged | keep theirs |
-| **changed** | **changed** | both moved | three-way merge, conflicts to the report |
+| base vs site | base vs latest | What it is                             | What to do                               |
+| ------------ | -------------- | -------------------------------------- | ---------------------------------------- |
+| same         | same           | untouched both sides                   | leave                                    |
+| same         | **changed**    | framework moved, user never touched it | take latest wholesale                    |
+| **changed**  | same           | user's override, framework unchanged   | keep theirs                              |
+| **changed**  | **changed**    | both moved                             | three-way merge, conflicts to the report |
 
 `src/pages`, `src/content` and `src/assets` are the user's by definition —
 never replace them. They still need migrating in step 6.

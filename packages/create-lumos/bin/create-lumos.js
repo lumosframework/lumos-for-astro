@@ -252,12 +252,21 @@ async function main() {
   const manifest = join(dir, "package.json");
   if (existsSync(manifest)) {
     const pkg = JSON.parse(await readFile(manifest, "utf8"));
+    // Read before it is overwritten: the framework's own version, which the
+    // template carries and the new site is about to replace with its own.
+    const framework = pkg.version;
     pkg.name = name;
     pkg.version = "0.0.1";
-    // The site's own version is its own business; this is the framework
-    // commit it was built from, which is what an upgrade reads.
+    // The site's own version is its own business. This is where it came from:
+    // the release for a human, the commit for an upgrade to merge against.
+    // The two are not redundant — a site scaffolded between releases is that
+    // version plus whatever has landed since, and only the commit says which.
     if (commit) {
-      pkg.lumos = { commit, scaffolded: new Date().toISOString().slice(0, 10) };
+      pkg.lumos = {
+        version: framework,
+        commit,
+        scaffolded: new Date().toISOString().slice(0, 10),
+      };
     }
     delete pkg.homepage;
     delete pkg.repository;
