@@ -5,137 +5,110 @@ description: Move a site built in Webflow onto Lumos for Astro. Use when someone
 
 # Importing a Webflow site
 
-A Webflow code export is a photograph of a published site. Much of what made it
-a Webflow site was resolved at publish time — which collection fed a list, how
-that list was filtered, what an interaction did.
+**The finished site is indistinguishable from the published one and contains no
+Webflow.** Every section is a Lumos component, every value a Lumos token, every
+utility a Lumos utility. Not a near-miss rebuilt in the framework's own taste —
+the same site, built properly.
 
-But not everything. Webflow writes each component instance as
-`data-wf--<component>--<prop>="<value>"`, so component names and their variants
-survive in the attribute names themselves. On a real site that is the whole
-component inventory: names, every variant, and how often each is used. Read the
-export first and the API stops being a fishing trip.
+That is achievable because Lumos for Webflow and Lumos for Astro are one design
+system under two naming conventions. `--swatch--light-200` here is
+`--light-200` there; `--_spacing---space--8` is `--space-8`; the fluid formulas
+have the same shape. Port the variables and the components render the original
+design with no hand-written CSS. A hand-built Webflow site takes more work, but
+the destination is the same.
 
-## Three passes, in this order
+## The passes
 
-**One: rebuild it exactly.** Page for page from the export, Webflow's own CSS
-and markup, changing nothing about how it looks. The site works and looks
-right, in Astro, still wearing Webflow's clothes.
+|       |                                                                              | Verified by                        |
+| ----- | ---------------------------------------------------------------------------- | ---------------------------------- |
+| **1** | Rebuild each page exactly, Webflow's own CSS intact                          | Matches the live site              |
+| **2** | Port the variables, swap in Lumos components, delete the CSS each swap kills | Still matches pass 1               |
+| **3** | Bind the CMS, routes and forms                                               | Item counts and content match live |
 
-**Two: swap in what Lumos already has.** A widget at a time, replacing Webflow
-markup with the real component and matching its props against what Webflow had.
-
-**Three: connect the data.** CMS bindings, dynamic routes, forms.
-
-The order is the point. Pass one produces something **provably identical to the
-live site** — content parity exact, screenshots near enough to overlay, because
-the CSS is Webflow's own. That becomes the baseline every later change is
-measured against. Swap the slider in pass two and something shifts, the swap
-did it; there is nowhere else for it to have come from. Rebuild and restructure
-in one move and every difference has three possible causes and no way to tell
+Pass 1 produces a **provable baseline**: parity exact, screenshots overlaying,
+because the CSS is Webflow's own. Everything after is measured against it, so a
+difference has one possible cause — the change just made. Rebuild and
+restructure together and every difference has three causes and no way to tell
 them apart.
 
-Resist finishing a page. A half-Lumos, half-Webflow page that looks finished is
-worse than an honestly Webflow one, because nothing can be verified against it.
+Resist finishing a page end-to-end. A half-converted page looks finished and
+verifies against nothing.
 
-## What to collect first
+## Collect first
 
-Ask for all five. Any one missing costs a category of information:
-
-1. **The Webflow MCP, connected** — the only source for CMS bindings, component
-   names and variants, and design variables. Without it this is guesswork; say
-   so rather than proceeding quietly.
+1. **The Webflow MCP, connected** — the only source for per-instance component
+   props, and the best source for CMS bindings. Without it, stop and say so.
 2. **The published URL** — the rendered truth, and the only place to see motion.
-3. **A CSV export per collection** — the item content.
-4. **The code export, unzipped** — every page's markup, including pages nobody
-   remembers.
-5. **The 301 redirects, exported from Webflow** — Site Settings → Publishing →
-   301 redirects, which exports as CSV. **There is no API for these**: the
-   sites tool reads settings, domains and publishing status, and redirects are
-   not among them. If nobody exports the CSV, the only remaining record is
-   Webflow's own settings screen, and once the site is unpublished it is gone.
+3. **A CSV per collection** — the item content.
+4. **The code export, unzipped**.
+5. **The 301 redirects** — Site Settings → Publishing, exports as CSV. **No API
+   returns these**; once the site is unpublished the record is gone. They are
+   not the redirects this migration creates — they are years of earlier ones,
+   and losing them breaks links that have nothing to do with the move.
 
-   These are not the redirects this migration creates. They are the ones the
-   site was already serving — often years of them, from restructures that
-   happened long before anyone considered leaving. Losing them breaks inbound
-   links that have nothing to do with the move.
-
-## Step 0 — Scan, and scope the blockers
+## Step 0 — Scan
 
 ```bash
 node .claude/skills/lumos-import-webflow/scan-export.mjs path/to/export
 ```
 
-It reports the site and page IDs (from `data-wf-site` and `data-wf-page`, which
-is how every MCP call addresses things), the component inventory with every
-variant and its count, collection templates, widgets, lists, forms, libraries,
-embeds and scripts.
+Reports the site and page IDs (`data-wf-site`, `data-wf-page` — how every MCP
+call addresses things), the component inventory, collection templates, widgets,
+lists, forms, libraries and embeds.
 
-**Read the provenance line first.** A site built with **Lumos for Webflow**
-announces itself in `u-*` classes and `data-*-columns` attributes, and it
-changes the whole job: its components are the same components this framework
-has, under the same names, and pass two becomes a lookup rather than a search.
-A hand-built Webflow site has no such luck, and every mapping is a judgement.
+**Read the provenance line first.** `u-*` classes and `data-*-columns`
+attributes mean the site was built with **Lumos for Webflow**, and pass 2
+becomes a lookup rather than a search.
 
-**Collection templates are not pages.** Webflow exports them as
-`detail_<slug>.html`, and that slug is the collection's own slug — matched
-against `get_collection_list`, the binding is exact, not inferred. Each becomes
+**The export did not lose the components.** Webflow writes each instance as
+`data-wf--<component>--<prop>="<value>"`, so names and variants survive in the
+attribute names — on a real site, the whole inventory with usage counts.
+
+**Templates are not pages.** `detail_<slug>.html` uses the collection's own
+slug; matched against `get_collection_list` the binding is exact. Each becomes
 one dynamic route.
 
-**Ignore the per-page list counts at first glance.** A site with a CMS-driven
-nav and footer shows eleven collection lists on every page because the chrome
-repeats. Those are bound once in the layout, not fifty-nine times.
+**Per-page list counts mislead.** A CMS-driven nav and footer put eleven
+collection lists on every page. Those bind once in the layout, not fifty-nine
+times.
 
-Then check for features this framework has no answer to, and **stop if you find
-one**: Ecommerce (`w-commerce`, `w-checkout`), Memberships, Logic, native site
-search. Each changes the shape of the project — Shopify or Stripe, Cloudflare
-Access, Pagefind. Agree an approach before rebuilding anything.
+Then stop for anything with no equivalent here — **Ecommerce** (`w-commerce`,
+`w-checkout`), **Memberships**, **Logic**, **native search**. Each changes the
+shape of the project. Agree an approach before rebuilding anything.
 
 ---
 
 # Pass 1 — Rebuild it exactly
 
-The goal is a site that is indistinguishable from the published one. Not
-idiomatic, not tokenised. Identical.
+Not idiomatic. Identical.
 
-**Pages, one for one.** Every page in the export becomes a page at the same
-route. Body markup goes in as it is, Webflow class names intact — those classes
-_are_ the styling, and renaming them here would be renaming and restructuring at
-once.
+**Pages, one for one**, at the same routes, body markup as-is with Webflow's
+class names intact — those classes _are_ the styling.
 
-**CSS.** Webflow exports `normalize.css`, `webflow.css` and
-`<site>.webflow.css`. The first two are framework and stay global. The third
-holds every component's rules, scattered — `.hero_wrap`, `.hero_inner`, the
-same names again inside each breakpoint, plus states.
+**CSS.** `normalize.css` and `webflow.css` are framework and stay global. The
+site stylesheet holds every component's rules, scattered across breakpoints.
 
 ```bash
 node .claude/skills/lumos-import-webflow/split-css.mjs export/css/site.webflow.css
 node .claude/skills/lumos-import-webflow/split-css.mjs export/css/site.webflow.css --prefix hero
 ```
 
-The first call shows the component groups it can see. The second prints one
-group's rules, media queries kept whole, ready for that component's `<style>`.
+The first shows the component groups; the second prints one group's rules with
+media queries intact, ready for that component's `<style>`. It separates
+library CSS (Swiper and friends) and reports two things it will not decide:
+rules whose selector spans two components, and what is genuinely global.
 
-Two things it will not decide:
+**Fonts.** `@font-face` blocks and the font files come across now. A missing
+font changes every measurement on the page and makes the later diffs
+meaningless.
 
-- **Rules that span two groups.** `.hero_wrap .button_primary` belongs to
-  neither alone. Move it, duplicate it, or leave it global — but read it.
-- **What is genuinely global.** Base type, colour variables and shared
-  utilities stay in a global stylesheet. Only component rules move.
+**Components.** Every group becomes a component holding its own markup and
+`<style>`. Where nothing here matches, build it now with Webflow's classes; it
+becomes a real Lumos component in pass 2.
 
-`u-*` classes are Lumos for Webflow's utility convention. Leave them working in
-pass one; they are the clearest signal of intent in pass two.
+**JavaScript.** Keep `webflow.js` for now if widgets need it; it leaves in pass 2. Read every embed.
 
-**Components.** Every group the splitter found becomes a component, holding its
-own markup and its own `<style>`. Where the markup matches nothing this
-framework has, **build it now** — with Webflow's class names and Webflow's CSS.
-It becomes a real Lumos component in pass two, or stays as it is if nothing
-maps.
-
-**JavaScript.** Keep `webflow.js` for now if widgets need it, and say so in the
-report. It is jQuery and Webflow's runtime, and it comes out in pass two as the
-widgets are replaced. Custom embeds are read one at a time.
-
-**Verify, and keep the result.** For every page:
+**Verify, and keep the screenshots.**
 
 ```bash
 node .claude/skills/lumos-import-webflow/compare-pages.mjs \
@@ -143,198 +116,166 @@ node .claude/skills/lumos-import-webflow/compare-pages.mjs \
   --local http://localhost:4321/about --shots
 ```
 
-Content parity must be exact — headings, links, images, form fields, counted
-not merely matched. Screenshots should be near-identical at this stage, because
-the CSS is Webflow's own; a visible difference means something was missed, not
-that a token rounded. **Keep these screenshots. They are the baseline for
-everything after.**
+Content parity must be exact — headings, links, images, fields, counted not
+merely matched. Screenshots should overlay. **This is the baseline.**
 
 ---
 
-# Pass 2 — Swap in what Lumos already has
+# Pass 2 — Make it Lumos
 
-One component at a time, verifying after each. A batch of swaps that breaks
-something costs more to unpick than it saved.
+## First, port the variables
 
-**Widgets, where the site used Webflow's own.** `w-slider` →
-`Interactive/Slider`, `w-tabs` → `Interactive/Tabs`, `w-dropdown` →
-`Interactive/Dropdown`, `w-nav` → `Global/Nav`, `w-form` → `Form/*`,
-`w-richtext` → `Typography/RichText`.
+```bash
+node .claude/skills/lumos-import-webflow/map-variables.mjs export/css/site.webflow.css
+```
 
-Do not expect to find them. A site built with Lumos for Webflow builds its own
-— a carousel there is Swiper, not `w-slider`, and the nav is custom markup, not
-`w-nav`. The scanner's library list is the better guide: **Swiper, GSAP,
-Three.js and Lenis on every page** is a site whose motion and interaction are
-third-party, and each one is a decision — reimplement it, bring the library
-across, or drop it. None of them arrive on their own.
+Compares the site's variables against `base.css` and sorts them four ways: what
+already matches, what differs, what the site has and this framework does not,
+and what cannot be mapped by name. The differing list prints paste-ready, with
+references already renamed.
 
-**When the site was built with Lumos for Webflow, most of pass two is this
-table.** The components carry the same names and the variants are already the
-prop values:
+On a real site that list is short — brand colours, a font family, a nav height,
+a tightened letter-spacing — because the two systems ship the same defaults.
+**Port it before swapping a single component.** Do it after and every swap
+lands at the framework's values instead of the site's, and each one looks like
+a regression.
 
-| Webflow component                          | Variants seen                                                                                   | Becomes                                                                             |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `typography-heading`                       | `display`, `h1`–`h6`                                                                            | `Typography/Heading` `variant`                                                      |
-| `typography-paragraph`                     | `inherit`, `text-large`, `text-small`                                                           | `Typography/Paragraph` `variant`                                                    |
-| `section`                                  | `inherit`, `dark`, `brand`                                                                      | `Wrapper/Section` `theme`                                                           |
-| `spacer`                                   | `none`, `small`, `main`, `large`, `page-top`                                                    | `Section` `paddingTop` / `paddingBottom` (`main`→`medium`, `page-top`→`navoverlap`) |
-| `layout`                                   | `stack`, `columns`, `columns-reversed`, `contain`, `breakout`, `card`, `auto-width`, `sticky-*` | `Wrapper/ContentWrapper` `variant`, with `reversed` → `reverse`                     |
-| `button-main`                              | `primary`, `secondary`, `tertiary`, `link`, `link-*`                                            | `Button` `emphasis` and `variant`                                                   |
-| `button-wrapper`                           | —                                                                                               | `Wrapper/ButtonWrapper`                                                             |
-| `form-input`, `form-label-text`            | `base`/`alt`, `hidden`/`visible`                                                                | `Form/Input`, with `hidden` → `labelHidden`                                         |
-| `data-{xsmall,small,medium,large}-columns` | numbers                                                                                         | `Wrapper/Grid`'s four column props                                                  |
-| `u-text-style-*`                           | —                                                                                               | the `text-style-*` utilities, same names                                            |
+Theme colours live in the `.theme-*` blocks, not `:root`. A site with dark
+sections has a value for each.
 
-Anything left over is a real decision. Take it one component at a time.
+## Then swap, one component at a time
+
+For a Lumos for Webflow site this is mostly a table. The variants are already
+the prop values:
+
+| Webflow                                                                        | Becomes                                                      |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| `typography-heading` `display`/`h1`–`h6`                                       | `Typography/Heading` `variant`                               |
+| `typography-paragraph` `inherit`/`text-large`/`text-small`                     | `Typography/Paragraph` `variant`                             |
+| `section` `inherit`/`dark`/`brand`                                             | `Wrapper/Section` `theme`                                    |
+| `spacer` `none`/`small`/`main`/`large`/`page-top`                              | `Section` padding (`main`→`medium`, `page-top`→`navoverlap`) |
+| `layout` `stack`/`columns`/`contain`/`breakout`/`card`/`auto-width`/`sticky-*` | `Wrapper/ContentWrapper` `variant`, `-reversed` → `reverse`  |
+| `button-main` `primary`/`secondary`/`tertiary`/`link*`                         | `Button` `emphasis` and `variant`                            |
+| `button-wrapper`                                                               | `Wrapper/ButtonWrapper`                                      |
+| `form-input`, `form-label-text` `hidden`                                       | `Form/Input`, `labelHidden`                                  |
+| `data-{xsmall,small,medium,large}-columns`                                     | `Wrapper/Grid`'s four column props                           |
+| `u-text-style-*`                                                               | the `text-style-*` utilities, same names                     |
 
 **Props the export does not carry come from the page, not the component.**
-`get_component_properties` returns the component's _definition_ — its property
-labels and defaults — which is not what a given instance was set to. A Button
-Main has ten properties and only `variant` reaches the export.
+`get_component_properties` returns a component's _defaults_ — a Button Main has
+ten properties and only `variant` reaches the export. Instance values are in
+`data_localization_tool` → `get_page_content`, as `component-instance` nodes
+with `propertyOverrides`. Join three calls:
 
-The instance values are in `data_localization_tool` → `get_page_content`, which
-returns each node as a `component-instance` with a `componentId` and its
-`propertyOverrides`. Join the three:
-
-- `list_components` — component id to name and group
+- `list_components` — id to name and group
 - `get_component_properties` — property id to label
-- `get_page_content` — this instance's actual values
+- `get_page_content` — this instance's values
 
-On a real page that recovers things visible nowhere in the export: a Section
-instance carrying `Container Classes: "u-gap-0"`, each button's own label, a
-video URL passed as a property.
+That recovers what the export never had: a Section's `Container Classes`, each
+button's own label, a video URL passed as a property.
 
-Where Lumos has no equivalent for a Webflow setting, say so in the report
-rather than dropping it silently.
-
-**Structure.** `u-section` becomes `Wrapper/Section`, containers become
-`Wrapper/ContentWrapper` or `Wrapper/Grid`, repeated cards become `Item/Card`,
-text becomes `Typography/*`.
+**Widgets, where Webflow's own were used.** `w-slider` → `Interactive/Slider`,
+`w-tabs` → `Interactive/Tabs`, `w-dropdown`, `w-nav`, `w-form`, `w-richtext`.
+Do not expect to find them: a Lumos for Webflow site builds its own, so the
+carousel is Swiper and the nav is custom markup. The library list is the better
+guide — Swiper, GSAP, Three.js and Lenis on every page means motion is
+third-party, and each library is a decision: reimplement, carry across, or
+drop.
 
 **Styles that came with a section — how it was set in Webflow decides.**
 
-- Set as a **named class** in Webflow (a class someone made and reused): keep it
-  as a custom class on the Lumos component, with its rules in that component's
-  `<style>`. It was a decision, and it should stay one.
-- Set as a **utility** (`u-*`, or a spacing class from a system): use the
-  matching Lumos utility or prop — `Section`'s `paddingTop`, `theme`, `gap`. A
-  utility in Webflow means the same thing as a utility here.
-- Set as a **one-off on the element**: fold it into the component's own styles
-  or drop it if a prop covers it. One-offs are how a system stops being one.
+- A **named class** stays a custom class on the Lumos component, its rules in
+  that component's `<style>`. It was a decision; keep it one.
+- A **utility** becomes the matching Lumos utility or prop — `Section`'s
+  `paddingTop`, `theme`, `gap`. A utility means the same thing in both systems.
+- A **one-off** folds into the component's styles, or disappears if a prop
+  covers it.
 
-**Delete what the swap made dead.** When a Webflow widget's markup goes, its
-CSS goes with it. A stylesheet still carrying rules for components that no
-longer exist is the failure mode of this kind of migration.
+**Delete what the swap killed.** The rules for replaced markup go with it. A
+stylesheet carrying styles for components that no longer exist is how this kind
+of migration fails.
 
-**Interactions.** As each widget is replaced, its IX2 behaviour has to be
-accounted for. Rebuild hovers, fades and scroll reveals in CSS or with an
-`IntersectionObserver`. Multi-step timelines and scrub-linked animation are not
-readable from `data-w-id` — watch them on the published site, describe them,
-and ask whether they are worth rebuilding. When the last widget is gone,
-`webflow.js` goes too.
+**Interactions.** As each widget goes, account for its IX2 behaviour: rebuild
+hovers, fades and scroll reveals in CSS or with an `IntersectionObserver`.
+Timelines and scrub-linked animation are not readable from `data-w-id` — watch
+them live, describe them, ask whether they are worth rebuilding. When the last
+widget is gone, so is `webflow.js`.
 
-**Verify against the baseline, not against live.** The pass-one screenshots are
-what to compare with now. A difference here was caused by the swap that just
-happened.
+**Verify against the pass-1 baseline, not against live.** A difference now was
+caused by the swap just made. It is a defect, not drift: the tokens are the
+site's own, so the components should land where the Webflow markup did. Chase
+it to the token or prop that is wrong rather than accepting it.
 
 ---
 
 # Pass 3 — Connect the data
 
-The markup is Lumos now. Bind it.
+**Where content lives**, decided before converting anything, by who edits the
+site: **Astro content collections** (typed, in git, no bill, no editor UI), **a
+headless CMS** (closest to what they are leaving, plus a subscription), or
+**Webflow as a headless backend** (least disruption, keeps the bill).
 
-**Decide where content lives**, before converting anything. Let the answer
-follow from who edits the site:
+**Bindings.** Two are exact, one is not:
 
-- **Astro content collections** — the CSV becomes markdown or JSON in the repo.
-  Type-checked, versioned, no service and no bill. A non-technical editor has no
-  interface until one is added.
-- **A headless CMS** — closest to what they are leaving. Editors keep a UI; the
-  project gains setup, a subscription and a build-time dependency.
-- **Webflow as a headless backend** — keep the CMS, drop the hosting. Least
-  disruption, but the Webflow bill and its rate limits stay.
-
-**Bind the lists.** Two of the three bindings are exact and one is not:
-
-- **Collection templates** — `detail_<slug>.html` names the collection's own
-  slug. Match it against `get_collection_list`. Exact.
-- **The CSVs** — each export is named `<Site> - <Collection> - <id>.csv` and
-  carries a `Collection ID` column. Exact, no matching by field shape.
+- **Templates** — `detail_<slug>.html` names the collection's slug.
+- **CSVs** — each is named with its collection ID and carries a `Collection ID`
+  column.
 - **Lists on a page** — nothing in the export says which collection. Compare
-  the fields rendered inside `w-dyn-item` against each collection's schema from
-  `get_collection_details`, or read the binding from the element tree
-  (`data_element_tool` → `query_elements`, then `get_attributes` with
-  `with_resolved_bindings: false`, which returns binding metadata rather than
-  resolved strings). **When two collections could both fit, ask.** A wrong
-  binding renders beautifully and says the wrong thing.
+  the fields inside `w-dyn-item` against `get_collection_details`, or read the
+  binding from the element tree (`data_element_tool` → `query_elements`, then
+  `get_attributes` with `with_resolved_bindings: false`). **When two
+  collections could both fit, ask.**
 
-**Filters and sorts are the one thing nothing hands you.** They are absent from
-the export by definition — the published HTML is the result of the filter, not
-the filter. They are not in the CMS API either: it filters items you ask for,
-it does not report how a page's list was configured. The element tree is where
-to look; if the binding metadata does not carry them, the record is the
-client's own Designer. Confirm every one against the live site: a list showing
-nine of forty items has a filter, and a rebuild without it shows all forty.
+**Filters and sorts are the one thing nothing hands you.** The published HTML
+is the result of a filter, not the filter; the CMS API filters what you ask
+for, it does not report how a page's list was configured. Look in the element
+tree; failing that, the record is the client's Designer. Confirm each against
+the live site — a list showing nine of forty items has a filter, and a rebuild
+without it shows forty.
 
-**Collection templates become dynamic routes.** A Webflow collection page is
-`/blog/[slug].astro` with `getStaticPaths`. Every published item needs a page at
-the same URL it had, or the redirects in the hosting step have to cover it.
+**Collection templates become dynamic routes** — `/blog/[slug].astro` with
+`getStaticPaths`, at the URLs the items already had.
 
-**Forms.** Fields survive; submission does not. Rebuild with `Form/*`
-components, including the honeypot and the success and error states the original
-had, then choose a provider. **Recommend Cloudflare** — a Worker endpoint plus
-Cloudflare Email Service, on the same platform as the hosting and with no third
-party. Say plainly that it is a recommendation: Formspree, Basin or a CRM
-endpoint are all reasonable, and an existing CRM usually decides it.
-
-**Verify.** Content parity again, and this time count items: a list that
-rendered nine on the live site and renders six now is a filter that was not
-carried across.
+**Forms.** Fields survive, submission does not. Rebuild with `Form/*`, keeping
+the honeypot and the success and error states, then choose a provider.
+**Recommend Cloudflare** — a Worker plus Cloudflare Email Service, same
+platform as the hosting, no third party. A recommendation: an existing CRM
+usually decides it.
 
 ---
 
-## Hosting
+## Finish
 
-**Recommend Cloudflare Workers**, which this framework is already configured
-for, with Cloudflare Email Service for form mail. A recommendation, not a
-requirement.
+**The gate:** no `.w-` classes outside the framework reset, no rules left in
+the site stylesheet that a component or token now covers, no `webflow.js`, and
+every page still matching. If Webflow CSS survives, name each rule in the
+report and why nothing here replaced it.
 
-**Redirects come in two sets, and both have to end up in one map.**
+**Hosting.** Recommend **Cloudflare Workers**, which this framework is
+configured for, with Cloudflare Email Service for form mail.
 
-- **Inherited** — the CSV from step 0. Webflow was already serving these;
-  carry every row across unchanged. A rule pointing at a URL this migration
-  also changed needs its target updated, not its source.
-- **Created by the move** — every URL that changed shape, including
-  `/collection/item` paths if any slug changed, and any page that was renamed
-  or reorganised on the way over.
-
-Check the two sets against each other for chains and contradictions: an old
-rule sending `/services` to `/what-we-do`, plus a new rule sending
-`/what-we-do` to `/work`, should be flattened to one hop rather than left to
-redirect twice.
-
-Then the custom domain, SSL and DNS cutover. Keep Webflow published until the
-new site answers on the domain.
+**Redirects, one map from two sets.** The inherited CSV, carried across
+unchanged, and the ones this move created. Check them against each other:
+`/services → /what-we-do` plus `/what-we-do → /work` should be flattened to one
+hop. Then the domain, SSL and DNS cutover, keeping Webflow published until the
+new site answers.
 
 ## The report
 
-- **Pass 1** — pages rebuilt, components created, CSS split per component, what
-  stayed global, rules that spanned two components and what was decided.
-- **Pass 2** — Webflow components mapped to Lumos ones, props read from the
-  export versus recovered from `get_page_content`, props with no equivalent,
-  styles kept as classes versus moved to utilities, CSS deleted, libraries
-  reimplemented or carried across, interactions rebuilt or dropped.
+- **Pass 1** — pages, components created, CSS split, what stayed global, rules
+  spanning two components and the decision made.
+- **Variables** — ported, added, and any left unmapped.
+- **Pass 2** — components mapped, props from the export versus from
+  `get_page_content`, props with no equivalent, styles kept as classes versus
+  moved to utilities, CSS deleted, libraries reimplemented or carried,
+  interactions rebuilt or dropped.
 - **Pass 3** — collections and where they landed, bindings inferred rather than
-  told, filters confirmed, forms and their provider.
-- **Parity** — pages checked against the live site, and any whose content did
-  not match.
-- **Out of scope** — Ecommerce, Memberships, Logic, search.
-- **Redirects** — the inherited rules, the ones this move created, any chains
-  that were flattened, and anything that could not be preserved.
-- **Still open** — everything unresolved.
+  told, filters confirmed, forms and provider.
+- **Parity** — every page checked, and any that did not match.
+- **Webflow that survived** — with a reason each.
+- **Out of scope**, **redirects**, **still open**.
 
 ## Versions
 
-Skill version 2.1.0. Tested against a 59-page Lumos for Webflow export with 13 collections and a 363 KB stylesheet. All three scripts read only: `scan-export.mjs` and
-`split-css.mjs` never write to the project, and `compare-pages.mjs` only fetches
-and screenshots.
+Skill 3.0.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+147 variables, a 363 KB stylesheet. All four scripts read only.
