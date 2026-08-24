@@ -99,7 +99,7 @@ idiomatic, not tokenised. Identical.
 
 **Pages, one for one.** Every page in the export becomes a page at the same
 route. Body markup goes in as it is, Webflow class names intact — those classes
-*are* the styling, and renaming them here would be renaming and restructuring at
+_are_ the styling, and renaming them here would be renaming and restructuring at
 once.
 
 **CSS.** Webflow exports `normalize.css`, `webflow.css` and
@@ -172,23 +172,23 @@ across, or drop it. None of them arrive on their own.
 table.** The components carry the same names and the variants are already the
 prop values:
 
-| Webflow component | Variants seen | Becomes |
-| --- | --- | --- |
-| `typography-heading` | `display`, `h1`–`h6` | `Typography/Heading` `variant` |
-| `typography-paragraph` | `inherit`, `text-large`, `text-small` | `Typography/Paragraph` `variant` |
-| `section` | `inherit`, `dark`, `brand` | `Wrapper/Section` `theme` |
-| `spacer` | `none`, `small`, `main`, `large`, `page-top` | `Section` `paddingTop` / `paddingBottom` (`main`→`medium`, `page-top`→`navoverlap`) |
-| `layout` | `stack`, `columns`, `columns-reversed`, `contain`, `breakout`, `card`, `auto-width`, `sticky-*` | `Wrapper/ContentWrapper` `variant`, with `reversed` → `reverse` |
-| `button-main` | `primary`, `secondary`, `tertiary`, `link`, `link-*` | `Button` `emphasis` and `variant` |
-| `button-wrapper` | — | `Wrapper/ButtonWrapper` |
-| `form-input`, `form-label-text` | `base`/`alt`, `hidden`/`visible` | `Form/Input`, with `hidden` → `labelHidden` |
-| `data-{xsmall,small,medium,large}-columns` | numbers | `Wrapper/Grid`'s four column props |
-| `u-text-style-*` | — | the `text-style-*` utilities, same names |
+| Webflow component                          | Variants seen                                                                                   | Becomes                                                                             |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `typography-heading`                       | `display`, `h1`–`h6`                                                                            | `Typography/Heading` `variant`                                                      |
+| `typography-paragraph`                     | `inherit`, `text-large`, `text-small`                                                           | `Typography/Paragraph` `variant`                                                    |
+| `section`                                  | `inherit`, `dark`, `brand`                                                                      | `Wrapper/Section` `theme`                                                           |
+| `spacer`                                   | `none`, `small`, `main`, `large`, `page-top`                                                    | `Section` `paddingTop` / `paddingBottom` (`main`→`medium`, `page-top`→`navoverlap`) |
+| `layout`                                   | `stack`, `columns`, `columns-reversed`, `contain`, `breakout`, `card`, `auto-width`, `sticky-*` | `Wrapper/ContentWrapper` `variant`, with `reversed` → `reverse`                     |
+| `button-main`                              | `primary`, `secondary`, `tertiary`, `link`, `link-*`                                            | `Button` `emphasis` and `variant`                                                   |
+| `button-wrapper`                           | —                                                                                               | `Wrapper/ButtonWrapper`                                                             |
+| `form-input`, `form-label-text`            | `base`/`alt`, `hidden`/`visible`                                                                | `Form/Input`, with `hidden` → `labelHidden`                                         |
+| `data-{xsmall,small,medium,large}-columns` | numbers                                                                                         | `Wrapper/Grid`'s four column props                                                  |
+| `u-text-style-*`                           | —                                                                                               | the `text-style-*` utilities, same names                                            |
 
 Anything left over is a real decision. Take it one component at a time.
 
 **Props the export does not carry come from the page, not the component.**
-`get_component_properties` returns the component's *definition* — its property
+`get_component_properties` returns the component's _definition_ — its property
 labels and defaults — which is not what a given instance was set to. A Button
 Main has ten properties and only `variant` reaches the export.
 
