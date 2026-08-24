@@ -2,10 +2,14 @@
 # lumos` and downloads of the source archive don't inherit the framework's
 # own contributor tooling or deploy target. Clones and forks still get
 # everything — export-ignore only applies to archives.
+#
+# .claude/skills is deliberately not listed: the skills are for the person
+# building a site, not for contributors here. Only the dev-server config,
+# which points at this repository's own setup, is withheld.
 
 /.gitattributes export-ignore
 /.github export-ignore
-/.claude export-ignore
+/.claude/launch.json export-ignore
 /packages export-ignore
 /CLA.md export-ignore
 /CONTRIBUTING.md export-ignore
