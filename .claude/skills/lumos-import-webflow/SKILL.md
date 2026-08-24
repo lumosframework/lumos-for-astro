@@ -245,6 +245,46 @@ the moment a paragraph follows.
 Which makes this variable work, not component work — do it in the same step as
 the colours, before anything is compared.
 
+### And the wrappers those margins needed
+
+**Webflow wrapped every eyebrow, heading and paragraph in a div of its own** —
+`width: 100%; display: flex; align-items: inherit` — because the parent was a
+block. The wrapper supplied the flex row a marker and text needed, passed the
+parent's alignment down, and left the parent in block layout so sibling margins
+could still collapse into each other.
+
+**None of that applies here.** `.section` and `.container` are
+`display: flex; flex-direction: column` with
+`align-items: var(--_alignment, start)`, so the alignment comes from the parent
+and flex children do not collapse their margins — which is the whole reason the
+rhythm above is top margins and does not have to reason about overlap. The
+wrapper has nothing left to do.
+
+**So delete the rule, not only the element.** That trio —
+`width: 100%`, `display: flex`, `align-items: inherit` (with `justify-content`
+and `text-align` inherit alongside) on a div whose only child is one typography
+block — is the signature. Where a wrapper genuinely has to stay for structure,
+`display-contents` is how it contributes no box.
+
+**The names invert, which is how this rule survives the swap.** Webflow's
+`wrapper` is the scaffolding; this framework's `_wrap` is the row Webflow
+called `layout`:
+
+| Webflow                               | Here                                      |
+| ------------------------------------- | ----------------------------------------- |
+| `u-eyebrow-wrapper` — the scaffolding | nothing; the element and its rule both go |
+| `u-eyebrow-layout`                    | `.eyebrow_wrap`                           |
+| `u-eyebrow-marker`, `u-eyebrow-text`  | `.eyebrow_marker`, `.eyebrow_text`        |
+| `u-heading` — the scaffolding         | nothing; `.heading` _is_ the `<h1>`       |
+| `u-text` — the scaffolding            | nothing; `.text` _is_ the `<p>`           |
+
+`split-css --prefix eyebrow` prints all four families together and `wrapper`
+reads like `wrap`, so the one element with no counterpart is the one whose
+rules get merged into the element that survives. The result is an
+`.eyebrow_wrap` at `width: 100%` and `display: flex` instead of `inline-flex` —
+the old layout model reassembled inside the new component, from a div that was
+correctly deleted.
+
 **A hand-built Webflow site gets none of this.** With no `u-` prefix there is
 no lookup, only judgement about what a div was for — and judgement belongs
 after the baseline proves what the div did. Bring those across as they are and
@@ -536,7 +576,9 @@ or because Webflow had no other way?
 
 - **Eyebrow** arrives as four nested divs — `u-eyebrow-wrapper`,
   `u-eyebrow-layout`, then the marker and the text. `Typography/Eyebrow` is the
-  whole thing; the outer two are Webflow's and go.
+  whole thing. Only the outermost is scaffolding: `u-eyebrow-layout` is the
+  component's own root under another name, so it is `.eyebrow_wrap` and it
+  keeps its rules, while `u-eyebrow-wrapper` and everything declared on it go.
 - **Heading** arrives as `<div class="u-heading" data-wf--typography-heading--variant="h2"><h1>…</h1></div>`.
   Read it before deleting it: the inner tag is the semantics and the attribute
   is the style, which is the pair `Heading` separates — `<Heading tag="h1"
@@ -750,5 +792,5 @@ new site answers.
 
 ## Versions
 
-Skill 4.2.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 4.3.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
