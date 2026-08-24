@@ -47,6 +47,47 @@ function walk(dir, out = []) {
   return out;
 }
 
+/** Top-level children of <body>, each with the markup it contains. */
+function topLevelBlocks(html, depthLimit = 2) {
+  const body = html.split(/<body[^>]*>/i)[1]?.split(/<\/body>/i)[0] ?? "";
+  const blocks = [];
+  const tag = /<(\/?)([a-z][\w-]*)([^>]*)>/gi;
+  const VOID = new Set(["img", "br", "hr", "input", "meta", "link", "source", "path", "circle", "use"]);
+  let depth = 0;
+  let start = -1;
+  let name = "";
+  let m;
+  while ((m = tag.exec(body))) {
+    const [whole, closing, el, attrs] = m;
+    if (VOID.has(el.toLowerCase()) || attrs.endsWith("/")) continue;
+    if (!closing) {
+      if (depth === 0) {
+        start = m.index;
+        name = `${el}${(attrs.match(/class="([^"]{0,40})"/) ?? [])[1] ? `.${attrs.match(/class="([^"]{0,40})"/)[1].split(/\s+/)[0]}` : ""}`;
+      }
+      depth++;
+    } else {
+      depth--;
+      if (depth === 0 && start !== -1) {
+        blocks.push({ name, html: body.slice(start, m.index + whole.length) });
+        start = -1;
+      }
+    }
+  }
+  /* A Webflow page is usually one wrapper holding everything. The parts worth
+     naming — nav, main, footer — are its children, so step inside it. */
+  const total = blocks.reduce((n, b) => n + b.html.length, 0);
+  const dominant = blocks.find((b) => b.html.length > total * 0.8 && b.html.length > 4000);
+  if (dominant && depthLimit > 0) {
+    const inner = dominant.html.replace(/^<[^>]+>/, "").replace(/<\/[a-z]+>\s*$/i, "");
+    return [
+      { name: `${dominant.name} (wrapper)`, html: dominant.html, wrapper: true },
+      ...topLevelBlocks(`<body>${inner}</body>`, depthLimit - 1),
+    ];
+  }
+  return blocks;
+}
+
 const files = walk(root);
 if (!files.length) {
   console.error(`no .html files under ${root} — is that the unzipped export?`);
@@ -66,6 +107,7 @@ const report = {
   lumosClasses: {},
   lumosAttrs: {},
   libraries: {},
+  chrome: {},
   embeds: [],
   externalScripts: {},
 };
@@ -202,6 +244,19 @@ for (const file of files) {
     }
   }
 
+  /* Webflow has no layout, so every exported page repeats the nav, the footer
+     and anything else site-wide. Identical blocks across most pages are the
+     layout, not page content. */
+  for (const block of topLevelBlocks(html)) {
+    const body = block.html.replace(/\s+/g, " ").trim();
+    const entry = (report.chrome[block.name] ??= {
+      name: block.name, pages: new Set(), bytes: 0, variants: new Set(),
+    });
+    entry.pages.add(page);
+    entry.bytes = Math.max(entry.bytes, body.length);
+    entry.variants.add(body);
+  }
+
   const embeds = (html.match(/\bw-embed\b/g) ?? []).length;
   if (embeds) report.embeds.push({ page, embeds });
 
@@ -253,6 +308,27 @@ console.log("\nINTERACTIONS — element tagged, timeline compiled away");
 if (!report.interactions.length) console.log("  none");
 for (const i of report.interactions) {
   console.log(`  ${i.page.padEnd(28)} ${i.animatedElements} animated element(s)`);
+}
+
+const pageCount = report.pages.length;
+const chrome = Object.values(report.chrome)
+  .filter((c) => c.pages.size >= Math.max(2, pageCount * 0.5) && c.bytes > 200)
+  .sort((a, b) => b.bytes - a.bytes);
+if (chrome.length) {
+  console.log("\nSITE CHROME — on nearly every page, so it belongs in the layout");
+  console.log("  BLOCK".padEnd(32) + "PAGES   SIZE      VERSIONS");
+  for (const c of chrome) {
+    const identical = c.variants.size === 1;
+    console.log(
+      `  ${c.name.padEnd(28)} ${String(c.pages.size).padStart(3)}/${pageCount}  ` +
+        `${(c.bytes / 1024).toFixed(1).padStart(6)} KB  ` +
+        (identical ? "identical" : `${c.variants.size} — differs per page`),
+    );
+  }
+  console.log("\n  Identical blocks are Nav, Footer or layout furniture: import each");
+  console.log("  ONCE into BaseLayout, Global/Nav or Global/Footer. A block that");
+  console.log("  differs per page is usually a wrapper — keep the wrapper in the");
+  console.log("  layout and let its changing child be the page's <slot />.");
 }
 
 const templates = report.pages.filter((p) => p.template);

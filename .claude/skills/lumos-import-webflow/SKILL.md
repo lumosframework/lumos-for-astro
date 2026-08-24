@@ -87,6 +87,40 @@ shape of the project. Agree an approach before rebuilding anything.
 
 Not idiomatic. Identical.
 
+## The layout comes first
+
+**Change the framework's own files. Never create a second version of one.** An
+import runs on a fresh scaffold, where `BaseLayout.astro`, `Global/Nav.astro`,
+`Global/Footer.astro` and `base.css` are placeholders that exist to be
+overwritten. A `WebflowLayout` beside `BaseLayout` leaves the site with two
+layouts, one wired to nothing, and every later step has to ask which is real.
+The same goes for `Nav`: replace what is inside it rather than building a
+second nav elsewhere.
+
+**Webflow has no layout, so every exported page repeats the chrome.** The
+scanner's SITE CHROME table names the blocks — on a real site,
+`header.navbar_wrapper` and `footer.footer_wrap` on 36 of 59 pages, a
+`div.page_wrap` around everything and a `main.page_main` inside it. Import each
+one **once**:
+
+| Export                                                        | Goes to                                       |
+| ------------------------------------------------------------- | --------------------------------------------- |
+| the outer wrapper (`page_wrap`)                               | `BaseLayout`, around everything               |
+| `header.navbar_wrapper`                                       | `Global/Nav.astro`, replacing its contents    |
+| `footer.footer_wrap`                                          | `Global/Footer.astro`, replacing its contents |
+| fixed and furniture blocks (`u-position-fixed`, `guide_wrap`) | `BaseLayout`                                  |
+| `main.page_main`                                              | `<main><slot /></main>` in `BaseLayout`       |
+| everything inside `page_main`                                 | the page file, and nothing else               |
+
+**A page file holds only what was inside `main`.** If nav markup appears in a
+page it is in the wrong place — and it will be in every page, because that is
+how the export was written.
+
+**Page metadata uses what the layout already has.** Each Webflow page's title,
+description and OG image map onto `BaseLayout`'s existing `SeoProps` and
+`Utility/BaseHead`. Putting title and description props on a new layout
+rebuilds something the framework already does.
+
 **Pages, one for one**, at the same routes, body markup as-is with Webflow's
 class names intact — those classes _are_ the styling.
 
@@ -359,5 +393,5 @@ new site answers.
 
 ## Versions
 
-Skill 3.1.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 3.2.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
