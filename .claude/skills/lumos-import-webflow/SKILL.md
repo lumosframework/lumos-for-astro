@@ -35,7 +35,7 @@ worse than an honestly Webflow one, because nothing can be verified against it.
 
 ## What to collect first
 
-Ask for all four. Any one missing costs a category of information:
+Ask for all five. Any one missing costs a category of information:
 
 1. **The Webflow MCP, connected** — the only source for CMS bindings, component
    names and variants, and design variables. Without it this is guesswork; say
@@ -44,6 +44,16 @@ Ask for all four. Any one missing costs a category of information:
 3. **A CSV export per collection** — the item content.
 4. **The code export, unzipped** — every page's markup, including pages nobody
    remembers.
+5. **The 301 redirects, exported from Webflow** — Site Settings → Publishing →
+   301 redirects, which exports as CSV. **There is no API for these**: the
+   sites tool reads settings, domains and publishing status, and redirects are
+   not among them. If nobody exports the CSV, the only remaining record is
+   Webflow's own settings screen, and once the site is unpublished it is gone.
+
+   These are not the redirects this migration creates. They are the ones the
+   site was already serving — often years of them, from restructures that
+   happened long before anyone considered leaving. Losing them breaks inbound
+   links that have nothing to do with the move.
 
 ## Step 0 — Scan, and scope the blockers
 
@@ -217,10 +227,22 @@ carried across.
 for, with Cloudflare Email Service for form mail. A recommendation, not a
 requirement.
 
-Carry across what the old host did quietly: **redirects** for every URL that
-changes shape, 301s from old `/collection/item` paths if slugs changed, and the
-custom domain, SSL and DNS cutover. Keep Webflow published until the new site
-answers on the domain.
+**Redirects come in two sets, and both have to end up in one map.**
+
+- **Inherited** — the CSV from step 0. Webflow was already serving these;
+  carry every row across unchanged. A rule pointing at a URL this migration
+  also changed needs its target updated, not its source.
+- **Created by the move** — every URL that changed shape, including
+  `/collection/item` paths if any slug changed, and any page that was renamed
+  or reorganised on the way over.
+
+Check the two sets against each other for chains and contradictions: an old
+rule sending `/services` to `/what-we-do`, plus a new rule sending
+`/what-we-do` to `/work`, should be flattened to one hop rather than left to
+redirect twice.
+
+Then the custom domain, SSL and DNS cutover. Keep Webflow published until the
+new site answers on the domain.
 
 ## The report
 
@@ -234,7 +256,8 @@ answers on the domain.
 - **Parity** — pages checked against the live site, and any whose content did
   not match.
 - **Out of scope** — Ecommerce, Memberships, Logic, search.
-- **Redirects** — the map, and anything that could not be preserved.
+- **Redirects** — the inherited rules, the ones this move created, any chains
+  that were flattened, and anything that could not be preserved.
 - **Still open** — everything unresolved.
 
 ## Versions
