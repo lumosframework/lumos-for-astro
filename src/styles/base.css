@@ -425,6 +425,7 @@ button {
   background-color: transparent;
   text-align: inherit;
   padding: 0;
+  border: 0;
 }
 button:not(:disabled) {
   cursor: pointer;
