@@ -5,11 +5,15 @@ description: Move a site built in Webflow onto Lumos for Astro. Use when someone
 
 # Importing a Webflow site
 
-A Webflow code export is a photograph of a published site. Everything that made
-it a Webflow site — which collection fed a list, which component an instance
-was, what an interaction did — was resolved at publish time and thrown away.
-The markup left behind proves those things existed without saying what they
-were.
+A Webflow code export is a photograph of a published site. Much of what made it
+a Webflow site was resolved at publish time — which collection fed a list, how
+that list was filtered, what an interaction did.
+
+But not everything. Webflow writes each component instance as
+`data-wf--<component>--<prop>="<value>"`, so component names and their variants
+survive in the attribute names themselves. On a real site that is the whole
+component inventory: names, every variant, and how often each is used. Read the
+export first and the API stops being a fishing trip.
 
 ## Three passes, in this order
 
@@ -61,10 +65,25 @@ Ask for all five. Any one missing costs a category of information:
 node .claude/skills/lumos-import-webflow/scan-export.mjs path/to/export
 ```
 
-It reports the site and page IDs (lifted from `data-wf-site` and
-`data-wf-page`, which is how every MCP call addresses things), the Webflow
-widgets and what they map to, every collection list, every form and its fields,
-interaction counts, component markers, embeds and third-party scripts.
+It reports the site and page IDs (from `data-wf-site` and `data-wf-page`, which
+is how every MCP call addresses things), the component inventory with every
+variant and its count, collection templates, widgets, lists, forms, libraries,
+embeds and scripts.
+
+**Read the provenance line first.** A site built with **Lumos for Webflow**
+announces itself in `u-*` classes and `data-*-columns` attributes, and it
+changes the whole job: its components are the same components this framework
+has, under the same names, and pass two becomes a lookup rather than a search.
+A hand-built Webflow site has no such luck, and every mapping is a judgement.
+
+**Collection templates are not pages.** Webflow exports them as
+`detail_<slug>.html`, and that slug is the collection's own slug — matched
+against `get_collection_list`, the binding is exact, not inferred. Each becomes
+one dynamic route.
+
+**Ignore the per-page list counts at first glance.** A site with a CMS-driven
+nav and footer shows eleven collection lists on every page because the chrome
+repeats. Those are bound once in the layout, not fifty-nine times.
 
 Then check for features this framework has no answer to, and **stop if you find
 one**: Ecommerce (`w-commerce`, `w-checkout`), Memberships, Logic, native site
@@ -137,16 +156,56 @@ everything after.**
 One component at a time, verifying after each. A batch of swaps that breaks
 something costs more to unpick than it saved.
 
-**Widgets.** `w-slider` → `Interactive/Slider`, `w-tabs` → `Interactive/Tabs`,
-`w-dropdown` → `Interactive/Dropdown`, `w-nav` → `Global/Nav`, `w-form` →
-`Form/*`, `w-richtext` → `Typography/RichText`.
+**Widgets, where the site used Webflow's own.** `w-slider` →
+`Interactive/Slider`, `w-tabs` → `Interactive/Tabs`, `w-dropdown` →
+`Interactive/Dropdown`, `w-nav` → `Global/Nav`, `w-form` → `Form/*`,
+`w-richtext` → `Typography/RichText`.
 
-**Match the props, do not guess them.** The export lost the settings; the API
-still has them. `data_localization_tool` → `list_components` finds the
-component, `get_component_properties` gives its properties and variant values.
-Read the Webflow slider's autoplay, delay and slides-per-view, then set the
-Lumos `Slider` to match. Where Lumos has no equivalent for a Webflow setting,
-say so in the report rather than dropping it silently.
+Do not expect to find them. A site built with Lumos for Webflow builds its own
+— a carousel there is Swiper, not `w-slider`, and the nav is custom markup, not
+`w-nav`. The scanner's library list is the better guide: **Swiper, GSAP,
+Three.js and Lenis on every page** is a site whose motion and interaction are
+third-party, and each one is a decision — reimplement it, bring the library
+across, or drop it. None of them arrive on their own.
+
+**When the site was built with Lumos for Webflow, most of pass two is this
+table.** The components carry the same names and the variants are already the
+prop values:
+
+| Webflow component | Variants seen | Becomes |
+| --- | --- | --- |
+| `typography-heading` | `display`, `h1`–`h6` | `Typography/Heading` `variant` |
+| `typography-paragraph` | `inherit`, `text-large`, `text-small` | `Typography/Paragraph` `variant` |
+| `section` | `inherit`, `dark`, `brand` | `Wrapper/Section` `theme` |
+| `spacer` | `none`, `small`, `main`, `large`, `page-top` | `Section` `paddingTop` / `paddingBottom` (`main`→`medium`, `page-top`→`navoverlap`) |
+| `layout` | `stack`, `columns`, `columns-reversed`, `contain`, `breakout`, `card`, `auto-width`, `sticky-*` | `Wrapper/ContentWrapper` `variant`, with `reversed` → `reverse` |
+| `button-main` | `primary`, `secondary`, `tertiary`, `link`, `link-*` | `Button` `emphasis` and `variant` |
+| `button-wrapper` | — | `Wrapper/ButtonWrapper` |
+| `form-input`, `form-label-text` | `base`/`alt`, `hidden`/`visible` | `Form/Input`, with `hidden` → `labelHidden` |
+| `data-{xsmall,small,medium,large}-columns` | numbers | `Wrapper/Grid`'s four column props |
+| `u-text-style-*` | — | the `text-style-*` utilities, same names |
+
+Anything left over is a real decision. Take it one component at a time.
+
+**Props the export does not carry come from the page, not the component.**
+`get_component_properties` returns the component's *definition* — its property
+labels and defaults — which is not what a given instance was set to. A Button
+Main has ten properties and only `variant` reaches the export.
+
+The instance values are in `data_localization_tool` → `get_page_content`, which
+returns each node as a `component-instance` with a `componentId` and its
+`propertyOverrides`. Join the three:
+
+- `list_components` — component id to name and group
+- `get_component_properties` — property id to label
+- `get_page_content` — this instance's actual values
+
+On a real page that recovers things visible nowhere in the export: a Section
+instance carrying `Container Classes: "u-gap-0"`, each button's own label, a
+video URL passed as a property.
+
+Where Lumos has no equivalent for a Webflow setting, say so in the report
+rather than dropping it silently.
 
 **Structure.** `u-section` becomes `Wrapper/Section`, containers become
 `Wrapper/ContentWrapper` or `Wrapper/Grid`, repeated cards become `Item/Card`,
@@ -195,14 +254,27 @@ follow from who edits the site:
 - **Webflow as a headless backend** — keep the CMS, drop the hosting. Least
   disruption, but the Webflow bill and its rate limits stay.
 
-**Bind the lists.** Each `w-dyn-list` from step 0 needs its collection.
-`get_collection_list` and `get_collection_details` give the schemas; match them
-against the fields rendered inside `w-dyn-item`. This is inference, not lookup
-— **when two collections could both fit, ask.** A wrong binding renders
-beautifully and says the wrong thing.
+**Bind the lists.** Two of the three bindings are exact and one is not:
 
-Filters and sorts are gone from the export entirely. The rendered order is the
-only evidence, and the client's memory is the rest. Confirm each one.
+- **Collection templates** — `detail_<slug>.html` names the collection's own
+  slug. Match it against `get_collection_list`. Exact.
+- **The CSVs** — each export is named `<Site> - <Collection> - <id>.csv` and
+  carries a `Collection ID` column. Exact, no matching by field shape.
+- **Lists on a page** — nothing in the export says which collection. Compare
+  the fields rendered inside `w-dyn-item` against each collection's schema from
+  `get_collection_details`, or read the binding from the element tree
+  (`data_element_tool` → `query_elements`, then `get_attributes` with
+  `with_resolved_bindings: false`, which returns binding metadata rather than
+  resolved strings). **When two collections could both fit, ask.** A wrong
+  binding renders beautifully and says the wrong thing.
+
+**Filters and sorts are the one thing nothing hands you.** They are absent from
+the export by definition — the published HTML is the result of the filter, not
+the filter. They are not in the CMS API either: it filters items you ask for,
+it does not report how a page's list was configured. The element tree is where
+to look; if the binding metadata does not carry them, the record is the
+client's own Designer. Confirm every one against the live site: a list showing
+nine of forty items has a filter, and a rebuild without it shows all forty.
 
 **Collection templates become dynamic routes.** A Webflow collection page is
 `/blog/[slug].astro` with `getStaticPaths`. Every published item needs a page at
@@ -248,9 +320,10 @@ new site answers on the domain.
 
 - **Pass 1** — pages rebuilt, components created, CSS split per component, what
   stayed global, rules that spanned two components and what was decided.
-- **Pass 2** — Webflow components mapped to Lumos ones, props matched and props
-  with no equivalent, styles kept as classes versus moved to utilities, CSS
-  deleted, interactions rebuilt or dropped.
+- **Pass 2** — Webflow components mapped to Lumos ones, props read from the
+  export versus recovered from `get_page_content`, props with no equivalent,
+  styles kept as classes versus moved to utilities, CSS deleted, libraries
+  reimplemented or carried across, interactions rebuilt or dropped.
 - **Pass 3** — collections and where they landed, bindings inferred rather than
   told, filters confirmed, forms and their provider.
 - **Parity** — pages checked against the live site, and any whose content did
@@ -262,6 +335,6 @@ new site answers on the domain.
 
 ## Versions
 
-Skill version 2.0.0. All three scripts read only: `scan-export.mjs` and
+Skill version 2.1.0. Tested against a 59-page Lumos for Webflow export with 13 collections and a 363 KB stylesheet. All three scripts read only: `scan-export.mjs` and
 `split-css.mjs` never write to the project, and `compare-pages.mjs` only fetches
 and screenshots.

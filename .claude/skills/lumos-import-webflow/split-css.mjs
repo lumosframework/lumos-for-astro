@@ -82,6 +82,9 @@ const isComponent = (c) => !isFramework(c) && !isUtility(c) && !isState(c);
 /** `hero_wrap` and `hero_inner` are one component; `hero-section` too. */
 const prefixOf = (c) => c.split(/[_-]/)[0].toLowerCase();
 
+/* Third-party CSS arrives in the same stylesheet but is not the site's. */
+const LIBRARY = new Set(["swiper", "lenis", "gsap", "splide", "lottie", "plyr", "fslightbox"]);
+
 if (!wanted) {
   const groups = new Map();
   const utilities = [];
@@ -89,7 +92,9 @@ if (!wanted) {
   for (const rule of rules) {
     const all = classesOf(rule.selector);
     if (all.some(isUtility)) {
-      utilities.push(rule.selector.trim());
+      /* Names, not selectors: Webflow compiles each variant into its own
+         `:where(.w-variant-<id>)` clause, so the selectors are unreadable. */
+      all.filter(isUtility).forEach((c) => utilities.push(c));
       continue;
     }
     const classes = all.filter(isComponent);
@@ -107,10 +112,16 @@ if (!wanted) {
     }
   }
 
-  const sorted = [...groups.entries()].sort((a, b) => b[1].rules - a[1].rules);
+  const sorted = [...groups.entries()]
+    .filter(([name]) => !LIBRARY.has(name))
+    .sort((a, b) => b[1].rules - a[1].rules);
+  const libs = [...groups.entries()].filter(([name]) => LIBRARY.has(name));
   console.log(`${rules.length} rules · ${sorted.length} component groups · ${global} element-only · ${utilities.length} utility`);
   if (utilities.length) {
-    console.log(`utilities: ${[...new Set(utilities)].slice(0, 8).join(", ")}${utilities.length > 8 ? " …" : ""}`);
+    const counts = new Map();
+    for (const u of utilities) counts.set(u, (counts.get(u) ?? 0) + 1);
+    const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+    console.log(`utilities: ${counts.size} distinct — ${top.map(([c, n]) => `${c} ×${n}`).join(", ")}`);
     console.log("  (u-* is Lumos for Webflow's convention — these usually map to a Lumos component or utility, not to CSS worth keeping)");
   }
   console.log("");
@@ -122,6 +133,10 @@ if (!wanted) {
         String(g.classes.size).padStart(9) +
         String(g.shared).padStart(9),
     );
+  }
+  if (libs.length) {
+    console.log("\nLIBRARY CSS — not the site's, do not split into components:");
+    for (const [name, g] of libs) console.log(`  ${name.padEnd(20)} ${g.rules} rules`);
   }
   console.log(
     "\nSHARED SELECTORS touch more than one group — those rules cannot move" +

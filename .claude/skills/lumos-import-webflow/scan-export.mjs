@@ -60,7 +60,12 @@ const report = {
   forms: [],
   interactions: [],
   widgets: {},
+  components: {},
+  variantInstances: {},
   componentMarkers: {},
+  lumosClasses: {},
+  lumosAttrs: {},
+  libraries: {},
   embeds: [],
   externalScripts: {},
 };
@@ -84,7 +89,16 @@ for (const file of files) {
   const siteId = (html.match(/data-wf-site="([^"]*)"/) ?? [])[1];
   const pageId = (html.match(/data-wf-page="([^"]*)"/) ?? [])[1];
   if (siteId) report.siteId = siteId;
-  report.pages.push({ page, route, pageId, bytes: html.length });
+  /* Webflow exports a collection template as detail_<collection>.html. It is
+     one dynamic route, not one page, and its rendered item is a sample. */
+  const template = /(^|\/)detail_([a-z0-9-]+)\.html$/.exec(page);
+  report.pages.push({
+    page,
+    route: template ? `/${template[2]}/[slug]` : route,
+    pageId,
+    template: template ? template[2] : null,
+    bytes: html.length,
+  });
 
   /* A collection list. The export keeps the rendered items but not the
      binding, so the collection and its filter/sort have to come from the MCP. */
@@ -133,13 +147,50 @@ for (const file of files) {
   const ix = (html.match(/data-w-id="/g) ?? []).length;
   if (ix) report.interactions.push({ page, animatedElements: ix });
 
-  /* Component instances sometimes carry a name and variant, sometimes not.
-     Collect every data-wf-* rather than guessing at attribute names. */
+  /* Webflow writes a component property as `data-wf--<component>--<prop>`,
+     so the component's name and the property's name survive in the attribute
+     name itself, with the chosen value alongside. This is the component
+     inventory the export was supposed to have lost. */
+  for (const m of html.matchAll(/data-wf--([a-z0-9-]+)--([a-z0-9-]+)="([^"]*)"/g)) {
+    const [, component, prop, value] = m;
+    const c = (report.components[component] ??= { props: {}, instances: 0 });
+    c.instances++;
+    const values = (c.props[prop] ??= {});
+    values[value] = (values[value] ?? 0) + 1;
+  }
+
+  /* A variant also lands as a class carrying its id. Useful as a count of how
+     many instances are non-default, even without the id resolving to a name. */
+  const variantClasses = (html.match(/\bw-variant-[0-9a-f-]{8,}/g) ?? []).length;
+  if (variantClasses) {
+    report.variantInstances[page] = variantClasses;
+  }
+
+  /* Anything else data-wf-* is form and page plumbing, not component identity. */
   for (const m of html.matchAll(/(data-wf-[a-z-]+)="([^"]*)"/g)) {
     const key = m[1];
-    if (key === "data-wf-site" || key === "data-wf-page") continue; // IDs, above
+    if (/^data-wf-(site|page|page-id|element-id|user-form-type)$/.test(key)) continue;
+    if (key.startsWith("data-wf--")) continue;
     (report.componentMarkers[key] ??= {});
     report.componentMarkers[key][m[2]] = (report.componentMarkers[key][m[2]] ?? 0) + 1;
+  }
+
+  /* A site built with Lumos for Webflow carries its own class and attribute
+     vocabulary, and that maps far more directly onto this framework than a
+     hand-built Webflow site does. */
+  for (const m of html.matchAll(/\b(u-[a-z0-9-]+)/g)) {
+    report.lumosClasses[m[1]] = (report.lumosClasses[m[1]] ?? 0) + 1;
+  }
+  for (const m of html.matchAll(/\b(data-(?:xsmall|small|medium|large)-columns|data-trigger|data-button|data-hide-from|data-code-move|data-number)="?/g)) {
+    report.lumosAttrs[m[1]] = (report.lumosAttrs[m[1]] ?? 0) + 1;
+  }
+
+  /* Libraries the site depends on. Webflow serves these as .txt from its CDN,
+     so a plain extension check misses them. */
+  for (const lib of ["swiper", "gsap", "threejs", "three.min", "lenis", "splide", "barba", "lottie", "jquery"]) {
+    if (new RegExp(lib, "i").test(html)) {
+      (report.libraries[lib] ??= new Set()).add(page);
+    }
   }
 
   for (const cls of classesOf(html)) {
@@ -204,14 +255,59 @@ for (const i of report.interactions) {
   console.log(`  ${i.page.padEnd(28)} ${i.animatedElements} animated element(s)`);
 }
 
-console.log("\nCOMPONENT MARKERS — present on some instances, not all");
-if (!Object.keys(report.componentMarkers).length) {
-  console.log("  none — every component identity must come from the MCP");
+const templates = report.pages.filter((p) => p.template);
+if (templates.length) {
+  console.log("\nCOLLECTION TEMPLATES — one dynamic route each, not one page");
+  for (const t of templates) {
+    console.log(`  ${t.page.padEnd(42)} → ${t.route}`);
+  }
 }
-for (const [attr, values] of Object.entries(report.componentMarkers)) {
-  console.log(`  ${attr}`);
-  for (const [value, count] of Object.entries(values)) {
-    console.log(`    ${value.padEnd(34)} ×${count}`);
+
+console.log("\nCOMPONENTS — name, property and value, from data-wf--<name>--<prop>");
+const comps = Object.entries(report.components).sort((a, b) => b[1].instances - a[1].instances);
+if (!comps.length) {
+  console.log("  none — component identity has to come from the MCP");
+}
+for (const [name, c] of comps) {
+  console.log(`  ${name}  (${c.instances} instance(s))`);
+  for (const [prop, values] of Object.entries(c.props)) {
+    const shown = Object.entries(values)
+      .sort((a, b) => b[1] - a[1])
+      .map(([v, n]) => `${v || "(empty)"} ×${n}`)
+      .join(", ");
+    console.log(`      ${prop}: ${shown}`);
+  }
+}
+const variantTotal = Object.values(report.variantInstances).reduce((a, b) => a + b, 0);
+if (variantTotal) {
+  console.log(`  plus ${variantTotal} w-variant-* class(es) across ${Object.keys(report.variantInstances).length} page(s) —`);
+  console.log("  a variant id with no name; resolve it with list_components if it matters");
+}
+
+const lumos = Object.entries(report.lumosClasses).sort((a, b) => b[1] - a[1]);
+if (lumos.length) {
+  console.log("\nBUILT WITH LUMOS FOR WEBFLOW — its classes map onto this framework");
+  console.log(`  ${lumos.length} u-* classes, ${lumos.reduce((a, [, n]) => a + n, 0)} uses. Most common:`);
+  for (const [cls, n] of lumos.slice(0, 8)) console.log(`      ${cls.padEnd(26)} ×${n}`);
+  const attrs = Object.entries(report.lumosAttrs).sort((a, b) => b[1] - a[1]);
+  if (attrs.length) {
+    console.log("  attribute APIs, which usually become props here:");
+    for (const [a, n] of attrs) console.log(`      ${a.padEnd(26)} ×${n}`);
+  }
+}
+
+const libs = Object.entries(report.libraries);
+if (libs.length) {
+  console.log("\nLIBRARIES — behaviour that does not come across on its own");
+  for (const [lib, pages] of libs.sort((a, b) => b[1].size - a[1].size)) {
+    console.log(`  ${lib.padEnd(12)} on ${String(pages.size).padStart(3)} page(s)`);
+  }
+}
+
+if (Object.keys(report.componentMarkers).length) {
+  console.log("\nOTHER data-wf-* MARKERS");
+  for (const [attr, values] of Object.entries(report.componentMarkers)) {
+    console.log(`  ${attr}: ${Object.keys(values).length} distinct value(s)`);
   }
 }
 
