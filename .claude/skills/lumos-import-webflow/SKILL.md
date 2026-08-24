@@ -26,11 +26,11 @@ the destination is the same.
 
 Three kinds of work:
 
-|       |                                                                     | Verified by                        |
-| ----- | ------------------------------------------------------------------- | ---------------------------------- |
-| **1** | Bring it across as it is — HTML, CSS, JS, fonts                     | Matches the live site              |
-| **2** | Substitute variables, breakpoints, classes, components; relocate JS | Still matches pass 1               |
-| **3** | Bind the CMS, routes and forms                                      | Item counts and content match live |
+|       |                                                                                               | Verified by                        |
+| ----- | --------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **1** | Bring it across as it is — HTML, CSS, JS, fonts, and every component the class names outright | Matches the live site              |
+| **2** | Substitute variables, breakpoints, classes, the components left; relocate JS                  | Still matches pass 1               |
+| **3** | Bind the CMS, routes and forms                                                                | Item counts and content match live |
 
 Pass 1 produces a **provable baseline**: parity exact, screenshots overlaying,
 because the CSS is Webflow's own. Everything after is measured against it, so a
@@ -161,6 +161,43 @@ class names intact — those classes _are_ the styling. Bring across the
 homepage first and leave the rest until the first slice is signed off; the
 groundwork below is shared, but converted pages are not.
 
+### Except the classes that already name a component
+
+**On a Lumos for Webflow site, a `u-` class that names a component is not a
+class to keep and convert later — it is the component, spelled differently.**
+Those come in as the component on the way in, on the first pass, in the same
+edit that brings the page across.
+
+| In the export                                                          | Comes in as                                                    |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `u-section` + `u-container` + `u-section-spacer` + `u-background-slot` | one `Wrapper/Section` — it renders all four                    |
+| `u-content-wrapper`, `u-layout-column-*`                               | `Wrapper/ContentWrapper` and a `variant`                       |
+| `u-button-wrapper`                                                     | `Wrapper/ButtonWrapper`                                        |
+| `button_main_wrap`, `clickable`                                        | `Button`                                                       |
+| `u-heading` wrapping `<h1>`–`<h6>`                                     | `Typography/Heading`, inner tag → `tag`, attribute → `variant` |
+| `u-text`                                                               | `Typography/Paragraph`                                         |
+| `u-eyebrow-wrapper` + `-layout` + `-marker` + `-text`                  | `Typography/Eyebrow` — all four                                |
+| `u-rich-text`                                                          | `Typography/RichText`                                          |
+| `u-svg`                                                                | `Media/Icon`                                                   |
+
+**Nothing is being guessed at here.** These are the same components under the
+other convention, and the scanner's provenance line already said so. Carrying
+them in as divs means editing the same markup twice to reach a state one edit
+could have produced, and it puts the site through an intermediate form where a
+run that stops early has shipped Webflow classes as the deliverable.
+
+**Their CSS goes to the framework component, not into the page.** The rules
+under `u-heading`, `u-button-wrapper` and the eyebrow family are that
+component's design — `split-css --prefix eyebrow`, then into
+`Typography/Eyebrow.astro`'s `<style>`, replacing what ships there. Copying
+them into a page's own `<style>` is the mistake this ordering exists to
+prevent: pass 2 then has to delete rules pass 1 just wrote.
+
+**A hand-built Webflow site gets none of this.** With no `u-` prefix there is
+no lookup, only judgement about what a div was for — and judgement belongs
+after the baseline proves what the div did. Bring those across as they are and
+convert them in pass 2.
+
 **CSS.** `normalize.css` and `webflow.css` are framework and stay global. The
 site stylesheet holds every component's rules, scattered across breakpoints.
 
@@ -184,11 +221,52 @@ pass-2 decision — a plain `<img>` becomes `Media/Img` and moves to
 binds it. Anything still served from `cdn.prod.website-files.com` is a file
 that never came across, and it stops working when the Webflow site does.
 
-**Components.** Every group becomes a component holding its own markup and
-`<style>`. Where nothing here matches, build it now with Webflow's classes; it
-becomes a real Lumos component in pass 2.
+### Every remaining block becomes a component
 
-**JavaScript.** Keep `webflow.js` for now if widgets need it; it leaves in pass 2. Read every embed.
+**Everything the table did not claim is still a component — it just doesn't
+have a name yet.** A site's own blocks arrive as a family of classes on a run
+of nested divs: `dot-grid_wrap`, `dot-grid_contain`, `dot-grid_layout`,
+`dot-grid_row`, `dot-grid_circle_wrap`. That is one component, and it is a
+component whether or not this framework ships something like it.
+
+**The work-list is not a judgement call — the splitter prints it:**
+
+```bash
+node .claude/skills/lumos-import-webflow/split-css.mjs export/css/site.webflow.css
+```
+
+Every row of that GROUP table that is not library CSS and not a class from the
+table above is a component to create. Work down it. A group left on the list is
+a block still sitting inline in a page with its rules in a global file, which
+is the state the export was already in.
+
+**Three things move, and it is one edit, not three:**
+
+| Where it is now                                       | Where it goes              |
+| ----------------------------------------------------- | -------------------------- |
+| the nested divs in the page                           | the component's template   |
+| its rules in `site.webflow.css` (`--prefix dot-grid`) | the component's `<style>`  |
+| its `u-embed-js` child, or its part of `webflow.js`   | the component's `<script>` |
+
+The page is left with `<DotGrid />` and nothing else of it.
+
+**Naming.** Drop Webflow's structural suffix from the root class —
+`dot-grid_wrap` is `DotGrid.astro` — and leave the inner class names as they
+are, so the rules transfer untouched. Then pick the folder by what the block
+does: `Media/` for a graphic, `Interactive/` for anything with behaviour,
+`Item/` for a block that repeats over content, `Wrapper/` for layout only,
+`Global/` for chrome. A decorative graphic built from real elements that has to
+scale as one piece is `/lumos-scaling-graphic`.
+
+**The check is the stylesheet.** When every group has moved, the site
+stylesheet holds fonts, genuinely global rules and nothing else. Anything still
+in it is a component that was not made — and it will keep working, silently,
+which is why this is checked rather than noticed.
+
+**JavaScript.** Keep `webflow.js` for now if widgets need it; it leaves in pass 2. Read every embed, and give each one to the component whose markup it drives
+rather than leaving it in the page — a `u-embed-js` sitting inside
+`dot-grid_wrap` is the dot grid's script, and it is the reason the block has a
+`data-script-initial` attribute on it.
 
 **Verify, and keep the screenshots.**
 
@@ -200,6 +278,16 @@ node .claude/skills/lumos-import-webflow/compare-pages.mjs \
 
 Content parity must be exact — headings, links, images, fields, counted not
 merely matched. Screenshots should overlay. **This is the baseline.**
+
+And on a Lumos for Webflow site, the table's classes are already gone:
+
+```bash
+grep -rn "u-section\|u-heading\|u-text\|u-eyebrow\|u-button-wrapper\|u-content-wrapper\|u-rich-text\|u-svg\|button_main_wrap\|clickable" src/pages src/components
+```
+
+Anything it finds is a swap that was skipped, and it is cheaper to finish now
+than after pass 2 has styled around it. Re-run `split-css` for the other half
+of the same question: a group still listed is a block still inline in a page.
 
 ---
 
@@ -251,8 +339,10 @@ markup you already have. On a real site, **256 of 359 classes rename cleanly**,
 ten belong to a component, and the rest need a decision. `--sed` writes the
 rename script.
 
-A class a component owns is a signal rather than an order: `u-section` means
-that markup wants `Wrapper/Section`, which is the next step anyway.
+A class a component owns is reported, not renamed. On a Lumos for Webflow site
+pass 1 already swapped the ones in the table, so the script should find none of
+them; whatever it does list is either a straggler or a component this framework
+has that the table does not name.
 
 A third group is answered by a component or a technique rather than another
 class, and the script names each one:
@@ -261,7 +351,7 @@ class, and the script names each one:
 - `u-section-spacer` → `Wrapper/Section`, with `paddingTop` / `paddingBottom`
 - `u-svg` → `Media/Icon`; `u-rich-text` → `Typography/RichText`
 - `u-embed-css`, `u-embed-js` → drop the wrapper, keep only its child `<style>`
-  or `<script>`
+  or `<script>`, in the component whose markup it drives
 - `u-hide-if-empty` → render nothing instead: a slot check or the `render`
   prop, decided at build time rather than hidden with CSS
 
@@ -270,6 +360,10 @@ their rules came across in pass 1, and inventing framework utilities to absorb
 them is how a substitution turns into a rewrite.
 
 ## Then the components, one at a time
+
+**This is the components pass 1 could not resolve by name** — a slider, a card,
+a nav, anything hand-built. The table's components are already in and already
+styled; do not revisit them here.
 
 **A swap has two halves, and the second is the one that gets skipped.** Replace
 the markup with the Lumos component, _then style that component to match the
@@ -568,6 +662,11 @@ JavaScript and its own libraries — each now living with the component that use
 it rather than in a global file. A migration that deleted them rewrote the site
 instead of moving it.
 
+**And the site stylesheet is empty of blocks.** Run `split-css` once more: what
+it reports should be fonts and global rules, not a list of groups. Every group
+still there is a block that never became a component, still inline in a page,
+still styled from a global file.
+
 Every page still matches. Anything Webflow that survived is named in the report
 with the reason nothing here replaced it.
 
@@ -597,5 +696,5 @@ new site answers.
 
 ## Versions
 
-Skill 4.0.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 4.1.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
