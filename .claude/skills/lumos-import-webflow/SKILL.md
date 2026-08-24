@@ -103,9 +103,15 @@ media queries intact, ready for that component's `<style>`. It separates
 library CSS (Swiper and friends) and reports two things it will not decide:
 rules whose selector spans two components, and what is genuinely global.
 
-**Fonts.** `@font-face` blocks and the font files come across now. A missing
-font changes every measurement on the page and makes the later diffs
-meaningless.
+**Fonts and images.** `@font-face` blocks and the font files come across now —
+a missing font changes every measurement and makes the later diffs meaningless.
+
+Images move too. The export ships an `images/` folder and rewrites `src` and
+`srcset` to point at it; keep those paths working. What each image becomes is a
+pass-2 decision — a plain `<img>` becomes `Media/Img` and moves to
+`src/assets` for optimisation, while a CMS-bound image stays a URL until pass 3
+binds it. Anything still served from `cdn.prod.website-files.com` is a file
+that never came across, and it stops working when the Webflow site does.
 
 **Components.** Every group becomes a component holding its own markup and
 `<style>`. Where nothing here matches, build it now with Webflow's classes; it
@@ -145,6 +151,19 @@ a tightened letter-spacing — because the two systems ship the same defaults.
 lands at the framework's values instead of the site's, and each one looks like
 a regression.
 
+**Then rename the references, or the port does nothing.** The CSS carried
+across in pass 1 refers to Webflow's variable names thousands of times — 3859
+`var()` uses on a real site. Values in `base.css` under new names leave every
+one of those pointing at a variable that no longer exists.
+
+```bash
+node .claude/skills/lumos-import-webflow/map-variables.mjs export/css/site.webflow.css --sed
+```
+
+Writes a rename script, longest names first so shorter ones cannot truncate
+them. Run it over the component styles and stylesheets, rebuild, and diff
+before going further.
+
 Theme colours live in the `.theme-*` blocks, not `:root`. A site with dark
 sections has a value for each.
 
@@ -164,9 +183,20 @@ rename script.
 A class a component owns is a signal rather than an order: `u-section` means
 that markup wants `Wrapper/Section`, which is the next step anyway.
 
-**Classes with no equivalent stay exactly as they are.** They are the site's
-own, their rules came across in pass 1, and inventing framework utilities to
-absorb them is how a substitution turns into a rewrite.
+A third group is answered by a component or a technique rather than another
+class, and the script names each one:
+
+- `u-content-wrapper`, `u-layout-column-*` → `Wrapper/ContentWrapper` and a variant
+- `u-section-spacer` → `Wrapper/Section`, with `paddingTop` / `paddingBottom`
+- `u-svg` → `Media/Icon`; `u-rich-text` → `Typography/RichText`
+- `u-embed-css`, `u-embed-js` → drop the wrapper, keep only its child `<style>`
+  or `<script>`
+- `u-hide-if-empty` → render nothing instead: a slot check or the `render`
+  prop, decided at build time rather than hidden with CSS
+
+**Everything else stays exactly as it is.** Those classes are the site's own,
+their rules came across in pass 1, and inventing framework utilities to absorb
+them is how a substitution turns into a rewrite.
 
 ## Then the components, one at a time
 
@@ -235,8 +265,19 @@ live site, described, and confirmed as worth the effort before anyone starts.
 When the last Webflow widget is gone, so is `webflow.js` — and nothing else
 about the site's behaviour should have changed.
 
-**Verify against the pass-1 baseline, not against live.** A difference now was
-caused by the swap just made. It is a defect, not drift: the tokens are the
+**Verify against the pass-1 baseline, not against live.** Capture the pages
+before starting pass 2 and again after each swap; the sibling skill's
+`visual-check.mjs` does both and pixel-diffs the pairs:
+
+```bash
+node .claude/skills/lumos-upgrade-version/visual-check.mjs capture before
+node .claude/skills/lumos-upgrade-version/visual-check.mjs capture after
+node .claude/skills/lumos-upgrade-version/visual-check.mjs compare
+```
+
+Here a pixel diff is the right instrument, unlike pass 1 against live: both
+sides are the same build on the same machine, so anything that moved, moved
+because of the swap. A difference now was caused by the change just made. It is a defect, not drift: the tokens are the
 site's own, so the components should land where the Webflow markup did. Chase
 it to the token or prop that is wrong rather than accepting it.
 

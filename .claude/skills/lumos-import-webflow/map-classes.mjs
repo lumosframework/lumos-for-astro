@@ -37,8 +37,17 @@ function walk(dir, exts, out = []) {
 /* What the site uses. */
 const used = new Map();
 for (const file of walk(exportDir, [".html"])) {
-  for (const m of readFileSync(file, "utf8").matchAll(/\bu-([a-z0-9-]+)/g)) {
-    used.set(m[1], (used.get(m[1]) ?? 0) + 1);
+  /* Class attributes only. Counting every u- in the file also counts the
+     stylesheet that defines them, and picks up fragments from attribute
+     selectors like [class*="u-text-style-"], which is not a class at all. */
+  const html = readFileSync(file, "utf8").replace(/<style[\s\S]*?<\/style>/g, "");
+  for (const attr of html.matchAll(/class="([^"]*)"/g)) {
+    for (const cls of attr[1].split(/\s+/)) {
+      if (!cls.startsWith("u-")) continue;
+      const name = cls.slice(2);
+      if (!name) continue;
+      used.set(name, (used.get(name) ?? 0) + 1);
+    }
   }
 }
 
@@ -85,11 +94,27 @@ for (const file of walk(srcDir, [".css", ".astro"])) {
   }
 }
 
+/* Classes whose answer is a component or a technique, not another class.
+   Each of these was confirmed against the framework rather than guessed. */
+const KNOWN = {
+  "content-wrapper": "Wrapper/ContentWrapper",
+  "layout-column": "Wrapper/ContentWrapper, with the matching variant",
+  "section-spacer": "Wrapper/Section — paddingTop / paddingBottom",
+  "svg": "Media/Icon",
+  "rich-text": "Typography/RichText",
+  "embed-css": "drop the wrapper; keep only its child <style>",
+  "embed-js": "drop the wrapper; keep only its child <script>",
+  "hide-if-empty": "render nothing instead — a slot check or the render prop",
+};
+const known = [];
+
 const renames = [];
 const components = [];
 const orphans = [];
 for (const [name, count] of [...used].sort((a, b) => b[1] - a[1])) {
-  if (!defined.has(name)) orphans.push([name, count]);
+  const hit = KNOWN[name] ?? KNOWN[name.replace(/-\d+$/, "")];
+  if (hit) known.push([name, count, hit]);
+  else if (!defined.has(name)) orphans.push([name, count]);
   else if (owner.has(name)) components.push([name, count, owner.get(name).file]);
   else renames.push([name, count]);
 }
@@ -125,12 +150,19 @@ for (const [name, count, file] of components.slice(0, 12)) {
 }
 if (components.length > 12) console.log(`  … and ${components.length - 12} more`);
 
-console.log(`\nNO EQUIVALENT — decide for each (${orphans.length})`);
+if (known.length) {
+  console.log(`\nNOT A CLASS HERE — a component or a technique answers it (${known.length})`);
+  for (const [name, count, answer] of known) {
+    console.log(`  u-${name.padEnd(22)} ×${String(count).padEnd(6)} ${answer}`);
+  }
+}
+
+console.log(`\nNO EQUIVALENT — the site's own, keep them (${orphans.length})`);
 for (const [name, count] of orphans.slice(0, 16)) {
   console.log(`  u-${name.padEnd(28)} ×${count}`);
 }
 if (orphans.length > 16) console.log(`  … and ${orphans.length - 16} more`);
 
 console.log(`\n${rule}`);
-console.log("Keep the markup. Rename what renames, swap the component where a");
-console.log("component owns the class, and carry the rest across as the site's own.");
+console.log("Rename what renames, swap the component where one owns the class, and");
+console.log("keep the rest — they are the site's own and their CSS already came across.");

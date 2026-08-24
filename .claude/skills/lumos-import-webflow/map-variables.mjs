@@ -18,8 +18,12 @@
 
 import { readFileSync } from "node:fs";
 
+const asSed = process.argv.includes("--sed");
 const webflowCss = process.argv[2];
-const baseCss = process.argv[3] ?? "src/styles/base.css";
+const baseCss =
+  process.argv[3] && !process.argv[3].startsWith("--")
+    ? process.argv[3]
+    : "src/styles/base.css";
 if (!webflowCss) {
   console.error("usage: map-variables.mjs <site.webflow.css> [base.css]");
   process.exit(1);
@@ -156,6 +160,30 @@ for (const [name, value] of wf) {
     ours,
     write: `${target}: ${theirs};`,
   });
+}
+
+/* The site's own CSS refers to these variables thousands of times. Porting the
+   values into base.css without renaming the references leaves every rule
+   pointing at a variable that no longer exists. */
+if (asSed) {
+  const pairs = [];
+  for (const name of wf.keys()) {
+    const target = toLumos(name);
+    if (target && target !== name) pairs.push([name, target]);
+  }
+  pairs.sort((a, b) => b[0].length - a[0].length); // longest first, so prefixes do not truncate
+  console.log("#!/bin/sh");
+  console.log("# Renames Webflow variable references to this framework's names.");
+  console.log("# Run over the CSS carried across in pass 1, then rebuild and diff.");
+  console.log('# usage: sh rename-variables.sh src/components/**/*.astro src/styles/*.css');
+  console.log('for f in "$@"; do');
+  for (const [from, to] of pairs) {
+    const esc = (v) => v.replace(/[-]/g, "\\-");
+    console.log(`  sed -i '' 's/${esc(from)}\\b/${to}/g' "$f"`);
+  }
+  console.log("done");
+  console.log(`# ${pairs.length} rename(s)`);
+  process.exit(0);
 }
 
 const rule = "─".repeat(72);

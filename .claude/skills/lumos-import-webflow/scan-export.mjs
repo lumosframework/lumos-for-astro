@@ -134,7 +134,7 @@ for (const file of files) {
     }
     report.forms.push({
       page,
-      name: attr("data-name") ?? attr("name"),
+      name: attr("data-name") ?? attr("name") ?? "(unnamed)",
       method: attr("method") ?? "get",
       action: attr("action") ?? null,
       fields,
