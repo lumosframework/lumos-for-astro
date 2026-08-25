@@ -189,7 +189,9 @@ run that stops early has shipped Webflow classes as the deliverable.
 **Their CSS goes to the framework component, not into the page.** The rules
 under `u-heading`, `u-button-wrapper` and the eyebrow family are that
 component's design — `split-css --prefix eyebrow`, then into
-`Typography/Eyebrow.astro`'s `<style>`, replacing what ships there. Copying
+`Typography/Eyebrow.astro`'s `<style is:global>` and inside its
+`@layer components`, replacing what ships there and coming out of the site
+stylesheet in the same edit. Copying
 them into a page's own `<style>` is the mistake this ordering exists to
 prevent: pass 2 then has to delete rules pass 1 just wrote.
 
@@ -342,6 +344,32 @@ is the state the export was already in.
 
 The page is left with `<DotGrid />` and nothing else of it.
 
+**Moved CSS always has the same shape**, whether it lands in a component you
+just made or in one the framework ships:
+
+```astro
+<style is:global>
+  @layer components {
+    .dot-grid_wrap { … }
+  }
+</style>
+```
+
+- **`is:global`.** Astro scopes a plain `<style>` by stamping the elements in
+  its own template, and markup arriving through a slot never gets the stamp.
+  Every component in the library declares its styles this way; the only plain
+  `<style>` blocks are `<noscript>` fallbacks, deliberately left unlayered so
+  they win.
+- **`@layer components`.** Unlayered CSS outranks every layer, so rules left
+  outside it beat base, patterns and utilities alike — a component whose styles
+  no utility can override. Inside the layer it sits exactly where the rest of
+  the library sits.
+- **Delete the rules from the site stylesheet in the same edit.** Not at the
+  end — as each one moves. The stylesheet is global and unlayered, so a copy
+  left behind outranks the layered copy just written: the component reads as
+  broken, the fix looks like a specificity problem, and the file that is
+  supposed to be emptying never shrinks.
+
 **Naming.** Drop Webflow's structural suffix from the root class —
 `dot-grid_wrap` is `DotGrid.astro` — and leave the inner class names as they
 are, so the rules transfer untouched. Then pick the folder by what the block
@@ -475,7 +503,8 @@ For each component:
    `u-eyebrow-wrapper`, `u-eyebrow-layout`, `u-eyebrow-marker`,
    `u-eyebrow-text` are one component, not four utilities. `split-css --prefix
 eyebrow` prints their rules.
-2. **Move those rules into the Lumos component's `<style>`**, replacing what is
+2. **Move those rules into the Lumos component's `<style is:global>`**, inside
+   its `@layer components` and out of the site stylesheet, replacing what is
    there. The two components have the same anatomy — a marker and a text node
    in `Eyebrow`, a wrapper and a label in `Button` — so the rules transfer
    nearly as they are. **Margins are the exception**: they are held by a
@@ -792,5 +821,5 @@ new site answers.
 
 ## Versions
 
-Skill 4.3.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 4.4.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.
