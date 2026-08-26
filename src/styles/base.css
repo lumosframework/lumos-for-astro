@@ -59,7 +59,7 @@
   /* Nav */
   --nav-height: 5rem;
 
-  /* Heading & text styles */
+  /* Typography styles */
   --display: clamp(var(--display-min) / 16 * 1rem, ((var(--display-min) - ((var(--display-max) - var(--display-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--display-max) - var(--display-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--display-max) / 16 * 1rem);
   --display-min: 64;
   --display-max: 112;
@@ -436,6 +436,13 @@ button,
 textarea,
 select {
   font: inherit;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+  list-style-type: "";
 }
 
 p,
