@@ -5,6 +5,44 @@ description: Move a site built in Webflow onto Lumos for Astro. Use when someone
 
 # Importing a Webflow site
 
+## This project
+
+**Fill this in as you go, in this file, and read it before doing anything
+else.** A migration runs across many sessions and more than one agent, and
+nothing below is recoverable from the code: a path lives on someone's desktop,
+a provider was chosen in conversation, a filter was read off a Designer nobody
+can open any more. An agent picking this up in week three has this section and
+the repository, and that is all.
+
+Leave a field as `—` until it is decided. **Write each one down at the moment
+it is answered, not at the end** — the end is exactly when the Webflow site
+gets unpublished and the answers stop being checkable.
+
+```markdown
+- **Live URL** — what every page is compared against, until cutover
+- **Provenance** — Lumos for Webflow, or hand-built
+- **Code export** — path to the unzipped folder
+- **Collection CSVs** — path
+- **301 redirects** — path to the CSV from Site Settings → Publishing
+- **Webflow site ID** — `data-wf-site`, how every MCP call addresses the site
+- **CMS** — content collections, a headless CMS, or Webflow headless; and why
+- **Forms** — provider, and where submissions go
+- **Search** — what replaced Webflow's, or that the site has none
+- **Hosting** — where it deploys, and the domain cutover plan
+- **Breakpoints** — the site's own, in rem, replacing the framework's
+- **Collections** — each one, and the route or component it landed in
+- **List filters and sorts** — per list, since nothing but the Designer records them
+- **Out of scope** — Ecommerce, Memberships, Logic, and what was agreed instead
+- **Decisions** — anything the site's owner chose that the code cannot explain
+- **Still open** — questions waiting on an answer
+```
+
+**This section belongs to the project, not to the framework.** In a fresh
+scaffold it is the empty template above; in a site being imported it is the
+record, and it is the one part of this file an upgrade must not overwrite.
+`/lumos-upgrade-version` carries it across; if the two ever conflict, the
+record wins and the framework's prose gives way.
+
 **The finished site is indistinguishable from the published one and contains no
 Webflow.** Every section is a Lumos component, every value a Lumos token, every
 utility a Lumos utility.
@@ -90,6 +128,9 @@ revisions to a pattern already applied to fifty-nine pages are not.
    not the redirects this migration creates — they are years of earlier ones,
    and losing them breaks links that have nothing to do with the move.
 
+Record each one in **This project** as it arrives — the paths especially, since
+they sit on someone's machine and nothing in the repository points at them.
+
 ## Step 0 — Scan
 
 ```bash
@@ -118,7 +159,9 @@ times.
 
 Then stop for anything with no equivalent here — **Ecommerce** (`w-commerce`,
 `w-checkout`), **Memberships**, **Logic**, **native search**. Each changes the
-shape of the project. Agree an approach before rebuilding anything.
+shape of the project. Agree an approach before rebuilding anything, and write
+what was agreed into **This project** — a decision taken in conversation is
+invisible to whoever picks the work up next.
 
 ---
 
@@ -751,12 +794,17 @@ headless CMS** (closest to what they are leaving, plus a subscription), or
   `get_attributes` with `with_resolved_bindings: false`). **When two
   collections could both fit, ask.**
 
+**Record the CMS, form and search choices in This project as each is made.**
+They are the three decisions the code will never explain, and whoever made them
+will not be in the next session.
+
 **Filters and sorts are the one thing nothing hands you.** The published HTML
 is the result of a filter, not the filter; the CMS API filters what you ask
 for, it does not report how a page's list was configured. Look in the element
 tree; failing that, the record is the client's Designer. Confirm each against
 the live site — a list showing nine of forty items has a filter, and a rebuild
-without it shows forty.
+without it shows forty. **Write every one into This project**: it is the one
+fact in the whole migration with no source left once Webflow is unpublished.
 
 **Collection templates become dynamic routes** — `/blog/[slug].astro` with
 `getStaticPaths`, at the URLs the items already had.
@@ -821,5 +869,5 @@ new site answers.
 
 ## Versions
 
-Skill 4.4.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
+Skill 4.5.0. Tested against a 59-page Lumos for Webflow export: 13 collections,
 147 variables, a 363 KB stylesheet. All five scripts read only; `map-classes --sed` writes a rename script for you to run and review.

@@ -98,6 +98,13 @@ For each file in the framework's surface — components, layouts, styles, utils:
 `src/pages`, `src/content` and `src/assets` are the user's by definition —
 never replace them. They still need migrating in step 6.
 
+**`.claude/skills` upgrades wholesale, with one exception.** A skill's prose is
+the framework's and should move to latest, but a skill may hold a section the
+project wrote into it — `/lumos-import-webflow`'s **This project** is one, and
+it records paths, providers and CMS filters that exist nowhere else. Carry any
+such section across verbatim before taking the new file, and say in the report
+that you did. Taking latest wholesale destroys a record with no other source.
+
 ### 5. Merge `base.css` rather than replacing it
 
 Global CSS is the file most likely to be in the fourth pile: the framework adds
