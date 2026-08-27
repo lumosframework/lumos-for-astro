@@ -13,8 +13,8 @@ efficiency, scalability and accessibility.
 
 Documentation lives at **[lumosframework.com](https://lumosframework.com)**.
 
-> **Beta.** `v0.0.1` is the first tagged release. The component API is still
-> settling, so expect prop names to move before `v0.1.0`.
+> **Beta.** The component API is still settling, so expect prop names to move
+> before `v0.1.0`. The badge above carries the current release.
 
 ## Getting started
 

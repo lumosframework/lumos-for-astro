@@ -1,3 +1,21 @@
+import pkg from "../package.json";
+
+const manifest = pkg as { version: string; lumos?: { version: string } };
+
+/**
+ * The framework release. `package.json` is the only place it is written, and
+ * anything showing a version to a person reads it from here — so a release
+ * bumps one file.
+ *
+ * Which field depends on where this is running. In the framework itself the
+ * package *is* Lumos, so `version` is the answer. In a site built from it,
+ * `version` is the site's own and `create-lumos` records the release it came
+ * from under `lumos`. A site scaffolded before stamping has neither, and falls
+ * back to the `0.0.1` that `create-lumos` writes — which is also the baseline
+ * `/lumos-upgrade-version` assumes for exactly those sites.
+ */
+export const LUMOS_VERSION = manifest.lumos?.version ?? manifest.version;
+
 /** Site name. Appended to every page title and used as `og:site_name`. */
 export const SITE_NAME = "Lumos Framework";
 /** Fallback meta description for pages that don't set their own. */

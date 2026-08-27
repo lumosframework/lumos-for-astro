@@ -195,7 +195,7 @@ Lumos release, and a Lumos release does not invalidate the skill.
   duplicates it; the script reads it and prints both on every run:
 
   ```
-  lumos-import-figma 1.0.0  ·  Lumos 0.0.1
+  lumos-import-figma 1.0.0  ·  Lumos 0.0.3
   ```
 
   If the running project is a different version than `TESTED_AGAINST`, the
