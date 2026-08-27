@@ -8,7 +8,6 @@ import lumos_background from "@/assets/graphics/lumos-background.svg";
 import Icon from "@/components/Media/Icon.astro";
 import logo_icon from "@/assets/logo/logo-icon.svg";
 import ContentWrapper from "@/components/Wrapper/ContentWrapper.astro";
-import { LUMOS_VERSION } from "@/consts";
 ---
 
 <Layout theme="dark">
@@ -28,7 +27,7 @@ import { LUMOS_VERSION } from "@/consts";
       <Heading variant="display" tag="h1" class="margin-block-8"
         >Style Guide</Heading
       >
-      <Eyebrow variant="tag">v{LUMOS_VERSION}</Eyebrow>
+      <Eyebrow variant="tag">v0.0.3</Eyebrow>
       <Img
         slot="column2"
         src={lumos_background}
