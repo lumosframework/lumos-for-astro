@@ -145,6 +145,17 @@ npx astro check && npx astro build
 Both clean before going near the screenshots. A type error found now is a
 migration that was missed.
 
+**Check the Astro pairing while you are already here.** Astro is the site's own
+dependency, not the framework's — Lumos is scaffolded in, not installed — so an
+upgrade is the natural moment to look, not a licence to force one. Compare the
+site's `astro` against the release being merged in; if the site is behind on a
+major, say so in the report and let its owner decide.
+
+Bump it with `npx @astrojs/upgrade` rather than by hand. It moves the
+`@astrojs/*` integrations with Astro, and `@astrojs/sitemap` declares no peer
+dependency on astro — so a mismatched pair installs without a word and turns up
+as a build failure, or as a sitemap that silently stops being written.
+
 ### 8. Prove nothing moved
 
 ```bash
