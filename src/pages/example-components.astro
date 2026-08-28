@@ -50,7 +50,7 @@ const lorem =
 >
   <!-- stack -->
   <Section paddingTop="small" paddingBottom="small">
-    <ContentWrapper>
+    <ContentWrapper variant="columns">
       <Eyebrow>stack</Eyebrow>
       <Heading tag="h2" variant="h3" maxWidth={17}>{heading}</Heading>
       <Paragraph maxWidth={36}>{text}</Paragraph>
@@ -265,7 +265,7 @@ const lorem =
     </ContentWrapper>
     <Form name="contact">
       <Fieldset legend="Contact Details" variant="columns">
-        <Input variant="first-name" required />
+        <Input required variant="first-name" />
         <Input variant="last-name" required />
         <Input
           variant="email"
