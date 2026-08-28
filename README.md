@@ -13,8 +13,16 @@ efficiency, scalability and accessibility.
 
 Documentation lives at **[lumosframework.com](https://lumosframework.com)**.
 
-> **Beta.** The component API is still settling, so expect prop names to move
-> before `v0.1.0`. The badge above carries the current release.
+> **Beta.** Every `0.x` release is allowed to break things, and the component
+> props and their placements are the parts still moving — the tokens, layers and
+> CSS are not. `v1.0.0` is where the API gets committed to; breaking it after
+> that would take a `v2.0.0`.
+>
+> Starting a site before then does not strand it. `create-lumos` stamps the
+> commit your site came from, and `/lumos-upgrade-version` three-way merges each
+> release into your own changes and pixel-diffs every page, so an upgrade is a
+> reviewed diff rather than a rewrite. The badge above carries the current
+> release.
 
 ## Getting started
 
