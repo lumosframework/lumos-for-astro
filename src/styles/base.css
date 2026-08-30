@@ -7,7 +7,7 @@
   --dark-700: #453e42;
   --dark-800: #2f2b2d;
   --dark-900: #1f1d1e;
-  --brand-500: #c6fb50;
+  --brand-500: red;
   --brand-text: var(--dark-900);
 
   /* Typography primitives */
