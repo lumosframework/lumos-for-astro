@@ -1,0 +1,28 @@
+name: Publish create-lumos
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Check package contents
+        working-directory: packages/create-lumos
+        run: npm pack --dry-run
+
+      - name: Publish package
+        working-directory: packages/create-lumos
+        run: npm publish --access public
