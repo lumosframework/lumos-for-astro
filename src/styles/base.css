@@ -1,4 +1,4 @@
-/* 1. Design tokens */
+/* Design tokens */
 :root {
   /* Swatches */
   --light-100: #ffffff;
@@ -15,8 +15,6 @@
   --primary-regular: 400;
   --primary-medium: 500;
   --primary-bold: 700;
-  --primary-trim-top: 0.4em;
-  --primary-trim-bottom: 0.38em;
 
   /* Letter spacing */
   --letter-spacing-tight: -0.03em;
@@ -70,8 +68,6 @@
   --display-margin-bottom: var(--space-6);
   --display-font-family: var(--primary-family);
   --display-font-weight: var(--primary-medium);
-  --display-trim-top: var(--primary-trim-top);
-  --display-trim-bottom: var(--primary-trim-bottom);
   --display-text-wrap: balance;
 
   --h1: clamp(var(--h1-min) / 16 * 1rem, ((var(--h1-min) - ((var(--h1-max) - var(--h1-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h1-max) - var(--h1-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h1-max) / 16 * 1rem);
@@ -84,8 +80,6 @@
   --h1-margin-bottom: var(--space-6);
   --h1-font-family: var(--primary-family);
   --h1-font-weight: var(--primary-medium);
-  --h1-trim-top: var(--primary-trim-top);
-  --h1-trim-bottom: var(--primary-trim-bottom);
   --h1-text-wrap: balance;
 
   --h2: clamp(var(--h2-min) / 16 * 1rem, ((var(--h2-min) - ((var(--h2-max) - var(--h2-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h2-max) - var(--h2-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h2-max) / 16 * 1rem);
@@ -98,8 +92,6 @@
   --h2-margin-bottom: var(--space-5);
   --h2-font-family: var(--primary-family);
   --h2-font-weight: var(--primary-medium);
-  --h2-trim-top: var(--primary-trim-top);
-  --h2-trim-bottom: var(--primary-trim-bottom);
   --h2-text-wrap: balance;
 
   --h3: clamp(var(--h3-min) / 16 * 1rem, ((var(--h3-min) - ((var(--h3-max) - var(--h3-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h3-max) - var(--h3-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h3-max) / 16 * 1rem);
@@ -112,8 +104,6 @@
   --h3-margin-bottom: var(--space-5);
   --h3-font-family: var(--primary-family);
   --h3-font-weight: var(--primary-medium);
-  --h3-trim-top: var(--primary-trim-top);
-  --h3-trim-bottom: var(--primary-trim-bottom);
   --h3-text-wrap: balance;
 
   --h4: clamp(var(--h4-min) / 16 * 1rem, ((var(--h4-min) - ((var(--h4-max) - var(--h4-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h4-max) - var(--h4-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h4-max) / 16 * 1rem);
@@ -126,8 +116,6 @@
   --h4-margin-bottom: var(--space-4);
   --h4-font-family: var(--primary-family);
   --h4-font-weight: var(--primary-medium);
-  --h4-trim-top: var(--primary-trim-top);
-  --h4-trim-bottom: var(--primary-trim-bottom);
   --h4-text-wrap: balance;
 
   --h5: clamp(var(--h5-min) / 16 * 1rem, ((var(--h5-min) - ((var(--h5-max) - var(--h5-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h5-max) - var(--h5-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h5-max) / 16 * 1rem);
@@ -140,8 +128,6 @@
   --h5-margin-bottom: var(--space-4);
   --h5-font-family: var(--primary-family);
   --h5-font-weight: var(--primary-medium);
-  --h5-trim-top: var(--primary-trim-top);
-  --h5-trim-bottom: var(--primary-trim-bottom);
   --h5-text-wrap: balance;
 
   --h6: clamp(var(--h6-min) / 16 * 1rem, ((var(--h6-min) - ((var(--h6-max) - var(--h6-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--h6-max) - var(--h6-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--h6-max) / 16 * 1rem);
@@ -154,8 +140,6 @@
   --h6-margin-bottom: var(--space-3);
   --h6-font-family: var(--primary-family);
   --h6-font-weight: var(--primary-medium);
-  --h6-trim-top: var(--primary-trim-top);
-  --h6-trim-bottom: var(--primary-trim-bottom);
   --h6-text-wrap: balance;
 
   --text-large: clamp(var(--text-large-min) / 16 * 1rem, ((var(--text-large-min) - ((var(--text-large-max) - var(--text-large-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-large-max) - var(--text-large-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-large-max) / 16 * 1rem);
@@ -168,8 +152,6 @@
   --text-large-margin-bottom: var(--space-4);
   --text-large-font-family: var(--primary-family);
   --text-large-font-weight: var(--primary-regular);
-  --text-large-trim-top: var(--primary-trim-top);
-  --text-large-trim-bottom: var(--primary-trim-bottom);
   --text-large-text-wrap: pretty;
 
   --text-main: clamp(var(--text-main-min) / 16 * 1rem, ((var(--text-main-min) - ((var(--text-main-max) - var(--text-main-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-main-max) - var(--text-main-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-main-max) / 16 * 1rem);
@@ -182,8 +164,6 @@
   --text-main-margin-bottom: var(--space-4);
   --text-main-font-family: var(--primary-family);
   --text-main-font-weight: var(--primary-regular);
-  --text-main-trim-top: var(--primary-trim-top);
-  --text-main-trim-bottom: var(--primary-trim-bottom);
   --text-main-text-wrap: pretty;
 
   --text-small: clamp(var(--text-small-min) / 16 * 1rem, ((var(--text-small-min) - ((var(--text-small-max) - var(--text-small-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-small-max) - var(--text-small-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-small-max) / 16 * 1rem);
@@ -196,8 +176,6 @@
   --text-small-margin-bottom: var(--space-4);
   --text-small-font-family: var(--primary-family);
   --text-small-font-weight: var(--primary-regular);
-  --text-small-trim-top: var(--primary-trim-top);
-  --text-small-trim-bottom: var(--primary-trim-bottom);
   --text-small-text-wrap: pretty;
 
   /* Site layout */
@@ -251,7 +229,7 @@
   --section-space-nav-overlap-max: 224;
 }
 
-/* 2. Color themes */
+/* Color themes */
 :root,
 .theme-light,
 .theme-dark .theme-invert,
@@ -367,7 +345,7 @@
   color: var(--text);
 }
 
-/* 3. Reset & base */
+/* Reset & base */
 *,
 ::before,
 ::after {
@@ -494,7 +472,7 @@ select:has(option[value=""]:checked) {
   }
 }
 
-/* 4. Text styles */
+/* Text styles */
 body,
 .text-style-main {
   font-family: var(--text-main-font-family);
@@ -504,8 +482,6 @@ body,
   letter-spacing: var(--text-main-letter-spacing);
   text-transform: var(--text-main-text-transform);
   text-wrap: var(--text-main-text-wrap);
-  --_trim-top: var(--text-main-trim-top);
-  --_trim-bottom: var(--text-main-trim-bottom);
   --_margin-top: var(--text-main-margin-top);
   --_margin-bottom: var(--text-main-margin-bottom);
 }
@@ -518,8 +494,6 @@ body,
   letter-spacing: var(--text-small-letter-spacing);
   text-transform: var(--text-small-text-transform);
   text-wrap: var(--text-small-text-wrap);
-  --_trim-top: var(--text-small-trim-top);
-  --_trim-bottom: var(--text-small-trim-bottom);
   --_margin-top: var(--text-small-margin-top);
   --_margin-bottom: var(--text-small-margin-bottom);
 }
@@ -532,8 +506,6 @@ body,
   letter-spacing: var(--text-large-letter-spacing);
   text-transform: var(--text-large-text-transform);
   text-wrap: var(--text-large-text-wrap);
-  --_trim-top: var(--text-large-trim-top);
-  --_trim-bottom: var(--text-large-trim-bottom);
   --_margin-top: var(--text-large-margin-top);
   --_margin-bottom: var(--text-large-margin-bottom);
 }
@@ -546,8 +518,6 @@ body,
   letter-spacing: var(--display-letter-spacing);
   text-transform: var(--display-text-transform);
   text-wrap: var(--display-text-wrap);
-  --_trim-top: var(--display-trim-top);
-  --_trim-bottom: var(--display-trim-bottom);
   --_margin-top: var(--display-margin-top);
   --_margin-bottom: var(--display-margin-bottom);
 }
@@ -561,8 +531,6 @@ h1,
   letter-spacing: var(--h1-letter-spacing);
   text-transform: var(--h1-text-transform);
   text-wrap: var(--h1-text-wrap);
-  --_trim-top: var(--h1-trim-top);
-  --_trim-bottom: var(--h1-trim-bottom);
   --_margin-top: var(--h1-margin-top);
   --_margin-bottom: var(--h1-margin-bottom);
 }
@@ -576,8 +544,6 @@ h2,
   letter-spacing: var(--h2-letter-spacing);
   text-transform: var(--h2-text-transform);
   text-wrap: var(--h2-text-wrap);
-  --_trim-top: var(--h2-trim-top);
-  --_trim-bottom: var(--h2-trim-bottom);
   --_margin-top: var(--h2-margin-top);
   --_margin-bottom: var(--h2-margin-bottom);
 }
@@ -591,8 +557,6 @@ h3,
   letter-spacing: var(--h3-letter-spacing);
   text-transform: var(--h3-text-transform);
   text-wrap: var(--h3-text-wrap);
-  --_trim-top: var(--h3-trim-top);
-  --_trim-bottom: var(--h3-trim-bottom);
   --_margin-top: var(--h3-margin-top);
   --_margin-bottom: var(--h3-margin-bottom);
 }
@@ -606,8 +570,6 @@ h4,
   letter-spacing: var(--h4-letter-spacing);
   text-transform: var(--h4-text-transform);
   text-wrap: var(--h4-text-wrap);
-  --_trim-top: var(--h4-trim-top);
-  --_trim-bottom: var(--h4-trim-bottom);
   --_margin-top: var(--h4-margin-top);
   --_margin-bottom: var(--h4-margin-bottom);
 }
@@ -621,8 +583,6 @@ h5,
   letter-spacing: var(--h5-letter-spacing);
   text-transform: var(--h5-text-transform);
   text-wrap: var(--h5-text-wrap);
-  --_trim-top: var(--h5-trim-top);
-  --_trim-bottom: var(--h5-trim-bottom);
   --_margin-top: var(--h5-margin-top);
   --_margin-bottom: var(--h5-margin-bottom);
 }
@@ -636,23 +596,18 @@ h6,
   letter-spacing: var(--h6-letter-spacing);
   text-transform: var(--h6-text-transform);
   text-wrap: var(--h6-text-wrap);
-  --_trim-top: var(--h6-trim-top);
-  --_trim-bottom: var(--h6-trim-bottom);
   --_margin-top: var(--h6-margin-top);
   --_margin-bottom: var(--h6-margin-bottom);
 }
 
-/* Leading trim */
-:is(h1, h2, h3, h4, h5, h6, p, [class*="text-style-"]:not(:has(h1, h2, h3, h4, h5, h6, p))) {
-  display: flow-root;
-  &::before {
-    content: "";
-    display: table;
-    margin-bottom: calc(-0.5lh + var(--_trim-top));
-  }
-  &::after {
-    content: "";
-    display: table;
-    margin-bottom: calc(-0.5lh + var(--_trim-bottom));
-  }
+/* Text trim */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+[class*="text-style-"] {
+  text-box: trim-both cap alphabetic;
 }
