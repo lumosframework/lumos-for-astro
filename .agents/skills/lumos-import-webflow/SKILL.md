@@ -810,10 +810,8 @@ fact in the whole migration with no source left once Webflow is unpublished.
 `getStaticPaths`, at the URLs the items already had.
 
 **Forms.** Fields survive, submission does not. Rebuild with `Form/*`, keeping
-the honeypot and the success and error states, then choose a provider.
-**Recommend Cloudflare** — a Worker plus Cloudflare Email Service, same
-platform as the hosting, no third party. A recommendation: an existing CRM
-usually decides it.
+the honeypot and the success and error states, then choose a provider that fits
+the site's host, delivery needs and existing CRM.
 
 ---
 
@@ -843,8 +841,8 @@ still styled from a global file.
 Every page still matches. Anything Webflow that survived is named in the report
 with the reason nothing here replaced it.
 
-**Hosting.** Recommend **Cloudflare Workers**, which this framework is
-configured for, with Cloudflare Email Service for form mail.
+**Hosting.** Preserve an existing hosting choice when it still fits. Otherwise,
+choose a static host with the site's owner; Lumos does not require one.
 
 **Redirects, one map from two sets.** The inherited CSV, carried across
 unchanged, and the ones this move created. Check them against each other:

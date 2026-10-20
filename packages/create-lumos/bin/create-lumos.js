@@ -19,10 +19,6 @@ const BRANCH = "main";
 const TARBALL = (ref) => `https://codeload.github.com/${REPO}/tar.gz/${ref}`;
 const COMMIT = `https://api.github.com/repos/${REPO}/commits/${BRANCH}`;
 
-// Pinned rather than current-dated: it selects Workers runtime behaviour, and
-// should be a date the framework was actually tested against.
-const COMPAT_DATE = "2026-08-13";
-
 // Lumi, drawn with half-block characters. The color version sits on a dark
 // card, since the mascot is white with transparent eyes and would vanish on a
 // light terminal. Rebuild both with .github/assets/build-ascii.mjs.
@@ -303,33 +299,6 @@ async function main() {
     delete pkg.bugs;
     await writeFile(manifest, `${JSON.stringify(pkg, null, 2)}\n`);
   }
-
-  // The framework's own Cloudflare config is withheld from the archive, since
-  // it names a Worker and claims a domain that belong to this repository. A
-  // generic one takes its place, deploying to a workers.dev subdomain.
-  await writeFile(
-    join(dir, "wrangler.jsonc"),
-    `{
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "${name}",
-  "compatibility_date": "${COMPAT_DATE}",
-
-  // The built site. There is no \`main\`, so this deploys as an assets-only
-  // Worker: Cloudflare serves the files and no script runs per request.
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "404-page",
-  },
-
-  // Add a \`routes\` entry to serve this on your own domain. Until then it is
-  // reachable at https://${name}.<your-subdomain>.workers.dev.
-
-  "observability": {
-    "enabled": true,
-  },
-}
-`,
-  );
 
   let installed = false;
   if (install) {

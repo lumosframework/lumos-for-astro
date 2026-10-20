@@ -1,0 +1,81 @@
+name: Update Astro
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-astro
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Update Astro and its integrations
+        id: update
+        run: node .github/scripts/update-astro.mjs
+
+      - name: Verify the updated template
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          npm ci --engine-strict
+          npm audit --audit-level=high
+          npm run check
+          npm run build
+
+      - name: Push the update branch
+        if: steps.update.outputs.changed == 'true'
+        env:
+          SUMMARY: ${{ steps.update.outputs.summary }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B automation/astro-latest
+          git add package.json package-lock.json
+          git commit -m "Update Astro dependencies" -m "$SUMMARY"
+          git push --force origin HEAD:automation/astro-latest
+
+      - name: Open or update the pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUMMARY: ${{ steps.update.outputs.summary }}
+          ASTRO_VERSION: ${{ steps.update.outputs.astro_version }}
+          NODE_VERSION: ${{ steps.update.outputs.node_version }}
+          REVIEW_REQUIRED: ${{ steps.update.outputs.review_required }}
+        run: |
+          PR=$(gh pr list --head automation/astro-latest --base main --state open --json number --jq '.[0].number')
+          BODY=$(printf '%s\n\n%s\n%s' \
+            "Keeps the Lumos template on the latest Astro toolchain." \
+            "- $SUMMARY" \
+            "- Template runtime synced from Astro: Node >=$NODE_VERSION")
+
+          if [ -z "$PR" ]; then
+            gh pr create \
+              --base main \
+              --head automation/astro-latest \
+              --title "Update Astro to $ASTRO_VERSION" \
+              --body "$BODY"
+            PR=$(gh pr list --head automation/astro-latest --base main --state open --json number --jq '.[0].number')
+          else
+            gh pr edit "$PR" --title "Update Astro to $ASTRO_VERSION" --body "$BODY"
+          fi
+
+          if [ "$REVIEW_REQUIRED" = "false" ]; then
+            gh pr merge "$PR" --auto --squash
+          fi

@@ -15,14 +15,13 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.11",
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.4.1",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
     "prettier": "^3.9.6",
-    "prettier-plugin-astro": "^0.14.1",
-    "wrangler": "^4.123.0"
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

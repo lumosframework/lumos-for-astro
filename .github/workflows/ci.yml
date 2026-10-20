@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  # Monday morning, so an Astro release is found within a week of landing
-  # rather than whenever someone next happens to upgrade.
-  schedule:
-    - cron: "0 6 * * 1"
 
 # A newer commit makes an in-flight run redundant, so drop it.
 concurrency:
@@ -21,40 +17,19 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Read the supported Node version
+        id: runtime
+        run: echo "version=$(jq -r '.engines.node | ltrimstr(\">=\")' package.json)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-node@v7
         with:
           # The oldest supported release, so newer syntax can't slip in unnoticed.
-          node-version: 22.22.0
+          node-version: ${{ steps.runtime.outputs.version }}
           cache: npm
 
       - run: npm ci --engine-strict
 
       - run: npm audit --audit-level=high
-
-      - run: npm run check
-
-      - run: npm run build
-
-  astro-latest:
-    name: Astro latest (advisory)
-    runs-on: ubuntu-latest
-    # A signal, not a gate. Red here means Astro moved, not that this branch is
-    # broken, so it never blocks a merge — it just says the pairing needs a look.
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      # The integrations move with Astro. `@astrojs/sitemap` declares no peer
-      # dependency on astro, so a mismatched pair installs quietly and nothing
-      # else in this repository would notice.
-      - run: npm install astro@latest @astrojs/sitemap@latest
 
       - run: npm run check
 

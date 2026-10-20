@@ -26,8 +26,6 @@ manager you ran it with — `npm`, `pnpm`, `yarn` or `bun`.
 Run it without a directory name and it asks for one. Pass `--no-install` to skip
 the install and set the project up yourself.
 
-Node 22.22 or newer is required.
-
 ## What you get
 
 An [Astro](https://astro.build) site with a component library and a styling
