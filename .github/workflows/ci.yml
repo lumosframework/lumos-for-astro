@@ -27,6 +27,11 @@ jobs:
           node-version: ${{ steps.runtime.outputs.version }}
           cache: npm
 
+      # The starter does not pin npm, so verify the lockfile with what a new
+      # install receives today as well as the supported Node runtime.
+      - name: Use the latest npm
+        run: npm install --global npm@latest
+
       - run: npm ci --engine-strict
 
       - run: npm audit --audit-level=high
