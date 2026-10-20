@@ -409,6 +409,11 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+button,
+label:has(input:is([type="radio"], [type="checkbox"])) {
+  user-select: none;
+}
+
 input,
 button,
 textarea,
