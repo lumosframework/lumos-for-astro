@@ -35,7 +35,7 @@ npm run dev
 | `npm run check`   | Type-checks every `.astro` file   |
 | `npm run format`  | Formats the project with Prettier |
 
-Node 22.19 or newer is required.
+Node 22.22 or newer is required.
 
 ## Documentation
 

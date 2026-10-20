@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           # The oldest supported release, so newer syntax can't slip in unnoticed.
-          node-version: 22.19.0
+          node-version: 22.22.0
           cache: npm
 
       - run: npm ci --engine-strict
