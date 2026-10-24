@@ -19,7 +19,9 @@ jobs:
 
       - name: Read the supported Node version
         id: runtime
-        run: echo "version=$(jq -r '.engines.node | ltrimstr(\">=\")' package.json)" >> "$GITHUB_OUTPUT"
+        run: |
+          REQUIRED_NODE=$(jq -er '.engines.node | ltrimstr(">=")' package.json)
+          echo "version=$REQUIRED_NODE" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v7
         with:
