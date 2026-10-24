@@ -29,11 +29,6 @@ jobs:
           node-version: ${{ steps.runtime.outputs.version }}
           cache: npm
 
-      # The starter does not pin npm, so verify the lockfile with what a new
-      # install receives today as well as the supported Node runtime.
-      - name: Use the latest npm
-        run: npm install --global npm@latest
-
       - run: npm ci --engine-strict
 
       - run: npm audit --audit-level=high
@@ -41,3 +36,16 @@ jobs:
       - run: npm run check
 
       - run: npm run build
+
+      # The latest npm can require a newer Node than the template minimum.
+      # Check its lockfile compatibility separately on the current Node LTS.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Use the latest npm
+        run: npm install --global npm@latest
+
+      - name: Verify the lockfile with the latest npm
+        run: npm ci --engine-strict
