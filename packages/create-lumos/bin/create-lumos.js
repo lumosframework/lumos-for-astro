@@ -103,24 +103,12 @@ function die(message) {
   exit(1);
 }
 
-function requireSupportedNode(requirement) {
-  const required = /^>=(\d+)\.(\d+)\.(\d+)$/
-    .exec(requirement)
-    ?.slice(1)
-    .map(Number);
-  if (!required) return;
-
-  const current = process.versions.node.split(".").map(Number);
-  let comparison = 0;
-  for (let index = 0; index < required.length; index++) {
-    if (current[index] === required[index]) continue;
-    comparison = current[index] > required[index] ? 1 : -1;
-    break;
-  }
-
-  if (comparison < 0) {
+function requireSupportedNode() {
+  // Like create-astro, only block older major versions here. Package managers
+  // handle the full engines requirement when installing packages.
+  if (Number.parseInt(process.versions.node.split(".")[0], 10) < 22) {
     die(
-      `This Lumos template requires Node ${required.join(".")} or newer. You are running ${process.versions.node}.`,
+      `Node.js v${process.versions.node} is out-of-date and unsupported! Please use Node.js v22 or higher.`,
     );
   }
 }
@@ -180,6 +168,8 @@ function usage() {
 }
 
 async function main() {
+  requireSupportedNode();
+
   const args = argv.slice(2);
   // Single dashes count too, so that -h is not mistaken for a directory name.
   const flags = args.filter((a) => a.startsWith("-"));
@@ -239,9 +229,6 @@ async function main() {
     (entry) => entry.path === "package.json" && entry.data,
   );
   if (!packageEntry) die("The template archive has no package.json.");
-  const templatePackage = JSON.parse(packageEntry.data.toString("utf8"));
-  requireSupportedNode(templatePackage.engines?.node);
-
   stdout.write(dim("Writing files... "));
   let count = 0;
   for (const entry of entries) {

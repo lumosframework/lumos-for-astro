@@ -26,6 +26,12 @@ manager you ran it with — `npm`, `pnpm`, `yarn` or `bun`.
 Run it without a directory name and it asks for one. Pass `--no-install` to skip
 the install and set the project up yourself.
 
+Like `create-astro`, the installer stops on Node versions below 22. On Node 22
+or newer, it allows scaffolding to continue and leaves the exact Node requirement
+to your package manager, which may warn or reject the install depending on its
+settings. Running the generated site still requires the Node version declared
+in its `package.json`.
+
 ## What you get
 
 An [Astro](https://astro.build) site with a component library and a styling
