@@ -17,13 +17,11 @@ const {
 } = Astro.props;
 ---
 
-{
-  render && (
-    <Button element="link" href={`#${target}`} class="skip-link">
-      {label}
-    </Button>
-  )
-}
+{render && (
+  <Button element="link" href={`#${target}`} class="skip-link">
+    {label}
+  </Button>
+)}
 
 <style is:global>
   @layer components {

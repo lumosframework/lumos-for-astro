@@ -35,35 +35,33 @@ if (import.meta.env.DEV && render && content && !id) {
 }
 ---
 
-{
-  render && id && content && (
-    <dialog
-      id={id}
-      class:list={[
-        "modal_wrap",
-        variant !== "small" && variant,
-        preview && "preview",
-        className,
-      ]}
-      aria-label={label}
-      {...rest}
-    >
-      <div class="modal_content">
-        <Button
-          class="modal_close"
-          variant="close"
-          emphasis="secondary"
-          data-modal-close
-        />
-        <div class="modal_scroll" data-modal-scroll>
-          <div class="modal_body margin-trim">
-            <Fragment set:html={content} />
-          </div>
+{render && id && content && (
+  <dialog
+    id={id}
+    class:list={[
+      "modal_wrap",
+      variant !== "small" && variant,
+      preview && "preview",
+      className,
+    ]}
+    aria-label={label}
+    {...rest}
+  >
+    <div class="modal_content">
+      <Button
+        class="modal_close"
+        variant="close"
+        emphasis="secondary"
+        data-modal-close
+      />
+      <div class="modal_scroll" data-modal-scroll>
+        <div class="modal_body margin-trim">
+          <Fragment set:html={content} />
         </div>
       </div>
-    </dialog>
-  )
-}
+    </div>
+  </dialog>
+)}
 
 <script>
   for (const modal of document.querySelectorAll<HTMLDialogElement>(

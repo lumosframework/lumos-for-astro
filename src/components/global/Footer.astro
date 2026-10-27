@@ -11,39 +11,37 @@ interface Props {
 const { render = true } = Astro.props;
 ---
 
-{
-  render && (
-    <footer class="footer_wrap">
-      <div class="footer_inner">
-        <div class="footer_top">
-          <a class="footer_logo" href="/" aria-label={SITE_NAME}>
-            <Icon src={logo} variant="full-width" />
-          </a>
-          <nav aria-label="Footer">
-            <ul class="footer_links">
-              <li>
-                <a class="footer_link" href="/">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a class="footer_link" href="/example-components">
-                  Example Components
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer_bottom">
-          <p class="footer_copyright text-style-small">
-            &copy; <span id="year">{new Date().getFullYear()}</span>&#160;
-            {SITE_NAME}
-          </p>
-        </div>
+{render && (
+  <footer class="footer_wrap">
+    <div class="footer_inner">
+      <div class="footer_top">
+        <a class="footer_logo" href="/" aria-label={SITE_NAME}>
+          <Icon src={logo} variant="full-width" />
+        </a>
+        <nav aria-label="Footer">
+          <ul class="footer_links">
+            <li>
+              <a class="footer_link" href="/">
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="footer_link" href="/example-components">
+                Example Components
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-    </footer>
-  )
-}
+      <div class="footer_bottom">
+        <p class="footer_copyright text-style-small">
+          &copy; <span id="year">{new Date().getFullYear()}</span>&#160;
+          {SITE_NAME}
+        </p>
+      </div>
+    </div>
+  </footer>
+)}
 
 <script>
   const year = document.querySelector<HTMLSpanElement>("#year");

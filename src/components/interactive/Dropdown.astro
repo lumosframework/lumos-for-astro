@@ -24,25 +24,23 @@ const {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && label && content && (
-    <details
-      class:list={["dropdown_wrap", preview && "preview", className]}
-      {...rest}
-    >
-      <summary class="dropdown_toggle">
-        <span class="dropdown_label text-style-trim">{label}</span>
-        <Icon class="dropdown_icon" src={arrow} variant="small" />
-      </summary>
+{render && label && content && (
+  <details
+    class:list={["dropdown_wrap", preview && "preview", className]}
+    {...rest}
+  >
+    <summary class="dropdown_toggle">
+      <span class="dropdown_label text-style-trim">{label}</span>
+      <Icon class="dropdown_icon" src={arrow} variant="small" />
+    </summary>
 
-      <div class="dropdown_content">
-        <div class="dropdown_body margin-trim">
-          <Fragment set:html={content} />
-        </div>
+    <div class="dropdown_content">
+      <div class="dropdown_body margin-trim">
+        <Fragment set:html={content} />
       </div>
-    </details>
-  )
-}
+    </div>
+  </details>
+)}
 
 <script>
   for (const dropdown of document.querySelectorAll<HTMLDetailsElement>(

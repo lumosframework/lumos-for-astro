@@ -29,32 +29,30 @@ const {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && name && content && (
-    <div
-      class:list={["form_wrap", className]}
-      data-state="idle"
-      data-endpoint={action}
+{render && name && content && (
+  <div
+    class:list={["form_wrap", className]}
+    data-state="idle"
+    data-endpoint={action}
+  >
+    <form
+      class="form_fields"
+      name={name}
+      action={action}
+      method={method}
+      {...rest}
     >
-      <form
-        class="form_fields"
-        name={name}
-        action={action}
-        method={method}
-        {...rest}
-      >
-        <Fragment set:html={content} />
-      </form>
+      <Fragment set:html={content} />
+    </form>
 
-      <p class="form_note form_note-sent text-style-main" role="status">
-        {successMessage}
-      </p>
-      <p class="form_note form_note-failed text-style-main" role="alert">
-        {errorMessage}
-      </p>
-    </div>
-  )
-}
+    <p class="form_note form_note-sent text-style-main" role="status">
+      {successMessage}
+    </p>
+    <p class="form_note form_note-failed text-style-main" role="alert">
+      {errorMessage}
+    </p>
+  </div>
+)}
 
 <script>
   for (const form of document.querySelectorAll<HTMLElement>(".form_wrap")) {

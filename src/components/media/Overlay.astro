@@ -25,15 +25,13 @@ const {
 } = Astro.props;
 ---
 
-{
-  render && (
-    <div
-      class:list={["overlay", variant !== "solid" && variant, className]}
-      style={`--_strength: ${strength};`}
-      {...rest}
-    />
-  )
-}
+{render && (
+  <div
+    class:list={["overlay", variant !== "solid" && variant, className]}
+    style={`--_strength: ${strength};`}
+    {...rest}
+  />
+)}
 
 <style is:global>
   @layer components {

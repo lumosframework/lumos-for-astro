@@ -31,27 +31,25 @@ const LEGEND_STYLES: Record<NonNullable<Props["legendStyle"]>, string> = {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && legend && content && (
-    <fieldset
-      class:list={["form-fieldset", variant !== "stack" && variant, className]}
-      {...rest}
+{render && legend && content && (
+  <fieldset
+    class:list={["form-fieldset", variant !== "stack" && variant, className]}
+    {...rest}
+  >
+    <legend
+      class:list={[
+        "form-fieldset_legend",
+        `form-fieldset_legend-${legendStyle}`,
+        LEGEND_STYLES[legendStyle],
+      ]}
     >
-      <legend
-        class:list={[
-          "form-fieldset_legend",
-          `form-fieldset_legend-${legendStyle}`,
-          LEGEND_STYLES[legendStyle],
-        ]}
-      >
-        {legend}
-      </legend>
-      <div class="form-fieldset_fields">
-        <Fragment set:html={content} />
-      </div>
-    </fieldset>
-  )
-}
+      {legend}
+    </legend>
+    <div class="form-fieldset_fields">
+      <Fragment set:html={content} />
+    </div>
+  </fieldset>
+)}
 
 <style is:global>
   @layer components {

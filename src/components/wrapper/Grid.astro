@@ -125,17 +125,15 @@ const columns =
     .join("; ") || undefined;
 ---
 
-{
-  render && content && (
-    <div
-      class:list={["grid", variant !== "columns" && variant, className]}
-      style={columns}
-      {...rest}
-    >
-      <Fragment set:html={content} />
-    </div>
-  )
-}
+{render && content && (
+  <div
+    class:list={["grid", variant !== "columns" && variant, className]}
+    style={columns}
+    {...rest}
+  >
+    <Fragment set:html={content} />
+  </div>
+)}
 
 <style is:global>
   @layer components {

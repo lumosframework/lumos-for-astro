@@ -58,31 +58,29 @@ const {
 } = Astro.props as AllProps;
 ---
 
-{
-  render && label && (
-    <label
-      class:list={["form-choice", variant !== "default" && variant, className]}
-    >
-      <input
-        class="form-choice_input"
-        type={type}
-        name={name ?? slug(label)}
-        value={value}
-        checked={checked || undefined}
-        required={required || undefined}
-        {...rest}
-      />
-      <span class="form-choice_mark" aria-hidden="true">
-        {type === "radio" ? (
-          <span class="form-choice_dot" />
-        ) : (
-          <Icon class="form-choice_tick" src={check} variant="small" />
-        )}
-      </span>
-      <span class="form-choice_text text-style-main">{label}</span>
-    </label>
-  )
-}
+{render && label && (
+  <label
+    class:list={["form-choice", variant !== "default" && variant, className]}
+  >
+    <input
+      class="form-choice_input"
+      type={type}
+      name={name ?? slug(label)}
+      value={value}
+      checked={checked || undefined}
+      required={required || undefined}
+      {...rest}
+    />
+    <span class="form-choice_mark" aria-hidden="true">
+      {type === "radio" ? (
+        <span class="form-choice_dot" />
+      ) : (
+        <Icon class="form-choice_tick" src={check} variant="small" />
+      )}
+    </span>
+    <span class="form-choice_text text-style-main">{label}</span>
+  </label>
+)}
 
 <style is:global>
   @layer components {

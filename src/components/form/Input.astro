@@ -95,30 +95,28 @@ const kind = KINDS[variant];
 const text = label ?? kind.label;
 ---
 
-{
-  render && (
-    <label class:list={["field", "form-input", className]}>
-      <span
-        class:list={["field-label text-style-main", labelHidden && "sr-only"]}
-      >
-        <span>{text}</span>
-        {required && (
-          <span class="field-star" aria-hidden="true">
-            *
-          </span>
-        )}
-      </span>
-      <input
-        class="field-control text-style-main"
-        type={kind.type}
-        name={name ?? slug(text)}
-        placeholder={placeholder ?? text}
-        inputmode={kind.mode}
-        autocomplete={kind.fill}
-        required={required || undefined}
-        value={value}
-        {...rest}
-      />
-    </label>
-  )
-}
+{render && (
+  <label class:list={["field", "form-input", className]}>
+    <span
+      class:list={["field-label text-style-main", labelHidden && "sr-only"]}
+    >
+      <span>{text}</span>
+      {required && (
+        <span class="field-star" aria-hidden="true">
+          *
+        </span>
+      )}
+    </span>
+    <input
+      class="field-control text-style-main"
+      type={kind.type}
+      name={name ?? slug(text)}
+      placeholder={placeholder ?? text}
+      inputmode={kind.mode}
+      autocomplete={kind.fill}
+      required={required || undefined}
+      value={value}
+      {...rest}
+    />
+  </label>
+)}

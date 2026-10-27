@@ -43,18 +43,16 @@ const {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && content && (
-    <Tag
-      class:list={[
-        "heading",
-        variant !== "inherit" && `text-style-${variant}`,
-        className,
-      ]}
-      style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
-      {...rest}
-    >
-      <Fragment set:html={content} />
-    </Tag>
-  )
-}
+{render && content && (
+  <Tag
+    class:list={[
+      "heading",
+      variant !== "inherit" && `text-style-${variant}`,
+      className,
+    ]}
+    style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
+    {...rest}
+  >
+    <Fragment set:html={content} />
+  </Tag>
+)}

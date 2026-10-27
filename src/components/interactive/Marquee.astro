@@ -68,43 +68,41 @@ const count = countItems(items);
 const locals = `--_count: ${count}`;
 ---
 
-{
-  render && items && (
-    <div
-      class:list={[
-        "marquee_wrap",
-        direction !== "forwards" && direction,
-        className,
-      ]}
-      style={locals}
-      role="group"
-      aria-label={label}
-      {...rest}
-    >
-      <div class="marquee_viewport">
-        <div class="marquee_track">
-          <div class="marquee_panel">
-            <Fragment set:html={items} />
-          </div>
-          {/* The copy that carries the loop. Astro renders it, so the strip is
+{render && items && (
+  <div
+    class:list={[
+      "marquee_wrap",
+      direction !== "forwards" && direction,
+      className,
+    ]}
+    style={locals}
+    role="group"
+    aria-label={label}
+    {...rest}
+  >
+    <div class="marquee_viewport">
+      <div class="marquee_track">
+        <div class="marquee_panel">
+          <Fragment set:html={items} />
+        </div>
+        {/* The copy that carries the loop. Astro renders it, so the strip is
             whole before any script runs, and it is held out of the accessibility
             tree and the tab order so nothing here is met twice. */}
-          <div class="marquee_panel" aria-hidden="true" inert>
-            <Fragment set:html={items} />
-          </div>
+        <div class="marquee_panel" aria-hidden="true" inert>
+          <Fragment set:html={items} />
         </div>
       </div>
-
-      <Button
-        variant="play"
-        emphasis="secondary"
-        pressed={true}
-        class="marquee_toggle"
-        data-marquee-toggle
-      />
     </div>
-  )
-}
+
+    <Button
+      variant="play"
+      emphasis="secondary"
+      pressed={true}
+      class="marquee_toggle"
+      data-marquee-toggle
+    />
+  </div>
+)}
 
 <script>
   for (const marquee of document.querySelectorAll<HTMLElement>(

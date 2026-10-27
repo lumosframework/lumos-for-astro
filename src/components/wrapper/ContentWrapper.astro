@@ -124,32 +124,30 @@ const column1 = await slotContent(Astro.slots);
 const column2 = await slotContent(Astro.slots, "column2");
 ---
 
-{
-  render && (column1 || column2) && (
-    <div
-      class:list={[
-        "layout",
-        variantClasses,
-        reverse && "reversed",
-        centered && "centered",
-        className,
-      ]}
-      style={media}
-      {...rest}
-    >
-      {column1 && (
-        <div class:list={[column1Class]}>
-          <Fragment set:html={column1} />
-        </div>
-      )}
-      {column2 && (
-        <div class:list={[column2Class]}>
-          <Fragment set:html={column2} />
-        </div>
-      )}
-    </div>
-  )
-}
+{render && (column1 || column2) && (
+  <div
+    class:list={[
+      "layout",
+      variantClasses,
+      reverse && "reversed",
+      centered && "centered",
+      className,
+    ]}
+    style={media}
+    {...rest}
+  >
+    {column1 && (
+      <div class:list={[column1Class]}>
+        <Fragment set:html={column1} />
+      </div>
+    )}
+    {column2 && (
+      <div class:list={[column2Class]}>
+        <Fragment set:html={column2} />
+      </div>
+    )}
+  </div>
+)}
 
 <style is:global>
   @layer components {

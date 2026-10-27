@@ -22,21 +22,19 @@ const {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && content && (
-    <div
-      class:list={["eyebrow_wrap", variant !== "default" && variant, className]}
-      {...rest}
-    >
-      {variant === "default" && (
-        <span class="eyebrow_marker" aria-hidden="true" />
-      )}
-      <Tag class="eyebrow_text text-style-small">
-        <Fragment set:html={content} />
-      </Tag>
-    </div>
-  )
-}
+{render && content && (
+  <div
+    class:list={["eyebrow_wrap", variant !== "default" && variant, className]}
+    {...rest}
+  >
+    {variant === "default" && (
+      <span class="eyebrow_marker" aria-hidden="true" />
+    )}
+    <Tag class="eyebrow_text text-style-small">
+      <Fragment set:html={content} />
+    </Tag>
+  </div>
+)}
 
 <style is:global>
   @layer components {

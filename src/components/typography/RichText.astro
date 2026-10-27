@@ -40,22 +40,20 @@ const {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && content && (
-    <div
-      class:list={[
-        "text",
-        "rich-text",
-        variant !== "inherit" && `text-style-${variant}`,
-        className,
-      ]}
-      style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
-      {...rest}
-    >
-      <Fragment set:html={content} />
-    </div>
-  )
-}
+{render && content && (
+  <div
+    class:list={[
+      "text",
+      "rich-text",
+      variant !== "inherit" && `text-style-${variant}`,
+      className,
+    ]}
+    style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
+    {...rest}
+  >
+    <Fragment set:html={content} />
+  </div>
+)}
 
 <style is:global>
   @layer components {

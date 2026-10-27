@@ -107,48 +107,46 @@ if (import.meta.env.DEV && render) {
 }
 ---
 
-{
-  render && (hasContent || hasImage) && (
-    <div
-      class:list={[
-        "card_wrap",
-        variant !== "default" && variant,
-        hasTheme && `theme-${theme}`,
-        className,
-      ]}
-      {...rest}
-    >
-      {hasImage && (
-        <div class="card_visual">
-          <Img src={image!} alt={imageAlt} />
-          {variant === "cover" && <Overlay variant="gradient" />}
-        </div>
-      )}
-      {hasContent && (
-        <div class="card_content margin-trim">
-          <Eyebrow>
-            <Fragment set:html={eyebrow} />
-          </Eyebrow>
-          <Heading tag={headingTag} variant="h5">
-            <Fragment set:html={heading} />
-          </Heading>
-          <Paragraph>
-            <Fragment set:html={text} />
-          </Paragraph>
-          <ButtonWrapper>
-            {buttonHref ? (
-              <Button element="link" href={buttonHref} {...buttonKind}>
-                {buttonLabel}
-              </Button>
-            ) : (
-              <Button {...buttonKind}>{buttonLabel}</Button>
-            )}
-          </ButtonWrapper>
-        </div>
-      )}
-    </div>
-  )
-}
+{render && (hasContent || hasImage) && (
+  <div
+    class:list={[
+      "card_wrap",
+      variant !== "default" && variant,
+      hasTheme && `theme-${theme}`,
+      className,
+    ]}
+    {...rest}
+  >
+    {hasImage && (
+      <div class="card_visual">
+        <Img src={image!} alt={imageAlt} />
+        {variant === "cover" && <Overlay variant="gradient" />}
+      </div>
+    )}
+    {hasContent && (
+      <div class="card_content margin-trim">
+        <Eyebrow>
+          <Fragment set:html={eyebrow} />
+        </Eyebrow>
+        <Heading tag={headingTag} variant="h5">
+          <Fragment set:html={heading} />
+        </Heading>
+        <Paragraph>
+          <Fragment set:html={text} />
+        </Paragraph>
+        <ButtonWrapper>
+          {buttonHref ? (
+            <Button element="link" href={buttonHref} {...buttonKind}>
+              {buttonLabel}
+            </Button>
+          ) : (
+            <Button {...buttonKind}>{buttonLabel}</Button>
+          )}
+        </ButtonWrapper>
+      </div>
+    )}
+  </div>
+)}
 
 <style is:global>
   @layer components {

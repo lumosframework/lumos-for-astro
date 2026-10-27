@@ -165,41 +165,39 @@ const wording = WORDING[variant];
 const text = label ?? wording.label;
 ---
 
-{
-  render && entries.length > 0 && (
-    <label class:list={["field", "form-select", className]}>
-      <span
-        class:list={["field-label text-style-main", labelHidden && "sr-only"]}
-      >
-        <span>{text}</span>
-        {required && (
-          <span class="field-star" aria-hidden="true">
-            *
-          </span>
-        )}
-      </span>
+{render && entries.length > 0 && (
+  <label class:list={["field", "form-select", className]}>
+    <span
+      class:list={["field-label text-style-main", labelHidden && "sr-only"]}
+    >
+      <span>{text}</span>
+      {required && (
+        <span class="field-star" aria-hidden="true">
+          *
+        </span>
+      )}
+    </span>
 
-      <span class="form-select_control">
-        <select
-          class="field-control form-select_field text-style-main"
-          name={name ?? slug(text)}
-          required={required || undefined}
-          {...rest}
-        >
-          <option value="" disabled selected={value === undefined} hidden>
-            {placeholder ?? wording.placeholder}
+    <span class="form-select_control">
+      <select
+        class="field-control form-select_field text-style-main"
+        name={name ?? slug(text)}
+        required={required || undefined}
+        {...rest}
+      >
+        <option value="" disabled selected={value === undefined} hidden>
+          {placeholder ?? wording.placeholder}
+        </option>
+        {entries.map((entry) => (
+          <option value={entry.value} selected={entry.value === value}>
+            {entry.label}
           </option>
-          {entries.map((entry) => (
-            <option value={entry.value} selected={entry.value === value}>
-              {entry.label}
-            </option>
-          ))}
-        </select>
-        <Icon class="form-select_mark" src={arrow} variant="small" />
-      </span>
-    </label>
-  )
-}
+        ))}
+      </select>
+      <Icon class="form-select_mark" src={arrow} variant="small" />
+    </span>
+  </label>
+)}
 
 <style is:global>
   @layer components {

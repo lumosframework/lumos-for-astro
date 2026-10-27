@@ -28,27 +28,25 @@ const {
 const content = await slotContent(Astro.slots);
 ---
 
-{
-  render && heading && content && (
-    <details
-      class:list={["accordion_item", className]}
-      open={open}
-      data-accordion-group
-      {...rest}
-    >
-      <summary class="accordion_toggle">
-        <Heading tag={headingTag} variant="h5" class="accordion_title">
-          {heading}
-        </Heading>
-        <Icon class="accordion_icon" src={arrow} variant="small" />
-      </summary>
+{render && heading && content && (
+  <details
+    class:list={["accordion_item", className]}
+    open={open}
+    data-accordion-group
+    {...rest}
+  >
+    <summary class="accordion_toggle">
+      <Heading tag={headingTag} variant="h5" class="accordion_title">
+        {heading}
+      </Heading>
+      <Icon class="accordion_icon" src={arrow} variant="small" />
+    </summary>
 
-      <div class="accordion_body margin-trim">
-        <Fragment set:html={content} />
-      </div>
-    </details>
-  )
-}
+    <div class="accordion_body margin-trim">
+      <Fragment set:html={content} />
+    </div>
+  </details>
+)}
 
 <style is:global>
   @layer components {

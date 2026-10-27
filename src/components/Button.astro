@@ -123,41 +123,39 @@ const named = {
 };
 ---
 
-{
-  render && (isWritten ? content : true) && (
-    <Tag
-      class:list={[
-        "button_wrap",
-        emphasis !== "primary" && emphasis,
-        variant !== "main" && variant,
-        variant === "arrow" && direction === "back" && "back",
-        className,
-      ]}
-      aria-label={isWritten ? undefined : (label ?? named[variant])}
-      aria-pressed={variant === "play" ? pressed : undefined}
-      {...tagAttrs}
-      {...rest}
-    >
-      {isWritten && (
-        <span class="button_text text-style-trim">
-          <Fragment set:html={content} />
-        </span>
-      )}
-      {variant === "play" && (
-        <Fragment>
-          <Icon class="button_mark button_play" src={play} variant="small" />
-          <Icon class="button_mark button_pause" src={pause} variant="small" />
-        </Fragment>
-      )}
-      {variant === "close" && (
-        <Icon class="button_mark" src={marks.close} variant="small" />
-      )}
-      {variant === "arrow" && (
-        <Icon class="button_mark" src={marks.arrow} variant="small" />
-      )}
-    </Tag>
-  )
-}
+{render && (isWritten ? content : true) && (
+  <Tag
+    class:list={[
+      "button_wrap",
+      emphasis !== "primary" && emphasis,
+      variant !== "main" && variant,
+      variant === "arrow" && direction === "back" && "back",
+      className,
+    ]}
+    aria-label={isWritten ? undefined : (label ?? named[variant])}
+    aria-pressed={variant === "play" ? pressed : undefined}
+    {...tagAttrs}
+    {...rest}
+  >
+    {isWritten && (
+      <span class="button_text text-style-trim">
+        <Fragment set:html={content} />
+      </span>
+    )}
+    {variant === "play" && (
+      <Fragment>
+        <Icon class="button_mark button_play" src={play} variant="small" />
+        <Icon class="button_mark button_pause" src={pause} variant="small" />
+      </Fragment>
+    )}
+    {variant === "close" && (
+      <Icon class="button_mark" src={marks.close} variant="small" />
+    )}
+    {variant === "arrow" && (
+      <Icon class="button_mark" src={marks.arrow} variant="small" />
+    )}
+  </Tag>
+)}
 
 <style is:global>
   @layer components {

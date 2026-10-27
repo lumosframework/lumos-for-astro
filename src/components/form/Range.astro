@@ -54,46 +54,44 @@ const progress = max === min ? 0 : (start - min) / (max - min);
 const fieldId = id ?? `range-${label ? slug(label) : "field"}`;
 ---
 
-{
-  render && label && (
-    <div
-      class:list={["field", "form-range", className]}
-      style={`--_progress: ${progress};`}
-    >
-      <label class="field-label text-style-main" for={fieldId}>
-        <span>{label}</span>
-        {required && (
-          <span class="field-star" aria-hidden="true">
-            *
-          </span>
-        )}
-      </label>
+{render && label && (
+  <div
+    class:list={["field", "form-range", className]}
+    style={`--_progress: ${progress};`}
+  >
+    <label class="field-label text-style-main" for={fieldId}>
+      <span>{label}</span>
+      {required && (
+        <span class="field-star" aria-hidden="true">
+          *
+        </span>
+      )}
+    </label>
 
-      <span class="form-range_control">
-        <input
-          class="form-range_input"
-          type="range"
-          id={fieldId}
-          name={name ?? slug(label)}
-          min={min}
-          max={max}
-          step={step}
-          value={start}
-          required={required || undefined}
-          {...rest}
-        />
-        <span class="form-range_track" aria-hidden="true" />
-        <span class="form-range_fill" aria-hidden="true" />
-        <span class="form-range_handle" aria-hidden="true" />
-      </span>
+    <span class="form-range_control">
+      <input
+        class="form-range_input"
+        type="range"
+        id={fieldId}
+        name={name ?? slug(label)}
+        min={min}
+        max={max}
+        step={step}
+        value={start}
+        required={required || undefined}
+        {...rest}
+      />
+      <span class="form-range_track" aria-hidden="true" />
+      <span class="form-range_fill" aria-hidden="true" />
+      <span class="form-range_handle" aria-hidden="true" />
+    </span>
 
-      <output class="form-range_output text-style-small" for={fieldId}>
-        <span class="form-range_value">{start}</span>
-        {unit && <span>{unit}</span>}
-      </output>
-    </div>
-  )
-}
+    <output class="form-range_output text-style-small" for={fieldId}>
+      <span class="form-range_value">{start}</span>
+      {unit && <span>{unit}</span>}
+    </output>
+  </div>
+)}
 
 <script>
   for (const range of document.querySelectorAll<HTMLElement>(".form-range")) {

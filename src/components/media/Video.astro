@@ -86,23 +86,21 @@ if (import.meta.env.DEV && render) {
 const isCustom = variant === "custom";
 ---
 
-{
-  render && src && (
-    <video
-      src={src}
-      poster={poster}
-      class:list={[
-        "video",
-        !isCustom && `ratio-${variant}`,
-        transparent && "transparent",
-        className,
-      ]}
-      style={isCustom && ratio ? `aspect-ratio: ${ratio};` : undefined}
-      loop={loop}
-      autoplay={autoplay}
-      muted={muted}
-      playsinline
-      {...rest}
-    />
-  )
-}
+{render && src && (
+  <video
+    src={src}
+    poster={poster}
+    class:list={[
+      "video",
+      !isCustom && `ratio-${variant}`,
+      transparent && "transparent",
+      className,
+    ]}
+    style={isCustom && ratio ? `aspect-ratio: ${ratio};` : undefined}
+    loop={loop}
+    autoplay={autoplay}
+    muted={muted}
+    playsinline
+    {...rest}
+  />
+)}

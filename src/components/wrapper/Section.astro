@@ -70,34 +70,32 @@ const content = await slotContent(Astro.slots);
 const background = await slotContent(Astro.slots, "background");
 ---
 
-{
-  render && (content || background) && (
-    <section
-      class:list={[
-        "section",
-        padClass("top", paddingTop),
-        padClass("bottom", paddingBottom),
-        fullHeight && "min-height-screen",
-        theme !== "inherit" && `theme-${theme}`,
-        align && `alignment-${align}`,
-        className,
-      ]}
-      {...rest}
-    >
-      <Fragment set:html={background} />
-      {content && (
-        <div
-          class:list={[
-            "container",
-            gap !== "8" && `gap-${gap}`,
-            containerClass,
-            containerAttrsClass,
-          ]}
-          {...containerRest}
-        >
-          <Fragment set:html={content} />
-        </div>
-      )}
-    </section>
-  )
-}
+{render && (content || background) && (
+  <section
+    class:list={[
+      "section",
+      padClass("top", paddingTop),
+      padClass("bottom", paddingBottom),
+      fullHeight && "min-height-screen",
+      theme !== "inherit" && `theme-${theme}`,
+      align && `alignment-${align}`,
+      className,
+    ]}
+    {...rest}
+  >
+    <Fragment set:html={background} />
+    {content && (
+      <div
+        class:list={[
+          "container",
+          gap !== "8" && `gap-${gap}`,
+          containerClass,
+          containerAttrsClass,
+        ]}
+        {...containerRest}
+      >
+        <Fragment set:html={content} />
+      </div>
+    )}
+  </section>
+)}

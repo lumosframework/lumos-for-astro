@@ -14,34 +14,32 @@ interface Props {
 const { render = true, overlap = false } = Astro.props;
 ---
 
-{
-  render && (
-    <header class:list={["nav_wrap", overlap && "overlap"]}>
-      <div class="nav_inner">
-        <a class="nav_logo" href="/" aria-label={SITE_NAME}>
-          <Icon src={logo} variant="full-width" />
-        </a>
-        <button
-          class="nav_toggle"
-          type="button"
-          aria-label="Menu"
-          aria-expanded="false"
-          aria-controls="nav-menu"
-        >
-          <span class="nav_toggle_icon" />
-        </button>
-        <nav class="nav_menu" id="nav-menu" aria-label="Main">
-          <div class="nav_menu_inner">
-            <ul class="nav_links">
-              <NavLink href="/">Home</NavLink>
-              <NavLink href="/example-components">Example Components</NavLink>
-            </ul>
-          </div>
-        </nav>
-      </div>
-    </header>
-  )
-}
+{render && (
+  <header class:list={["nav_wrap", overlap && "overlap"]}>
+    <div class="nav_inner">
+      <a class="nav_logo" href="/" aria-label={SITE_NAME}>
+        <Icon src={logo} variant="full-width" />
+      </a>
+      <button
+        class="nav_toggle"
+        type="button"
+        aria-label="Menu"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+      >
+        <span class="nav_toggle_icon" />
+      </button>
+      <nav class="nav_menu" id="nav-menu" aria-label="Main">
+        <div class="nav_menu_inner">
+          <ul class="nav_links">
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="/example-components">Example Components</NavLink>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+)}
 
 {/* No-JS fallback */}
 <noscript>

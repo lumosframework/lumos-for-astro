@@ -25,15 +25,13 @@ if (import.meta.env.DEV && render && !Svg) {
 }
 ---
 
-{
-  render && Svg && (
-    <Svg
-      class:list={["icon", variant, className]}
-      aria-hidden={labelled ? undefined : "true"}
-      {...rest}
-    />
-  )
-}
+{render && Svg && (
+  <Svg
+    class:list={["icon", variant, className]}
+    aria-hidden={labelled ? undefined : "true"}
+    {...rest}
+  />
+)}
 
 <style is:global>
   @layer components {

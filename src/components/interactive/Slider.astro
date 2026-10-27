@@ -72,38 +72,36 @@ const visible =
 const slides = await slotContent(Astro.slots);
 ---
 
-{
-  render && slides && (
-    <div
-      class:list={["slider_wrap", variant !== "bleed" && variant, className]}
-      style={visible}
-      {...rest}
-    >
-      <div class="slider_list" role="group" aria-label={label} tabindex="0">
-        <Fragment set:html={slides} />
-      </div>
+{render && slides && (
+  <div
+    class:list={["slider_wrap", variant !== "bleed" && variant, className]}
+    style={visible}
+    {...rest}
+  >
+    <div class="slider_list" role="group" aria-label={label} tabindex="0">
+      <Fragment set:html={slides} />
+    </div>
 
-      <div class="slider_controls">
-        <div class="slider_markers" />
-        <div class="slider_steps">
-          <Button
-            variant="arrow"
-            emphasis="secondary"
-            direction="back"
-            label="Previous slide"
-            data-step="-1"
-          />
-          <Button
-            variant="arrow"
-            emphasis="secondary"
-            label="Next slide"
-            data-step="1"
-          />
-        </div>
+    <div class="slider_controls">
+      <div class="slider_markers" />
+      <div class="slider_steps">
+        <Button
+          variant="arrow"
+          emphasis="secondary"
+          direction="back"
+          label="Previous slide"
+          data-step="-1"
+        />
+        <Button
+          variant="arrow"
+          emphasis="secondary"
+          label="Next slide"
+          data-step="1"
+        />
       </div>
     </div>
-  )
-}
+  </div>
+)}
 
 <script>
   const THRESHOLD = 4;

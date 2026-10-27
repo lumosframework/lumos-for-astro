@@ -212,18 +212,16 @@ const shared = {
 } as unknown as LocalImageProps | RemoteImageProps;
 ---
 
-{
-  render &&
-    src &&
-    (isPublicPath ? (
-      <img
-        src={src as string}
-        {...{ alt, width, height, loading }}
-        fetchpriority={fetchPriority === "auto" ? undefined : fetchPriority}
-        {...attrs}
-        class:list={classes}
-      />
-    ) : (
-      <Image {...shared} />
-    ))
-}
+{render &&
+  src &&
+  (isPublicPath ? (
+    <img
+      src={src as string}
+      {...{ alt, width, height, loading }}
+      fetchpriority={fetchPriority === "auto" ? undefined : fetchPriority}
+      {...attrs}
+      class:list={classes}
+    />
+  ) : (
+    <Image {...shared} />
+  ))}

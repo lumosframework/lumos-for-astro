@@ -29,61 +29,59 @@ const links = await slotContent(Astro.slots, "links");
 const panels = await slotContent(Astro.slots);
 ---
 
-{
-  render && links && panels && (
-    <div
-      class:list={[
-        "tabs_wrap",
-        variant !== "horizontal" && variant,
-        auto && "auto",
-        preview && "preview",
-        className,
-      ]}
-      {...rest}
-    >
-      <div class="tabs_bar">
-        <div
-          class="tabs_links"
-          role="tablist"
-          aria-orientation={variant === "side" ? "vertical" : "horizontal"}
-        >
-          <Fragment set:html={links} />
-        </div>
+{render && links && panels && (
+  <div
+    class:list={[
+      "tabs_wrap",
+      variant !== "horizontal" && variant,
+      auto && "auto",
+      preview && "preview",
+      className,
+    ]}
+    {...rest}
+  >
+    <div class="tabs_bar">
+      <div
+        class="tabs_links"
+        role="tablist"
+        aria-orientation={variant === "side" ? "vertical" : "horizontal"}
+      >
+        <Fragment set:html={links} />
       </div>
+    </div>
 
-      <div class="tabs_panels">
-        <Fragment set:html={panels} />
-      </div>
+    <div class="tabs_panels">
+      <Fragment set:html={panels} />
+    </div>
 
-      {auto && (
-        <div class="tabs_controls">
-          <div class="tabs_steps">
-            <Button
-              variant="arrow"
-              emphasis="secondary"
-              direction="back"
-              label="Previous tab"
-              data-step="-1"
-            />
-            <Button
-              variant="arrow"
-              emphasis="secondary"
-              label="Next tab"
-              data-step="1"
-            />
-          </div>
+    {auto && (
+      <div class="tabs_controls">
+        <div class="tabs_steps">
           <Button
-            variant="play"
+            variant="arrow"
             emphasis="secondary"
-            label="Pause automatic rotation"
-            pressed
-            data-toggle
+            direction="back"
+            label="Previous tab"
+            data-step="-1"
+          />
+          <Button
+            variant="arrow"
+            emphasis="secondary"
+            label="Next tab"
+            data-step="1"
           />
         </div>
-      )}
-    </div>
-  )
-}
+        <Button
+          variant="play"
+          emphasis="secondary"
+          label="Pause automatic rotation"
+          pressed
+          data-toggle
+        />
+      </div>
+    )}
+  </div>
+)}
 
 {}
 <noscript>

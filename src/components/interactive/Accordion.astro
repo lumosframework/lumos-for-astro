@@ -30,21 +30,19 @@ const items = (
 ).replaceAll("data-accordion-group", group);
 ---
 
-{
-  render && items && (
-    <div
-      class:list={[
-        "accordion_wrap",
-        single && "single",
-        preview && "preview",
-        className,
-      ]}
-      {...rest}
-    >
-      <Fragment set:html={items} />
-    </div>
-  )
-}
+{render && items && (
+  <div
+    class:list={[
+      "accordion_wrap",
+      single && "single",
+      preview && "preview",
+      className,
+    ]}
+    {...rest}
+  >
+    <Fragment set:html={items} />
+  </div>
+)}
 
 <script>
   const accordions = document.querySelectorAll<HTMLElement>(".accordion_wrap");
