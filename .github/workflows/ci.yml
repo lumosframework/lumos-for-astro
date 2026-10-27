@@ -37,6 +37,9 @@ jobs:
 
       - run: npm run build
 
+      - name: Verify the version in freshly scaffolded sites
+        run: node .github/scripts/check-starter-version.mjs
+
       # The latest npm can require a newer Node than the template minimum.
       # Check its lockfile compatibility separately on the current Node LTS.
       - uses: actions/setup-node@v7
