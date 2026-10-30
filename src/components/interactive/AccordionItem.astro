@@ -92,9 +92,15 @@ const content = await slotContent(Astro.slots);
       block-size: 0;
       overflow: hidden;
       content-visibility: hidden;
-      transition:
-        block-size var(--open-duration) var(--open-ease),
-        content-visibility var(--open-duration) var(--open-ease) allow-discrete;
+    }
+
+    @supports (interpolate-size: allow-keywords) {
+      .accordion_item::details-content {
+        transition:
+          block-size var(--open-duration) var(--open-ease),
+          content-visibility var(--open-duration) var(--open-ease)
+            allow-discrete;
+      }
     }
 
     .accordion_item:is([open], .stacki-opened)::details-content,
