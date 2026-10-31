@@ -1,7 +1,7 @@
 {
   "name": "lumos-for-astro",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "engines": {
     "node": ">=22.23.4"
