@@ -3,12 +3,17 @@
 # own repository automation or deploy target. Clones and forks still get
 # everything — export-ignore only applies to archives.
 #
+# README.md goes too: it describes the framework rather than the site, and
+# its banner points into .github, which is withheld, so a scaffolded site
+# would carry a broken image and this repository's CI badge.
+#
 # .agents/skills and the .claude/skills links are deliberately not listed: the
 # skills belong in generated sites. Only the dev-server config, which points at
 # this repository's setup, is withheld.
 
 /.gitattributes export-ignore
 /.github export-ignore
+/README.md export-ignore
 /.claude/launch.json export-ignore
 /packages export-ignore
 /wrangler.jsonc export-ignore

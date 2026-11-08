@@ -17,9 +17,30 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      # Anything pushed with GITHUB_TOKEN is attributed to github-actions[bot],
+      # and workflow runs for a bot's own pull request land in `action_required`
+      # waiting on a human. The required check never reports, so the auto-merge
+      # enabled below never fires and the update sits open indefinitely. An app
+      # installation token carries the app's identity instead, so CI runs
+      # unattended. Configure the AUTOMATION_APP_ID variable and the
+      # AUTOMATION_APP_PRIVATE_KEY secret to turn this on.
+      - name: Mint an app installation token
+        id: app
+        if: vars.AUTOMATION_APP_ID != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOMATION_APP_ID }}
+          private-key: ${{ secrets.AUTOMATION_APP_PRIVATE_KEY }}
+
+      - name: Warn when the app is not configured
+        if: vars.AUTOMATION_APP_ID == ''
+        run: echo "::warning title=Automation app not configured::Falling back to GITHUB_TOKEN. The pull request will open, but its CI run waits for manual approval and auto-merge never fires. Set the AUTOMATION_APP_ID variable and the AUTOMATION_APP_PRIVATE_KEY secret."
+
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          # Carried into the push below, so the commit lands as the app.
+          token: ${{ steps.app.outputs.token || github.token }}
 
       - uses: actions/setup-node@v7
         with:
@@ -44,10 +65,18 @@ jobs:
       - name: Push the update branch
         if: steps.update.outputs.changed == 'true'
         env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
           SUMMARY: ${{ steps.update.outputs.summary }}
+          APP_SLUG: ${{ steps.app.outputs.app-slug }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Commit as whichever identity pushed, so the author matches the
+          # account the commit is actually attributed to. The numeric id is what
+          # links a noreply address to the account on github.com.
+          AUTHOR="github-actions[bot]"
+          if [ -n "$APP_SLUG" ]; then AUTHOR="$APP_SLUG[bot]"; fi
+          ID=$(gh api "/users/$AUTHOR" --jq .id)
+          git config user.name "$AUTHOR"
+          git config user.email "$ID+$AUTHOR@users.noreply.github.com"
           git checkout -B automation/astro-latest
           git add package.json package-lock.json
           git commit -m "Update Astro dependencies" -m "$SUMMARY"
@@ -56,7 +85,7 @@ jobs:
       - name: Open or update the pull request
         if: steps.update.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
           SUMMARY: ${{ steps.update.outputs.summary }}
           ASTRO_VERSION: ${{ steps.update.outputs.astro_version }}
           NODE_VERSION: ${{ steps.update.outputs.node_version }}
