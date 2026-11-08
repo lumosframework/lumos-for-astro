@@ -336,5 +336,10 @@ const column2 = await slotContent(Astro.slots, "column2");
         }
       }
     }
+
+    /* breakout container */
+    .section:has(.layout.breakout) {
+      container-type: inline-size;
+    }
   }
 </style>
