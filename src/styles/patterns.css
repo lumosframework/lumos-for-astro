@@ -22,7 +22,6 @@
   align-items: stretch;
   justify-content: center;
   position: relative;
-  container-type: inline-size;
 }
 
 .container {
