@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "keep": [],
+  "lockedStylesheets": [
+    "src/styles/patterns.css",
+    "src/styles/utilities.css"
+  ]
+}
