@@ -13,37 +13,21 @@ type Props = Base &
         /** Grid mode. */
         variant?: "columns";
         /**
-         * Columns below 30rem. Defaults to `1`.
-         *
-         * @min 1
-         * @max 12
-         * @int
+         * Columns below 30rem: a number for equal columns, or one span or range per child on 12 columns, separated by spaces, like `"4 4 3 1"` or `"1/4 6/12"`. Defaults to `1`.
          */
-        xsmall?: number;
+        xsmall?: string | number;
         /**
-         * Columns from 30rem. Inherits `xsmall`.
-         *
-         * @min 1
-         * @max 12
-         * @int
+         * Columns from 30rem: a number for equal columns, or one span or range per child on 12 columns, separated by spaces, like `"4 4 3 1"` or `"1/4 6/12"`. Inherits `xsmall`.
          */
-        small?: number;
+        small?: string | number;
         /**
-         * Columns from 48rem. Inherits `small`.
-         *
-         * @min 1
-         * @max 12
-         * @int
+         * Columns from 48rem: a number for equal columns, or one span or range per child on 12 columns, separated by spaces, like `"4 4 3 1"` or `"1/4 6/12"`. Inherits `small`.
          */
-        medium?: number;
+        medium?: string | number;
         /**
-         * Columns from 64rem. Inherits `medium`.
-         *
-         * @min 1
-         * @max 12
-         * @int
+         * Columns from 64rem: a number for equal columns, or one span or range per child on 12 columns, separated by spaces, like `"4 4 3 1"` or `"1/4 6/12"`. Inherits `medium`.
          */
-        large?: number;
+        large?: string | number;
         maxColumnCount?: never;
         minColumnWidth?: never;
       }
@@ -70,10 +54,10 @@ type Props = Base &
 
 type AllProps = Base & {
   variant?: "columns" | "autofit" | "autofill";
-  xsmall?: number;
-  small?: number;
-  medium?: number;
-  large?: number;
+  xsmall?: string | number;
+  small?: string | number;
+  medium?: string | number;
+  large?: string | number;
   maxColumnCount?: number;
   minColumnWidth?: number;
 };
@@ -108,18 +92,105 @@ if (
   );
 }
 
+const parseLayout = (name: string, value: string) => {
+  const tokens = value.trim().split(/\s+/).filter(Boolean);
+  if (!tokens.length) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[lumos] <Grid ${name}=""> needs at least one token; the breakpoint is ignored.`,
+      );
+    }
+    return undefined;
+  }
+  return tokens.map((token) => {
+    if (token === "auto") return "auto";
+    const span = /^(\d+)$/.exec(token);
+    if (span && +span[1] >= 1 && +span[1] <= 12) return `span ${span[1]}`;
+    const range = /^(\d+)[/-](\d+)$/.exec(token);
+    if (range && +range[1] >= 1 && +range[1] <= +range[2] && +range[2] <= 12) {
+      return `${range[1]} / ${+range[2] + 1}`;
+    }
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[lumos] <Grid ${name}="${value}"> has an invalid token "${token}"; use a span (1-12) or a range like "7/12". It falls back to auto.`,
+      );
+    }
+    return "auto";
+  });
+};
+
+const breakpoints = (
+  [
+    ["xs", "xsmall", xsmall, ""],
+    ["sm", "small", small, "(width >= 30rem)"],
+    ["md", "medium", medium, "(width >= 48rem)"],
+    ["lg", "large", large, "(width >= 64rem)"],
+  ] as const
+).map(([key, name, raw, query]) => {
+  const value =
+    typeof raw === "string" && /^\s*\d+\s*$/.test(raw) ? Number(raw) : raw;
+  return {
+    key,
+    value,
+    query,
+    placements:
+      variant === "columns" && typeof value === "string"
+        ? parseLayout(name, value)
+        : undefined,
+  };
+});
+
+const columnVars = breakpoints.map(({ key, value, placements }) =>
+  placements
+    ? `--_cols-${key}: 12`
+    : typeof value === "number" &&
+      !(key === "xs" && value === 1) &&
+      `--_cols-${key}: ${value}`,
+);
+
+let inheritedLayout = false;
+const layoutRules = breakpoints.flatMap(({ key, value, query, placements }) => {
+  let rules: string[] = [];
+  if (placements) {
+    rules = [
+      ...(inheritedLayout
+        ? ["& > :nth-child(n of :not(style)) { grid-column: auto; }"]
+        : []),
+      ...placements.map(
+        (placement, i) =>
+          `& > :nth-child(${placements.length}n + ${i + 1} of :not(style)) { grid-column: ${placement}; }`,
+      ),
+    ];
+    inheritedLayout = true;
+  } else if (typeof value === "number" && key !== "xs" && inheritedLayout) {
+    rules = ["& > :nth-child(n of :not(style)) { grid-column: auto; }"];
+    inheritedLayout = false;
+  }
+  if (!rules.length) return [];
+  return [query ? `@media ${query} { ${rules.join(" ")} }` : rules.join(" ")];
+});
+
+const hash = (text: string) => {
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = (h * 33) ^ text.charCodeAt(i);
+  return (h >>> 0).toString(36);
+};
+
+const layoutClass = layoutRules.length
+  ? `grid-layout-${hash(layoutRules.join(""))}`
+  : undefined;
+
+const layoutCss =
+  layoutClass &&
+  `@layer components { .${layoutClass} { ${layoutRules.join(" ")} } }`;
+
 const columns =
   (variant !== "columns"
     ? [
         maxColumnCount !== undefined && `--_max-cols: ${maxColumnCount}`,
         validMinColumnWidth && `--_min-col-width: ${minColumnWidth}`,
       ]
-    : [
-        xsmall !== 1 && `--_cols-xs: ${xsmall}`,
-        small !== undefined && `--_cols-sm: ${small}`,
-        medium !== undefined && `--_cols-md: ${medium}`,
-        large !== undefined && `--_cols-lg: ${large}`,
-      ]
+    : columnVars
   )
     .filter(Boolean)
     .join("; ") || undefined;
@@ -127,10 +198,16 @@ const columns =
 
 {render && content && (
   <div
-    class:list={["grid", variant !== "columns" && variant, className]}
+    class:list={[
+      "grid",
+      variant !== "columns" && variant,
+      layoutClass,
+      className,
+    ]}
     style={columns}
     {...rest}
   >
+    {layoutCss && <style is:inline set:html={layoutCss} />}
     <Fragment set:html={content} />
   </div>
 )}
