@@ -1,3 +1,5 @@
 dist
 .astro
 node_modules
+.agents
+.stacki
