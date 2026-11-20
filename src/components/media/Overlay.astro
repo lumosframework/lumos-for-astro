@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { mergeStyle } from "@/utils/style.ts";
 
 interface Props extends HTMLAttributes<"div"> {
   /** Set to `false` to omit the component. */
@@ -21,6 +22,7 @@ const {
   variant = "solid",
   strength = 50,
   class: className,
+  style,
   ...rest
 } = Astro.props;
 ---
@@ -28,7 +30,7 @@ const {
 {render && (
   <div
     class:list={["overlay", variant !== "solid" && variant, className]}
-    style={`--_strength: ${strength};`}
+    style={mergeStyle(`--_strength: ${strength}`, style)}
     {...rest}
   />
 )}
