@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import Button from "@/components/Button.astro";
 import { slotContent } from "@/utils/slots.ts";
+import { mergeStyle } from "@/utils/style.ts";
 
 type Props = HTMLAttributes<"div"> & {
   /** Set to `false` to omit the component. */
@@ -17,6 +18,7 @@ const {
   label = "Marquee",
   direction = "forwards",
   class: className,
+  style,
   ...rest
 } = Astro.props;
 
@@ -75,7 +77,7 @@ const locals = `--_count: ${count}`;
       direction !== "forwards" && direction,
       className,
     ]}
-    style={locals}
+    style={mergeStyle(locals, style)}
     role="group"
     aria-label={label}
     {...rest}
