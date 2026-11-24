@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { slotContent } from "@/utils/slots.ts";
+import { mergeStyle } from "@/utils/style.ts";
 
 type RichTextStyle =
   | "inherit"
@@ -34,6 +35,7 @@ const {
   variant = "inherit",
   maxWidth,
   class: className,
+  style,
   ...rest
 } = Astro.props;
 
@@ -48,7 +50,7 @@ const content = await slotContent(Astro.slots);
       variant !== "inherit" && `text-style-${variant}`,
       className,
     ]}
-    style={maxWidth ? `--_mw: ${maxWidth}ch;` : undefined}
+    style={mergeStyle(maxWidth && `--_mw: ${maxWidth}ch`, style)}
     {...rest}
   >
     <Fragment set:html={content} />

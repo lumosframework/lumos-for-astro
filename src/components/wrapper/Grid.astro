@@ -1,6 +1,7 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { slotContent } from "@/utils/slots.ts";
+import { mergeStyle } from "@/utils/style.ts";
 
 type Base = HTMLAttributes<"div"> & {
   /** Set to `false` to omit the component. */
@@ -88,6 +89,7 @@ const {
   maxColumnCount,
   minColumnWidth,
   class: className,
+  style,
   ...rest
 } = Astro.props as AllProps;
 
@@ -128,7 +130,7 @@ const columns =
 {render && content && (
   <div
     class:list={["grid", variant !== "columns" && variant, className]}
-    style={columns}
+    style={mergeStyle(columns, style)}
     {...rest}
   >
     <Fragment set:html={content} />

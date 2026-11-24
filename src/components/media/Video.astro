@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { mergeStyle } from "@/utils/style.ts";
 
 type VideoRatio = "2-1" | "16-9" | "3-2" | "5-4" | "1-1" | "4-5" | "2-3";
 
@@ -62,6 +63,7 @@ const {
   muted = true,
   transparent = false,
   class: className,
+  style,
   ...rest
 } = Astro.props as AllProps;
 
@@ -96,7 +98,7 @@ const isCustom = variant === "custom";
       transparent && "transparent",
       className,
     ]}
-    style={isCustom && ratio ? `aspect-ratio: ${ratio};` : undefined}
+    style={mergeStyle(isCustom && ratio && `aspect-ratio: ${ratio}`, style)}
     loop={loop}
     autoplay={autoplay}
     muted={muted}
