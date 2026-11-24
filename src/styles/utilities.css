@@ -554,7 +554,7 @@
 .gap-0 {
   grid-column-gap: var(--_gap-size);
   grid-row-gap: var(--_gap-size);
-  --_gap-size: 0rem;
+  --_gap-size: 0;
 }
 
 .gap-1 {
@@ -634,7 +634,7 @@
 }
 
 .gap-row-0 {
-  grid-row-gap: 0rem;
+  grid-row-gap: 0;
 }
 
 .gap-row-1 {

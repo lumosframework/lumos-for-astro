@@ -5,7 +5,7 @@ import {
   readFile,
   readdir,
   symlink,
-  copyFile,
+  cp,
 } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
@@ -245,9 +245,9 @@ async function main() {
 
     if (entry.link) {
       // Windows refuses symlinks without elevation, so fall back to a copy of
-      // whatever the link pointed at.
+      // whatever the link pointed at, which may be a directory.
       await symlink(entry.link, dest).catch(() =>
-        copyFile(resolve(dirname(dest), entry.link), dest),
+        cp(resolve(dirname(dest), entry.link), dest, { recursive: true }),
       );
     } else {
       await writeFile(dest, entry.data);

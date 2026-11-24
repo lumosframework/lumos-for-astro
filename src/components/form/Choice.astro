@@ -87,7 +87,7 @@ const {
     .form-choice {
       display: inline-flex;
       align-items: center;
-      gap: 0.75em;
+      gap: var(--space-2);
       cursor: pointer;
     }
 
@@ -108,8 +108,8 @@ const {
       flex: none;
       display: grid;
       place-items: center;
-      width: 1.5em;
-      height: 1.5em;
+      width: var(--space-4);
+      height: var(--space-4);
       background-color: var(--_mark);
       border: var(--border-width) solid transparent;
       border-radius: var(--radius-small);
@@ -129,8 +129,8 @@ const {
     }
 
     .form-choice_dot {
-      width: 1.1em;
-      height: 1.1em;
+      width: var(--space-3);
+      height: var(--space-3);
       background-color: var(--_ink);
       border-radius: var(--radius-round);
       scale: 0;
@@ -163,19 +163,19 @@ const {
     /* Toggle */
     .form-choice.toggle {
       & .form-choice_mark {
-        width: 2.75em;
-        height: 1.5em;
+        width: calc(var(--space-4) * 2);
+        height: var(--space-4);
         border-radius: var(--radius-round);
         place-items: center start;
-        padding: 0.15em;
+        padding: calc(var(--space-1) / 2);
       }
       & :is(.form-choice_tick, .form-choice_dot) {
         display: none;
       }
       & .form-choice_mark::after {
         content: "";
-        width: 1.1em;
-        height: 1.1em;
+        width: var(--space-3);
+        height: var(--space-3);
         border-radius: var(--radius-round);
         background-color: var(--text);
         transition:
@@ -190,7 +190,7 @@ const {
 
     /* Chip */
     .form-choice.chip {
-      padding: 0.75em 1.5em;
+      padding: var(--space-2) var(--space-4);
       background-color: var(--background-2);
       border: var(--border-width) solid transparent;
       border-radius: var(--radius-round);

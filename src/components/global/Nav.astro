@@ -8,14 +8,14 @@ interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
   /** Fix the nav over the page. */
-  overlap?: boolean;
+  navOverlap?: boolean;
 }
 
-const { render = true, overlap = false } = Astro.props;
+const { render = true, navOverlap = false } = Astro.props;
 ---
 
 {render && (
-  <header class:list={["nav_wrap", overlap && "overlap"]}>
+  <header class:list={["nav_wrap", navOverlap && "nav-overlap"]}>
     <div class="nav_inner">
       <a class="nav_logo" href="/" aria-label={SITE_NAME}>
         <Icon src={logo} variant="full-width" />
@@ -109,7 +109,7 @@ const { render = true, overlap = false } = Astro.props;
       color: var(--text);
       border-bottom: var(--border-width) solid var(--border);
 
-      &.overlap {
+      &.nav-overlap {
         position: fixed;
         inset-inline: 0;
       }

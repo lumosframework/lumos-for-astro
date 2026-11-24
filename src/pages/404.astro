@@ -11,7 +11,7 @@ import ContentWrapper from "@/components/wrapper/ContentWrapper.astro";
 <Layout
   title="Page not found"
   description="The page you're looking for doesn't exist."
-  overlap={true}
+  navOverlap={true}
 >
   <Section paddingTop="navoverlap" paddingBottom="navoverlap" class="flex-grow">
     <ContentWrapper centered={true}>
@@ -23,9 +23,7 @@ import ContentWrapper from "@/components/wrapper/ContentWrapper.astro";
         here might be out of date.
       </Paragraph>
       <ButtonWrapper>
-        <Button element="link" href="/">
-          Back to home
-        </Button>
+        <Button href="/">Back to home</Button>
       </ButtonWrapper>
     </ContentWrapper>
   </Section>

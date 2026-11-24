@@ -402,6 +402,7 @@ img {
 button {
   background-color: transparent;
   text-align: inherit;
+  text-transform: inherit;
   padding: 0;
   border: 0;
 }
@@ -419,6 +420,7 @@ button,
 textarea,
 select {
   font: inherit;
+  letter-spacing: inherit;
 }
 
 ul,
@@ -613,6 +615,6 @@ h4,
 h5,
 h6,
 p,
-[class*="text-style-"] {
+[class*="text-style-"]:not(input, textarea, select) {
   text-box: trim-both cap alphabetic;
 }

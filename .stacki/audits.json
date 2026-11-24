@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "ignored": [],
+  "tokens": {
+    "properties": [
+      "border-radius",
+      "gap",
+      "row-gap",
+      "column-gap",
+      "font-size",
+      "line-height",
+      "letter-spacing",
+      "padding*",
+      "margin*",
+      "width",
+      "max-width"
+    ],
+    "colors": true,
+    "px": true,
+    "remOutsideVariables": false,
+    "allowed": [
+      "0",
+      "auto",
+      "inherit",
+      "initial",
+      "unset",
+      "currentcolor",
+      "transparent",
+      "none",
+      "normal",
+      "100%"
+    ]
+  }
+}

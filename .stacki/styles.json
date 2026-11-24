@@ -4,5 +4,28 @@
   "lockedStylesheets": [
     "src/styles/patterns.css",
     "src/styles/utilities.css"
-  ]
+  ],
+  "newStyleTag": {
+    "version": 2,
+    "attributes": "is:global"
+  },
+  "newStyleLocations": {
+    "version": 1,
+    "page": {
+      "use": "file",
+      "file": "src/styles/global.css",
+      "tag": {
+        "version": 2,
+        "attributes": "is:global"
+      }
+    },
+    "component": {
+      "use": "tag",
+      "tag": {
+        "version": 2,
+        "attributes": "is:global",
+        "content": "@layer components {\n}"
+      }
+    }
+  }
 }

@@ -54,6 +54,20 @@ jobs:
         id: update
         run: node .github/scripts/update-astro.mjs
 
+      # Nothing left to update means an open update pull request is obsolete,
+      # usually because the same bump reached main another way. GitHub leaves it
+      # open, so close it here. Only main can answer that: a manual run from
+      # another branch compares against that branch instead.
+      - name: Close the obsolete pull request
+        if: steps.update.outputs.changed == 'false' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+        run: |
+          PR=$(gh pr list --head automation/astro-latest --base main --state open --json number --jq '.[0].number')
+          if [ -n "$PR" ]; then
+            gh pr close "$PR" --comment "Closing: main already has the latest Astro toolchain."
+          fi
+
       - name: Verify the updated template
         if: steps.update.outputs.changed == 'true'
         run: |

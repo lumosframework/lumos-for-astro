@@ -1,6 +1,6 @@
 ---
 import { Font } from "astro:assets";
-import { SITE_NAME, SITE_DESCRIPTION } from "@/consts.ts";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/consts.ts";
 import { isNoindexRoute } from "@/utils/seo.ts";
 import type { SeoProps } from "@/types.ts";
 
@@ -12,6 +12,8 @@ const {
   image = "/og-image.jpg",
   type = "website",
   noindex,
+  schemaType = "WebPage",
+  schema,
 } = Astro.props;
 
 const isNoindex = noindex ?? isNoindexRoute(Astro.url.pathname);
@@ -19,6 +21,31 @@ const isNoindex = noindex ?? isNoindexRoute(Astro.url.pathname);
 const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
+
+const isArticle = schemaType === "Article" || schemaType === "BlogPosting";
+
+const defaultSchema = {
+  "@context": "https://schema.org",
+  "@type": schemaType,
+  name: title ?? SITE_NAME,
+  description,
+  url: canonical.href,
+  isPartOf: {
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: new URL("/", Astro.site ?? SITE_URL).href,
+  },
+  ...(isArticle && { headline: title ?? SITE_NAME, image: socialImage.href }),
+};
+const schemaItems =
+  schema === false || isNoindex
+    ? []
+    : Array.isArray(schema)
+      ? schema.map((item) => ({ "@context": "https://schema.org", ...item }))
+      : [{ ...defaultSchema, ...schema }];
+const jsonLd = schemaItems.map((item) =>
+  JSON.stringify(item).replace(/</g, "\\u003c"),
+);
 ---
 
 <meta charset="utf-8" />
@@ -46,4 +73,7 @@ const socialImage = new URL(image, Astro.site);
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
+{jsonLd.map((json) => (
+  <script type="application/ld+json" set:html={json} />
+))}
 <meta name="generator" content={Astro.generator} />
