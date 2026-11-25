@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "defaultRole": "admin",
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Admin",
+      "members": [
+        "email:admin@example.invalid"
+      ]
+    },
+    {
+      "id": "client",
+      "name": "Client",
+      "members": [],
+      "access": [
+        "panel:elements",
+        "panel:pages",
+        "panel:navigator",
+        "panel:components",
+        "panel:assets",
+        "panel:cms",
+        "panel:history",
+        "panel:settings",
+        "page:create",
+        "page:delete",
+        "page:rename",
+        "publish",
+        "settings:editor",
+        "cli:read",
+        "panel:ai",
+        "panel:audits",
+        "cli:components"
+      ],
+      "componentRules": [
+        {
+          "kind": "folder",
+          "path": "src/components/global"
+        },
+        {
+          "kind": "folder",
+          "path": "src/components/utility"
+        },
+        {
+          "kind": "folder",
+          "path": "src/layouts"
+        }
+      ]
+    }
+  ]
+}

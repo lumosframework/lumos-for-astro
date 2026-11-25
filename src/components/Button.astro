@@ -10,21 +10,21 @@ import { slotContent } from "@/utils/slots.ts";
 type Emphasis = "primary" | "secondary";
 
 type Tag =
-  | (HTMLAttributes<"button"> & {
+  | (Omit<HTMLAttributes<"a">, "type"> & {
       /** Rendered element. */
-      element?: "button";
+      element?: "link";
+      /** Link destination. */
+      href?: string;
+      type?: never;
+      disabled?: never;
+    })
+  | (HTMLAttributes<"button"> & {
+      element: "button";
       /** Native button type. */
       type?: "button" | "submit" | "reset";
       /** Disable the button. */
       disabled?: boolean;
       href?: never;
-    })
-  | (Omit<HTMLAttributes<"a">, "type"> & {
-      element: "link";
-      /** Link destination. */
-      href?: string;
-      type?: never;
-      disabled?: never;
     });
 
 type Kind =
@@ -86,7 +86,7 @@ type AllProps = HTMLAttributes<"button"> &
     label?: string;
     pressed?: boolean;
     direction?: "forward" | "back";
-    element?: "button" | "link";
+    element?: "link" | "button";
     href?: string;
     type?: "button" | "submit" | "reset";
   };
@@ -98,7 +98,7 @@ const {
   label,
   pressed = false,
   direction = "forward",
-  element = "button",
+  element = "link",
   href,
   type = "button",
   class: className,
@@ -163,13 +163,13 @@ const named = {
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      gap: 0.5em;
-      padding: 0.75em 1.5em;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-4);
       background-color: var(--button-background);
       color: var(--button-text);
       border: var(--border-width) solid var(--button-border);
-      border-radius: 0.5em;
-      line-height: 1.2;
+      border-radius: var(--radius-small);
+      line-height: var(--line-height-medium);
       text-decoration: none;
       text-align: center;
       transition:
@@ -199,7 +199,7 @@ const named = {
         --button-text-hover: var(--link-text-hover);
         --button-border-hover: var(--link-border);
 
-        padding: 0.4em 0;
+        padding: var(--space-1) 0;
         border: 0;
         border-bottom: var(--border-width) solid var(--button-border);
         border-radius: 0;
@@ -224,7 +224,7 @@ const named = {
       }
       &:is(.play, .close, .arrow) {
         gap: 0;
-        padding: 0.75em;
+        padding: var(--space-2);
         border-radius: var(--radius-round);
       }
       &.back .button_mark {

@@ -14,21 +14,26 @@ type Props = SeoProps & {
    * first section starts underneath it. Give that section
    * `paddingTop="navoverlap"` to clear the bar.
    */
-  overlap?: boolean;
+  navOverlap?: boolean;
 };
 
-const { theme = "inherit", overlap = false, ...seo } = Astro.props;
+const {
+  theme = "inherit",
+  navOverlap = false,
+  schemaType = "WebPage",
+  ...seo
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en" class:list={[theme !== "inherit" && `theme-${theme}`]}>
   <head>
-    <BaseHead {...seo} />
+    <BaseHead {...seo} schemaType={schemaType} />
     <slot name="head" />
   </head>
   <body>
     <SkipLink />
-    <Nav overlap={overlap} />
+    <Nav navOverlap={navOverlap} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

@@ -136,11 +136,13 @@ if (import.meta.env.DEV && render) {
         </Paragraph>
         <ButtonWrapper>
           {buttonHref ? (
-            <Button element="link" href={buttonHref} {...buttonKind}>
+            <Button href={buttonHref} {...buttonKind}>
               {buttonLabel}
             </Button>
           ) : (
-            <Button {...buttonKind}>{buttonLabel}</Button>
+            <Button element="button" {...buttonKind}>
+              {buttonLabel}
+            </Button>
           )}
         </ButtonWrapper>
       </div>

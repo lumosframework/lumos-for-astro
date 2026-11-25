@@ -62,12 +62,14 @@ const panels = await slotContent(Astro.slots);
             emphasis="secondary"
             direction="back"
             label="Previous tab"
+            element="button"
             data-step="-1"
           />
           <Button
             variant="arrow"
             emphasis="secondary"
             label="Next tab"
+            element="button"
             data-step="1"
           />
         </div>
@@ -76,6 +78,7 @@ const panels = await slotContent(Astro.slots);
           emphasis="secondary"
           label="Pause automatic rotation"
           pressed
+          element="button"
           data-toggle
         />
       </div>
