@@ -7,6 +7,28 @@
       "name": "Admin",
       "members": [
         "email:admin@example.invalid"
+      ],
+      "componentRules": [
+        {
+          "kind": "component",
+          "path": "src/components/global/Footer.astro"
+        },
+        {
+          "kind": "component",
+          "path": "src/components/global/Nav.astro"
+        },
+        {
+          "kind": "component",
+          "path": "src/components/global/NavLink.astro"
+        },
+        {
+          "kind": "component",
+          "path": "src/components/global/SkipLink.astro"
+        },
+        {
+          "kind": "folder",
+          "path": "src/components/utility"
+        }
       ]
     },
     {

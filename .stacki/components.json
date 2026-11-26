@@ -29,7 +29,7 @@
     "src/components/item/Card.astro": {
       "props": {
         "heading": "Lorem ipsum dolor sit amet elit",
-        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       }
     },
     "src/components/typography/Eyebrow.astro": {
@@ -42,7 +42,12 @@
     },
     "src/components/typography/Paragraph.astro": {
       "props": {},
-      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+      "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "editing": {
+        "slot:default": {
+          "lineBreaks": true
+        }
+      }
     },
     "src/components/wrapper/ButtonWrapper.astro": {
       "props": {},
@@ -53,16 +58,46 @@
       ]
     },
     "src/components/wrapper/ContentWrapper.astro": {
-      "props": {},
+      "props": {
+        "variant": "columns"
+      },
       "children": [
         {
-          "component": "src/components/typography/Heading.astro"
+          "component": "src/components/typography/Heading.astro",
+          "props": {},
+          "text": "Lorem ipsum dolor sit amet elit",
+          "inherit": false
         },
         {
-          "component": "src/components/typography/Paragraph.astro"
+          "component": "src/components/typography/Paragraph.astro",
+          "props": {},
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+          "inherit": false
         },
         {
-          "component": "src/components/wrapper/ButtonWrapper.astro"
+          "component": "src/components/wrapper/ButtonWrapper.astro",
+          "props": {},
+          "children": [
+            {
+              "component": "src/components/Button.astro",
+              "props": {},
+              "text": "Button Text",
+              "inherit": false
+            }
+          ],
+          "inherit": false
+        },
+        {
+          "component": "src/components/media/Img.astro",
+          "props": {
+            "slot": "column2"
+          },
+          "assets": {
+            "src": {
+              "file": "src/assets/graphics/lumos-background.svg"
+            }
+          },
+          "inherit": false
         }
       ]
     },
@@ -73,13 +108,28 @@
       },
       "children": [
         {
-          "component": "src/components/item/Card.astro"
+          "component": "src/components/item/Card.astro",
+          "props": {
+            "heading": "Lorem ipsum dolor sit amet elit",
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          },
+          "inherit": false
         },
         {
-          "component": "src/components/item/Card.astro"
+          "component": "src/components/item/Card.astro",
+          "props": {
+            "heading": "Lorem ipsum dolor sit amet elit",
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          },
+          "inherit": false
         },
         {
-          "component": "src/components/item/Card.astro"
+          "component": "src/components/item/Card.astro",
+          "props": {
+            "heading": "Lorem ipsum dolor sit amet elit",
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          },
+          "inherit": false
         }
       ]
     },
@@ -87,7 +137,445 @@
       "props": {}
     },
     "src/components/wrapper/Section.astro": {
-      "props": {}
+      "props": {},
+      "children": [
+        {
+          "component": "src/components/wrapper/ContentWrapper.astro",
+          "props": {
+            "variant": "columns"
+          },
+          "children": [
+            {
+              "component": "src/components/typography/Heading.astro",
+              "props": {},
+              "text": "Lorem ipsum dolor sit amet elit",
+              "inherit": false
+            },
+            {
+              "component": "src/components/typography/Paragraph.astro",
+              "props": {},
+              "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+              "inherit": false
+            },
+            {
+              "component": "src/components/wrapper/ButtonWrapper.astro",
+              "props": {},
+              "children": [
+                {
+                  "component": "src/components/Button.astro",
+                  "props": {},
+                  "text": "Button Text",
+                  "inherit": false
+                }
+              ],
+              "inherit": false
+            },
+            {
+              "component": "src/components/media/Img.astro",
+              "props": {
+                "slot": "column2"
+              },
+              "assets": {
+                "src": {
+                  "file": "src/assets/graphics/lumos-background.svg"
+                }
+              },
+              "inherit": false
+            }
+          ],
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/media/Img.astro": {
+      "props": {},
+      "assets": {
+        "src": {
+          "file": "src/assets/graphics/lumos-background.svg"
+        }
+      }
+    },
+    "src/components/form/Choice.astro": {
+      "props": {
+        "label": "Label"
+      }
+    },
+    "src/components/form/Fieldset.astro": {
+      "props": {
+        "legend": "Label",
+        "variant": "inline",
+        "legendStyle": "label"
+      },
+      "children": [
+        {
+          "component": "src/components/form/Choice.astro",
+          "props": {
+            "type": "radio",
+            "name": "color",
+            "label": "Red",
+            "value": "red",
+            "checked": true
+          },
+          "inherit": false
+        },
+        {
+          "component": "src/components/form/Choice.astro",
+          "props": {
+            "type": "radio",
+            "name": "color",
+            "label": "Green",
+            "value": "green"
+          },
+          "inherit": false
+        },
+        {
+          "component": "src/components/form/Choice.astro",
+          "props": {
+            "type": "radio",
+            "name": "color",
+            "label": "Blue",
+            "value": "blue"
+          },
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/form/Range.astro": {
+      "props": {
+        "label": "Label",
+        "unit": "%"
+      }
+    },
+    "src/components/form/Select.astro": {
+      "props": {
+        "label": "Label"
+      },
+      "literals": {
+        "options": "[\"Option 1\", \"Option 2\", \"Option 3\"]"
+      }
+    },
+    "src/components/form/Textarea.astro": {
+      "props": {
+        "label": "Label",
+        "placeholder": "Placeholder"
+      }
+    },
+    "src/components/form/Form.astro": {
+      "props": {
+        "name": "Form Name"
+      },
+      "children": [
+        {
+          "component": "src/components/form/Input.astro",
+          "props": {
+            "variant": "first-name"
+          },
+          "inherit": false
+        },
+        {
+          "component": "src/components/form/Input.astro",
+          "props": {
+            "variant": "email"
+          },
+          "inherit": false
+        },
+        {
+          "component": "src/components/wrapper/ButtonWrapper.astro",
+          "props": {
+            "marginTop": "4"
+          },
+          "children": [
+            {
+              "component": "src/components/Button.astro",
+              "props": {
+                "element": "button",
+                "type": "submit"
+              },
+              "text": "Submit",
+              "inherit": false
+            }
+          ],
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/form/Input.astro": {
+      "props": {
+        "label": "Label"
+      }
+    },
+    "src/components/interactive/Accordion.astro": {
+      "props": {},
+      "children": [
+        {
+          "component": "src/components/interactive/AccordionItem.astro",
+          "props": {
+            "heading": "Item 1"
+          },
+          "children": [
+            {
+              "component": "src/components/typography/Paragraph.astro",
+              "props": {},
+              "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+              "inherit": false
+            }
+          ],
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/interactive/AccordionItem.astro": {
+      "props": {
+        "heading": "Item 1"
+      },
+      "children": [
+        {
+          "component": "src/components/typography/Paragraph.astro",
+          "props": {},
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/interactive/Dropdown.astro": {
+      "props": {
+        "label": "Text"
+      },
+      "children": [
+        {
+          "component": "src/components/typography/Paragraph.astro",
+          "props": {},
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/interactive/Marquee.astro": {
+      "props": {},
+      "children": [
+        {
+          "component": "src/components/typography/Paragraph.astro",
+          "props": {},
+          "text": "Repeating text",
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/interactive/Modal.astro": {
+      "props": {
+        "preview": true,
+        "id": "model-1"
+      },
+      "children": [
+        {
+          "component": "src/components/wrapper/ContentWrapper.astro",
+          "props": {},
+          "children": [
+            {
+              "component": "src/components/typography/Heading.astro",
+              "props": {},
+              "text": "Lorem ipsum dolor sit amet elit",
+              "inherit": false
+            },
+            {
+              "component": "src/components/typography/Paragraph.astro",
+              "props": {},
+              "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+              "inherit": false
+            },
+            {
+              "component": "src/components/wrapper/ButtonWrapper.astro",
+              "props": {},
+              "children": [
+                {
+                  "component": "src/components/Button.astro",
+                  "props": {},
+                  "text": "Button Text",
+                  "inherit": false
+                }
+              ],
+              "inherit": false
+            }
+          ],
+          "inherit": false
+        }
+      ]
+    },
+    "src/components/interactive/Tabs.astro": {
+      "props": {},
+      "children": [
+        {
+          "element": "div",
+          "tag": "Fragment",
+          "props": {
+            "slot": "links"
+          },
+          "children": [
+            {
+              "component": "src/components/interactive/TabLink.astro",
+              "props": {},
+              "text": "Link 1",
+              "inherit": false
+            },
+            {
+              "component": "src/components/interactive/TabLink.astro",
+              "props": {},
+              "text": "Link 2",
+              "inherit": false
+            },
+            {
+              "component": "src/components/interactive/TabLink.astro",
+              "props": {},
+              "text": "Link 3",
+              "inherit": false
+            }
+          ]
+        },
+        {
+          "element": "div",
+          "tag": "Fragment",
+          "props": {},
+          "children": [
+            {
+              "literal": "",
+              "verbatim": "<!-- Section 1 -->"
+            },
+            {
+              "component": "src/components/wrapper/ContentWrapper.astro",
+              "props": {},
+              "children": [
+                {
+                  "component": "src/components/typography/Heading.astro",
+                  "props": {},
+                  "text": "Section 1",
+                  "inherit": false
+                },
+                {
+                  "component": "src/components/typography/Paragraph.astro",
+                  "props": {},
+                  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+                  "inherit": false
+                },
+                {
+                  "component": "src/components/wrapper/ButtonWrapper.astro",
+                  "props": {},
+                  "children": [
+                    {
+                      "component": "src/components/Button.astro",
+                      "props": {},
+                      "text": "Button Text",
+                      "inherit": false
+                    }
+                  ],
+                  "inherit": false
+                }
+              ],
+              "inherit": false
+            },
+            {
+              "literal": "",
+              "verbatim": "<!-- Section 2 -->"
+            },
+            {
+              "component": "src/components/wrapper/ContentWrapper.astro",
+              "props": {},
+              "children": [
+                {
+                  "component": "src/components/typography/Heading.astro",
+                  "props": {},
+                  "text": "Section 2",
+                  "inherit": false
+                },
+                {
+                  "component": "src/components/typography/Paragraph.astro",
+                  "props": {},
+                  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+                  "inherit": false
+                },
+                {
+                  "component": "src/components/wrapper/ButtonWrapper.astro",
+                  "props": {},
+                  "children": [
+                    {
+                      "component": "src/components/Button.astro",
+                      "props": {},
+                      "text": "Button Text",
+                      "inherit": false
+                    }
+                  ],
+                  "inherit": false
+                }
+              ],
+              "inherit": false
+            },
+            {
+              "literal": "",
+              "verbatim": "<!-- Section 3 -->"
+            },
+            {
+              "component": "src/components/wrapper/ContentWrapper.astro",
+              "props": {},
+              "children": [
+                {
+                  "component": "src/components/typography/Heading.astro",
+                  "props": {},
+                  "text": "Section 3",
+                  "inherit": false
+                },
+                {
+                  "component": "src/components/typography/Paragraph.astro",
+                  "props": {},
+                  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+                  "inherit": false
+                },
+                {
+                  "component": "src/components/wrapper/ButtonWrapper.astro",
+                  "props": {},
+                  "children": [
+                    {
+                      "component": "src/components/Button.astro",
+                      "props": {},
+                      "text": "Button Text",
+                      "inherit": false
+                    }
+                  ],
+                  "inherit": false
+                }
+              ],
+              "inherit": false
+            }
+          ]
+        }
+      ]
+    },
+    "src/components/media/Icon.astro": {
+      "props": {},
+      "assets": {
+        "src": {
+          "file": "src/assets/icons/play.svg"
+        }
+      }
+    },
+    "src/components/media/Video.astro": {
+      "props": {
+        "src": "https://timothyricks.us.getafile.online/background-video"
+      }
+    },
+    "src/components/typography/RichText.astro": {
+      "props": {},
+      "children": [
+        {
+          "element": "p",
+          "props": {},
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+        }
+      ],
+      "editing": {
+        "slot:default": {
+          "lineBreaks": true,
+          "richText": true
+        }
+      }
     }
   }
 }
