@@ -29,7 +29,17 @@
     "src/components/item/Card.astro": {
       "props": {
         "heading": "Lorem ipsum dolor sit amet elit",
-        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "eyebrow": "Some text",
+        "buttonLabel": "Get started",
+        "buttonHref": "/",
+        "variant": "cover",
+        "theme": "dark"
+      },
+      "assets": {
+        "image": {
+          "file": "src/assets/graphics/lumos-background.svg"
+        }
       }
     },
     "src/components/typography/Eyebrow.astro": {
@@ -111,7 +121,17 @@
           "component": "src/components/item/Card.astro",
           "props": {
             "heading": "Lorem ipsum dolor sit amet elit",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "eyebrow": "Some text",
+            "buttonLabel": "Get started",
+            "buttonHref": "/",
+            "variant": "cover",
+            "theme": "dark"
+          },
+          "assets": {
+            "image": {
+              "file": "src/assets/graphics/lumos-background.svg"
+            }
           },
           "inherit": false
         },
@@ -119,7 +139,17 @@
           "component": "src/components/item/Card.astro",
           "props": {
             "heading": "Lorem ipsum dolor sit amet elit",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "eyebrow": "Some text",
+            "buttonLabel": "Get started",
+            "buttonHref": "/",
+            "variant": "cover",
+            "theme": "dark"
+          },
+          "assets": {
+            "image": {
+              "file": "src/assets/graphics/lumos-background.svg"
+            }
           },
           "inherit": false
         },
@@ -127,7 +157,17 @@
           "component": "src/components/item/Card.astro",
           "props": {
             "heading": "Lorem ipsum dolor sit amet elit",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "eyebrow": "Some text",
+            "buttonLabel": "Get started",
+            "buttonHref": "/",
+            "variant": "cover",
+            "theme": "dark"
+          },
+          "assets": {
+            "image": {
+              "file": "src/assets/graphics/lumos-background.svg"
+            }
           },
           "inherit": false
         }
@@ -364,7 +404,7 @@
     "src/components/interactive/Modal.astro": {
       "props": {
         "preview": true,
-        "id": "model-1"
+        "id": "modal-1"
       },
       "children": [
         {
