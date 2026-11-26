@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "classes": [
+    "theme-dark"
+  ],
+  "components": {
+    "src/components/Button.astro": {
+      "split": [
+        "variant",
+        "emphasis"
+      ]
+    },
+    "src/components/item/Card.astro": {
+      "frames": {
+        "": {
+          "width": 400
+        },
+        "variant=cover": {
+          "assets": {
+            "image": {
+              "file": "src/assets/graphics/lumos-background.svg"
+            }
+          }
+        },
+        "variant=stacked": {
+          "assets": {
+            "image": {
+              "file": "src/assets/graphics/lumos-background.svg"
+            }
+          }
+        }
+      }
+    },
+    "src/components/wrapper/ContentWrapper.astro": {
+      "arrange": "column"
+    }
+  }
+}
